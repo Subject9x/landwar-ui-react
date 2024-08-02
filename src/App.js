@@ -4,6 +4,7 @@ import React from "react";
 //import logo from './logo.svg';
 import HomePage from "./pages/landing/homepage.js"
 import RulebooksPage from "./pages/landing/RulebooksPage.js";
+import UnitEditor from "./pages/units/UnitEditor.js";
 
 import './App.css';
 
@@ -30,7 +31,7 @@ function App() {
         </a> 
       </header>*/}
       {/* <HomePage /> */}
-        <RulebooksPage />
+        <UnitEditor />
     </div>
   );
 }
