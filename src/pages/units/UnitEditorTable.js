@@ -5,6 +5,13 @@ import UnitTableRow from "./UnitTableRow";
 
 function UnitEditorTable(){
 
+    const unitColumns = ['select','name', 'size', 'move', 'evade', 'dmg-m', 'dmg-r', 'range', 'armor', 'tags', 'baseCost', 'tagCost', 'total']
+
+    const [totalCosts, setTotalCosts] = useState([0,0,0]);    
+    const [unitRows, setUnitRows] = useState([{}]);
+    const [rowCount, setRowCount] = useState(0);
+    const [rowTagArrays, setRowTagArrays] = useState({'select':false, 'name':"", 'size':0, 'move':0, 'evade':0, 'dmg-m':0, 'dmg-r':0, 'range':0, 'armor':0, 'tags':[], 'baseCost':0, 'tagCost':0, 'total':0});
+
 
     function onSelectAll(){
         console.log("onSelectAll");
@@ -30,28 +37,49 @@ function UnitEditorTable(){
         console.log("onPrintPDF");
     }
 
-    
 
+    const btnAddRow = () =>{
+        const row = {'select':false, 'name':"", 'size':0, 'move':0, 'evade':0, 'dmg-m':0, 'dmg-r':0, 'range':0, 'armor':0, 'tags':[], 'baseCost':0, 'tagCost':0, 'total':0};
+        setUnitRows([...unitRows, row]);
+    }
+    function btnRemoveRow(){
+
+    }
+    function btnCopyUnits(){
+
+    }
+
+    function onUnitRowChange(e){
+        console.log("e change?" + e);
+
+    }
+
+    function onUnitRowTags(rowId){
+        console.log(rowId);
+    }
+
+    useEffect(() => {}, [unitRows]) 
 
     return (
-<div className="grd">
-    <div className="grd-row">
-        <div className="grd-row-col-6">
+<div className="grid-container fluid">
+    <div className="grid-x grid-margin-x">
+        <div className="cell medium-10 large-8">
             <UnitEditorBar onSelectAll={onSelectAll}
                 onDeselectAll={onDeselectAll}
                 onDeleteSelectRow={onDeleteSelectRow}
                 onSaveSelectRow={onSaveSelectRow}
                 onLoadCSV={onLoadCSV}
                 onPrintPDF={onPrintPDF}
+                totalCosts={totalCosts}
             />
         </div>
     </div>
 
-    <div className="grd-row">
-        <div className="grd-row-col-6">
+    <div className="grid-x grid-margin-x">
+        <div className="cell">
             <table id="unitTable">
                 <thead>
-                    <tr className="unitTableHead">
+                    <tr key={0} className="unitTableHead">
                         <th>Select</th>
                         <th>Name</th>
                         <th>Size</th>
@@ -68,19 +96,20 @@ function UnitEditorTable(){
                     </tr>
                 </thead>
                 <tbody>
-                    <UnitTableRow rowId={1}/>
+                    {unitRows.map((item, idx)=>(
+                        <UnitTableRow rowId={idx + 1} rowData={item} onRowChange={onUnitRowChange} onRowTagsClick={onUnitRowTags}/>
+                    ))}
                 </tbody>
             </table>
         </div>
     </div>
-    <div className="grd-row">
-        <div className="grd-row-col-2--sm grd-row-col-2--md grd-row-col-1--lg  ">
-            <button type="button" id="btnAddUnit" title="Add row to bottom" className="btn btn--green ui-icon-white"><span className="ui-icon ui-icon-plusthick"></span></button>
-            <button type="button" id="btnRemoveUnit" title="Delete LAST row" className="btn btn--red ui-icon-white"><span className="ui-icon ui-icon-minusthick"></span></button>
-            <button type="button" id="btnCopyUnit" title="Copy LAST row" className="btn btn--blue ui-icon-white"><span className="ui-icon ui-icon-copy"></span></button>
+    <div className="grid-x grid-margin-x">
+        <div className="cell shrink">
+            <button type="button" id="btnAddUnit" title="Add row to bottom" className="button sucesss" onClick={btnAddRow}>ADD UNIT<span className="ui-icon ui-icon-plusthick"></span></button>
+            <button type="button" id="btnRemoveUnit" title="Delete LAST row" className="button alert" onClick={btnRemoveRow}>DELETE LAST<span className="ui-icon ui-icon-minusthick"></span></button>
+            <button type="button" id="btnCopyUnit" title="Copy LAST row" className="button secondary" onClick={btnCopyUnits}>COPY LAST<span className="ui-icon ui-icon-copy"></span></button>
         </div>
-    </div>  
-    <div className="row-fill-s row-fill row-fill-l"></div>
+    </div> 
 </div>
     );
 };

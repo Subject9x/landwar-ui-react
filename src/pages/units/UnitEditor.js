@@ -6,21 +6,19 @@ import UnitEditorTable from "./UnitEditorTable";
 function UnitEditor(){
 
     return(
-<div className="grd">
-    <div className="grd-row">
-        <div className="grd-row-col-6"><UserInfoBar /></div>
+<div className="grid-container fluid">
+    <div className="grid-x grid-margin-x">
+        <div className="cell small-4"><UserInfoBar /></div>
     </div>
 
-    <div className="grd-row">
-        <div className="grd-row-col-3-6">
+    <div className="grid-x grid-margin-x">
+        <div className="cell small-8">
             Unit Set:<input type="text" />
         </div>
     </div>
     
-    <div className="grd-row">
-        <div className="grd-row-col-6">
+    <div className="grid-x grid-margin-x">
             <UnitEditorTable />
-        </div>
     </div>
 </div>
     );  

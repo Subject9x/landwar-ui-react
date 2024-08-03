@@ -137,10 +137,10 @@
     float: left;
 }
 
-.container{
+/*.container{
     width: auto;
     overflow-x:  visible;
-}
+}*/
 
 .offset-center{
     margin: 0 auto;
@@ -156,7 +156,7 @@ body{
     margin: 0;
 }
 
-.row-nomargin{
+/*.row-nomargin{
     display: flex;
     flex-wrap: inherit;
 }
@@ -169,7 +169,7 @@ body{
 
 .row-center{
     
-}
+}*/
 
 .offset-center{
     margin: 0 auto;

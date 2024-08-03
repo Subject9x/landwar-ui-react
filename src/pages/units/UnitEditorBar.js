@@ -1,12 +1,14 @@
 import React, {useEffect, useCallback} from "react";
 
+import UnitEditorPointStats from "./UnitEditorPointStats";
 
-function UnitEditorBar({onSelectAll, onDeselectAll, onDeleteSelectRow, onSaveSelectRow, onLoadCSV, onPrintPDF}){
+
+function UnitEditorBar({onSelectAll, onDeselectAll, onDeleteSelectRow, onSaveSelectRow, onLoadCSV, onPrintPDF, totalCosts}){
 
     return(
-<div className="grd">
-    <div className="grd-row">
-        <div class="grd-row-col-4-6--sm grd-row-col-4-6--md grd-row-col-3-6--lg">
+<div className="grid-container fluid">
+    <div className="grid-x grid-margin-x">
+        <div className="cell shrink">
 
             {/*<button type="button" title="Select All rows" onclick="ub_control_select_all(true);" class="btn--blue ui-icon-white"><span class="ui-icon ui-icon-check"></span></button>
             <button type="button" title="Deselect All rows" onclick="ub_control_select_all(false);" class="btn ui-icon-grey"><span class="ui-icon ui-icon-squaresmall-minus"></span></button>
@@ -16,27 +18,23 @@ function UnitEditorBar({onSelectAll, onDeselectAll, onDeleteSelectRow, onSaveSel
             <button type="button" title="Print Selected to PDF" onclick="ub_control_new_print(event)" class="btn--green ui-icon-white"><span class="ui-icon ui-icon-print"></span></button>
             <button type="button" title="Select All rows" onclick="ub_control_help(event)" class="btn--blue ui-icon-white"><span class="ui-icon ui-icon-help"></span></button>*/}
         
-            <button type="button" title="Select All rows" onClick={onSelectAll} class="btn--blue ui-icon-white"><span className="ui-icon ui-icon-check"></span></button>
-            <button type="button" title="Deselect All rows" onClick={onDeselectAll} class="btn ui-icon-grey"><span className="ui-icon ui-icon-squaresmall-minus"></span></button>
-            <button type="button" title="Delete Selected rows" onClick={onDeleteSelectRow} class="btn--red ui-icon-white"><span className="ui-icon ui-icon-trash"></span></button>
-            <button type="button" title="Save Selected rows" onClick={onSaveSelectRow} class="btn--green ui-icon-white"><span className="ui-icon ui-icon-disk"></span></button>
-            <button type="button" title="Load .csv file" onClick={onLoadCSV} class="btn--green ui-icon-white"><span className="ui-icon ui-icon-folder-open"></span></button>
-            <button type="button" title="Print Selected to PDF" onClick={onPrintPDF} class="btn--green ui-icon-white"><span className="ui-icon ui-icon-print"></span></button>
+            <button type="button" title="Select All rows" onClick={onSelectAll} className="button primary">SELECT ALL<span className="ui-icon ui-icon-check"></span></button>
+            <button type="button" title="Deselect All rows" onClick={onDeselectAll} className="button secondary">DESELECT ALL<span className="ui-icon ui-icon-squaresmall-minus"></span></button>
+            <button type="button" title="Delete Selected rows" onClick={onDeleteSelectRow} className="button alert">DELETE SELECT<span className="ui-icon ui-icon-trash"></span></button>
+            <button type="button" title="Save Selected rows" onClick={onSaveSelectRow} className="button success">SAVE SELECT<span className="ui-icon ui-icon-disk"></span></button>
+            <button type="button" title="Load .csv file" onClick={onLoadCSV} className="button primary">LOAD CSV<span className="ui-icon ui-icon-folder-open"></span></button>
+            <button type="button" title="Print Selected to PDF" onClick={onPrintPDF} className="button primary">PRINT SELECTED<span className="ui-icon ui-icon-print"></span></button>
         </div>
-        <div class="grd-row-col-2-6--sm grd-row-col-2-6--md grd-row-col-3-6--lg">
-           <table><tbody>
-                <tr>
-                    <td><b>Base:</b><label id="totalBase"></label></td>
-                    <td><b>TAGS</b><label id="totalTags"></label></td>
-                    <td><b>Total:</b><label id="totalAll"></label></td>
-                </tr>
-            </tbody></table>
+        <div className="cell shrink">
+            <UnitEditorPointStats 
+                totalBase={totalCosts.totalBase}
+                totalTags={totalCosts.totalTags}
+                totalAll={totalCosts.totalAll}
+            />
         </div>
     </div>
 </div>
-
     );
-
 };
 
 export default UnitEditorBar;

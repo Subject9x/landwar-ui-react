@@ -8,10 +8,10 @@ import UnitEditor from "./pages/units/UnitEditor.js";
 
 import './App.css';
 
-import './css/base_responsive.css'
+//import './css/base_responsive.css'
 import './css/styles.css'
 
-require ('furtive/css/furtive.min.css')
+import 'foundation-sites/dist/css/foundation.min.css';
 
 function App() {
   return (
