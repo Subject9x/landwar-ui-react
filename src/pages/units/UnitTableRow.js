@@ -7,21 +7,27 @@ export default function UnitTableRow({rowId, rowData, onRowChange, onRowTagsClic
         onRowTagsClick(rowId);
     }
 
+
+    function onInputChange(e){
+        const item = e.target;
+        onRowChange(rowId, item.id, item.value);
+    }
+
 return(
-<tr key={rowId} id={rowId}>
-    <td><input id={rowId + "_select"} type="checkbox" onChange={onRowChange}/></td>
-    <td><input id={rowId + "_name"} type="text" minLength={1} maxLength={32} onChange={onRowChange}/></td>
-    <td><input id={rowId + "_size"} type="number" maxLength="4" min="0" onChange={onRowChange}/></td>
-    <td><input id={rowId + "_move"} type="number" maxLength="4" min="0" onChange={onRowChange}/></td>
-    <td><input id={rowId + "_evade"} type="number" maxLength="4" min="0" max="3" onChange={onRowChange}/></td>
-    <td><input id={rowId + "_dmg_m"} type="number" maxLength="4" min="0" onChange={onRowChange}/></td>
-    <td><input id={rowId + "_dmg_r"} type="number" maxLength="4" min="0" onChange={onRowChange}/></td>
-    <td><input id={rowId + "_range"} type="number" maxLength="4" min="0" onChange={onRowChange}/></td>
-    <td><input id={rowId + "_armor"} type="number" maxLength="4" min="0" onChange={onRowChange}/></td>
-    <td><label id={rowId + "_points"} ></label></td>
-    <td><button id={rowId + "_tags"} type="button" className="btn ui-icon-grey" onClick={onClickTags}><span className="ui-icon ui-icon-tag"></span></button><input type="hidden" /></td>
-    <td><label id={rowId + "_tagTotal"} ></label></td>
-    <td><label id={rowId + "_total"} ></label></td>
+<tr id={rowId}>
+    <td><input id={"select"} type="checkbox" onChange={onInputChange} defaultValue={false}/></td>
+    <td><input id={"name"} type="text" minLength={1} maxLength={32} onChange={onInputChange} defaultValue={""}/></td>
+    <td><input id={"size"} type="number" maxLength="4" min="0" onChange={onInputChange} defaultValue={0}/></td>
+    <td><input id={"move"} type="number" maxLength="4" min="0" onChange={onInputChange} defaultValue={0}/></td>
+    <td><input id={"evade"} type="number" maxLength="4" min="0" max="3" onChange={onInputChange} defaultValue={0}/></td>
+    <td><input id={"dmg_m"} type="number" maxLength="4" min="0" onChange={onInputChange} defaultValue={0}/></td>
+    <td><input id={"dmg_r"} type="number" maxLength="4" min="0" onChange={onInputChange} defaultValue={0}/></td>
+    <td><input id={"range"} type="number" maxLength="4" min="0" onChange={onInputChange} defaultValue={0}/></td>
+    <td><input id={"armor"} type="number" maxLength="4" min="0" onChange={onInputChange} defaultValue={0}/></td>
+    <td><label id={"points"}>{rowData['baseCost']}</label></td>
+    <td><button id={"tags"} type="button" className="button secondary" onClick={onClickTags}><span className="ui-icon ui-icon-tag"></span></button><input type="hidden" /></td>
+    <td><label id={"tagTotal"} >{rowData['tagCost']}</label></td>
+    <td><label id={"total"} >{rowData['total']}</label></td>
 </tr>
 )
 };
