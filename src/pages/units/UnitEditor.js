@@ -1,7 +1,7 @@
 import React from "react";
 
 import UserInfoBar from "../../components/UserInfoBar";
-import UnitEditorTable from "./UnitEditorTable";
+import UnitEditorTable from "./table/UnitEditorTable";
 
 function UnitEditor(){
 
