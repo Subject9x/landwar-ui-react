@@ -8,28 +8,30 @@
         these are distinct from the unitbuilder bindings to make them accessible anywhere.
 */
 
+import { tags_checkExclusions } from "./tagInfo";
+
 // Beta 1.5 - size is more of a meta stat that affects other calcs, its a but redundant to factor this as a cost unto-itself, but it's a nice 'rounding
 // value for additional cost bulk.
-function calcSize(sizeVal){
+export function calcSize(sizeVal){
     // return sizeVal * 2; // old, pre 1.3
     return sizeVal / 3; 
 }
 
-function calcMove(moveVal, sizeVal){
+export function calcMove(moveVal, sizeVal){
     if(moveVal === 0){
         return 0;
     }
     return (moveVal + sizeVal) / 2;
 }
 
-function calcEvade(sizeVal, evadeVal, moveVal){
+export function calcEvade(sizeVal, evadeVal, moveVal){
     if(evadeVal === 0){
         return 0;
     }
     return ((sizeVal / 1.5) * evadeVal) + (moveVal / 2);
 }
 
-function calcDMG_M(meleeDamageVal, moveVal){
+export function calcDMG_M(meleeDamageVal, moveVal){
     if(meleeDamageVal === 0){
         return 0;
     }
@@ -37,11 +39,11 @@ function calcDMG_M(meleeDamageVal, moveVal){
     return meleeDamageVal / 2 + (moveVal / 4) ;
 }
 
-function calcDMG_R(rangeDamageVal){
+export function calcDMG_R(rangeDamageVal){
     return rangeDamageVal * 4;
 }
 
-function calcRange(moveVal, rangeVal, rangeDamageVal){
+export function calcRange(moveVal, rangeVal, rangeDamageVal){
     if(rangeVal === 0){
         return 0;
     }
@@ -51,7 +53,7 @@ function calcRange(moveVal, rangeVal, rangeDamageVal){
     return Math.max(0, (moveVal / 2) + ((rangeVal / 16) * rangeVal) + (rangeDamageVal / 2));
 }
 
-function calcArmor(armorVal, sizeVal){
+export function calcArmor(armorVal, sizeVal){
     if(armorVal === 0){
         return 0;
     }
@@ -115,6 +117,26 @@ export function calculateUnitBaseCost(unitData){
 }
 
 export function calculateUnitTagCost(unitData){
+    let tagCost = 0;
+    let removeTag = [];
+    unitData['tags'].forEach(tag => {
+        let check = tag.req(unitData);
+        check = tags_checkExclusions(tag.excl, unitData['tags'], check);
+
+        if(check.length <= 0){
+            tagCost = tagCost + tag.func(unitData);
+        }
+        else{
+            removeTag = [...removeTag, tag]
+        }
+    });
+
+    removeTag.forEach(tag => {
+        unitData['tags'].filter(rem => rem === tag);
+    })
+
+    unitData['tagCost'] = tagCost;
+    unitData['total'] = unitData['baseCost'] + tagCost;
 
     
     return unitData;

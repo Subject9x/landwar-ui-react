@@ -1,8 +1,9 @@
 import React, {useState, useEffect, useCallback} from "react";
 import UnitEditorBar from "./UnitEditorBar";
 import UnitTableRow from "./UnitTableRow.js";
+import UnitTagWindow from "../tagWindow/UnitTagWindow.js";
 
-import {calculateUnitBaseCost} from "./../../../components/data/UnitCalculator.js";
+import {calculateUnitBaseCost, calculateUnitTagCost} from "./../../../components/data/UnitCalculator.js";
 
 function UnitEditorTable(){
 
@@ -10,7 +11,8 @@ function UnitEditorTable(){
 
     const [totalCosts, setTotalCosts] = useState([0,0,0]);    
     const [selectedRows, setSelectedRows] = useState([]);
-    const [unitRows, setUnitRows] = useState([{'id':0, 'name':"", 'size':0, 'move':0, 'evade':0, 'dmg_m':0, 'dmg_r':0, 'range':0, 'armor':0, 'tags':[], 'baseCost':0, 'tagCost':0, 'total':0}]);
+    const [unitRows, setUnitRows] = 
+        useState([{'id':0, 'name':"", 'size':0, 'move':0, 'evade':0, 'dmg_m':0, 'dmg_r':0, 'range':0, 'armor':0, 'tags':['FRLS'], 'baseCost':0, 'tagCost':0, 'total':0}]);
 
 
     const [disableAdd, setDisableAdd] = useState(false);
@@ -99,6 +101,7 @@ function UnitEditorTable(){
         else{
             tmpUnit[columnName] = Number(val);
             tmpUnit = calculateUnitBaseCost(tmpUnit);
+            tmpUnit = calculateUnitTagCost(tmpUnit);
         }
         
         //bind changes
@@ -130,9 +133,13 @@ function UnitEditorTable(){
             />
         </div>
     </div>
-
     <div className="grid-x grid-margin-x">
-        <div className="cell">
+        <div className="cell auto">
+            <UnitTagWindow unitData={unitRows[0]}/>
+        </div>
+    </div>
+    <div className="grid-x grid-margin-x">
+        <div className="cell auto">
             <table id="unitTable">
                 <thead>
                     <tr key={0} className="unitTableHead">
@@ -154,7 +161,6 @@ function UnitEditorTable(){
                 <tbody>  
                     {unitRows.map((item, idx)=>(
                         <UnitTableRow key={idx} rowId={idx} rowData={unitRows} handleRowDataUpdate={updateRowData} hasCheck={selectedRows.includes(idx)} handleRowClickCheck={handleRowClickCheck} />
-                     
                     ))}
                 </tbody>
             </table>

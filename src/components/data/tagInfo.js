@@ -1,8 +1,7 @@
-import "./UnitCalculator.js";
 
-let sortedTags = [];
+import { calcArmor, calcDMG_M, calcDMG_R, calcEvade, calcMove, calcRange, calculateUnitBaseCost } from "./UnitCalculator";
 
-const tagInfo = {
+export const tagInfo = {
     id : "core",
     data :[ 
         {
@@ -10,26 +9,26 @@ const tagInfo = {
             title : 'Advanced Gun Sights',
             desc : '<p><i>Combat Phase</i></p><p><b>Target</b> of this Unit <b>cannot</b> have <b>+1 DEF</b> when attacked at <b>Long Range</b>.</p>',
             excl : ['RNGOPTSH','RNGOPTLN'],
-            func : (rowId) =>{
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+            func : (unitData) =>{
+                let moveVal = unitData['move'];
+                let rangeDamageVal = unitData['dmg_r'];
+                let rangeVal = unitData['range'];
                 return ((moveVal / 4) + (rangeDamageVal / 2) + (rangeVal / 2));
             },
-            reqs : (rowId, tagArr) =>{
+            reqs : (unitData) =>{
                 let warn = '';
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+                let rangeDamageVal = unitData['dmg_r'];
+                let rangeVal = unitData['range'];
                 if(rangeDamageVal < 1){
                     warn = warn + "<p>Cannot have <b>[Range Damage]</b> of 0.</p>";
                 }
                 if(rangeVal < 1){
                     warn = warn + "<p>Cannot have <b>[Range Distance]</b> of 0.</p>";
                 }
-                if(tags_checkByName('Optimal Range - Short', tagArr)){
+                if(tags_checkByName('Optimal Range - Short', unitData['tags'])){
                     warn = warn + '<p>Unit already has the <b>[Optimal Range - Short]</b> tag.</p>';
                 }
-                if(tags_checkByName('Optimal Range - Long', tagArr)){
+                if(tags_checkByName('Optimal Range - Long', unitData['tags'])){
                     warn = warn + '<p>Unit already has the <b>[Optimal Range - Long]</b> tag.</p>';
                 }
 
@@ -42,18 +41,18 @@ const tagInfo = {
             title : 'Afterburner',
             desc : '<p><i>Movement Phase</i></p><p>During the <i>Movement Phase</i>, Unit may forego any <i>Attack</i> this turn to move <b>double</b> its <b>[Move]</b>.</p>',
             excl : ['STBLFR'],
-            func : (rowId) => {
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let armorVal = parseInt(document.getElementById(rowId + '_armor').value);
+            func : (unitData) => {
+                let moveVal = unitData['move'];
+                let armorVal = unitData['armor'];
                 return ((armorVal/2) + (moveVal/2));
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
+                let moveVal = unitData['move'];
                 if(moveVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Move]</b> greater than 0.</p>';
                 }
-                if(tags_checkByName('Stable Fire Platform', tagArr)){
+                if(tags_checkByName('Stable Fire Platform', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Stable Fire Platform] tag.</p>';
                 }
                 return warn;
@@ -65,25 +64,25 @@ const tagInfo = {
             title : 'Area Denial',
             desc : "<p><i>Resolution Phase</i></p><p>Unit cannot be <i>Panicked</i></p><p>When checking for <i>Local Objectives</i> and comparing remaining total Armor; <b>add 50% <i>Size Value</i></b> of Unit to Unit's <b>current</b> <i>Armor</i>.</p>",
             excl : [],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                if(sizeVal == 0){
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                if(sizeVal === 0){
                     sizeVal = 1;
                 }
                 return sizeVal * 1.5;
             },
-            reqs : (rowId, tagArr) => {
-                let moveVal = parseInt(document.getElementById(rowId + '_move'));
+            reqs : (unitData) => {
+                let moveVal = unitData['move']
                 let warn = '';
                 if(moveVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Move]</b> greater than 0.</p>';
                 }
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+                let rangeVal = unitData['range'];
                 if(rangeVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
                 }
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
-                let meleeDamageVal = parseInt(document.getElementById(rowId + '_DMGM').value);
+                let rangeDamageVal = unitData['dmg_r'];
+                let meleeDamageVal = unitData['dmg_m'];
                 if(rangeDamageVal <= 0 || meleeDamageVal <= 0){
                     warn = warn + '<p>Unit must have <i>either</i> <b>Range Damage</b> <i>or</i> <b>Melee Damage</b> greater than 0.</p>';
                 }
@@ -96,14 +95,14 @@ const tagInfo = {
             title : 'Armor Piercing - Melee',
             desc : "<p><i>Combat Phase</i></p><p>When applying Damage from this unit's <i>Melee</i> attack; <b>If</b> Target has the <i>[Heavy Armor]</b> tag, <b>ignore it</b>. If Target does not have this tag, Target suffers <b>+2 Stress</b> along with the damage of the attack.</p>",
             excl : [],
-            func : (rowId) => {
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let meleeDamageVal = parseInt(document.getElementById(rowId + '_DMGM').value);
-                return (uc_calc_Damage_Melee(meleeDamageVal, moveVal) * 0.6);
+            func : (unitData) => {
+                let moveVal = unitData['move'];
+                let meleeDamageVal = unitData['dmg_m'];
+                return (calcDMG_M(meleeDamageVal, moveVal) * 0.6);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let meleeDamageVal = parseInt(document.getElementById(rowId + '_DMGM').value);
+                let meleeDamageVal = unitData['dmg_m'];
                 if(meleeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Melee Damage]</b> greater than 0.</p>';
                 }
@@ -116,13 +115,13 @@ const tagInfo = {
             title : 'Armor Piercing - Ranged',
             desc : "<p><i>Combat Phase</i></p><p>When applying Damage from this unit's <i>Ranged</i> attack; <b>If</b> Target has the <i>[Heavy Armor]</b> tag, <b>ignore it</b>. If Target does not have this tag, Target suffers <b>+2 Stress</b> along with the damage of the attack.</p>",
             excl : [],
-            func : (rowId) => {
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
-                return (uc_calc_Damage_Range(rangeDamageVal) * 0.8);
+            func : (unitData) => {
+                let rangeDamageVal = unitData['dmg_r'];
+                return (calcDMG_R(rangeDamageVal) * 0.8);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+                let rangeDamageVal = unitData['dmg_r'];
                 if(rangeDamageVal < 4){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 3.</p>';
                 }
@@ -135,27 +134,27 @@ const tagInfo = {
             title : 'Battery',
             desc : '<p><i>Combat Phase</i></p><p>Unit may divide total Ranged DMG up into several attacks at different targets.</p>',
             excl : ['BLAST'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                if(sizeVal == 0){
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                if(sizeVal === 0){
                     sizeVal = 1;
                 }
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+                let rangeDamageVal = unitData['dmg_r'];
+                let rangeVal = unitData['range'];
                 return Math.max(0, ((rangeVal/2) + rangeDamageVal) - sizeVal);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+                let rangeDamageVal = unitData['dmg_r'];
                 if(rangeDamageVal <= 1){
                     warn = warn + '<p>Unit must have a <b>[Damage-Range]</b> greater than 1.</p>';
                 }
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+                let rangeVal = unitData['range'];
                 if(rangeVal < 1){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
                 }
 
-                if(tags_checkByName('Blast', tagArr)){
+                if(tags_checkByName('Blast', unitData['tags'])){
                     warn = warn + '<p>Unit already has the <b>[Blast]</b> tag.</p>';
                 }
 
@@ -168,21 +167,21 @@ const tagInfo = {
             title : 'Blast',
             desc : '<p><i>Combat Phase</i></p><p>When this Unit makes a <i>Ranged Attack</i>, Player may declare this attack is using <i>[Blast]</i>. Select a Target unit as normal, and make the attack roll. <b>If</b> the attack hits, Target takes <b>25% round down</b> damage and <b>+1 Stress</b>. The remaining damage is split <b>equally</b> across <b>all</b> units within a 6" radius of the <b>Target regardless of LoS.</b></p><p>Attacker picks which units are hit first. <i>Stationary</i> units must also be picked first and are hit automatically <b>even if they are friendly</b>, other units may avoid damage on 1 D6 roll of 5+.</p>',
             excl : ['BTRY'],
-            func : (rowId) => {
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+            func : (unitData) => {
+                let moveVal = unitData['move'];
+                let rangeDamageVal = unitData['dmg_r'];
+                let rangeVal = unitData['range'];
 
                 return (moveVal / 4) + (rangeVal / 3) + (rangeDamageVal / 2);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+                let rangeDamageVal = unitData['dmg_r'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
 
-                if(tags_checkByName('Battery')){
+                if(tags_checkByName('Battery', unitData['tags'])){
                     warn = warn + '<p>Unit already has the <b>[Battery]</b> tag.</p>';
                 }
 
@@ -195,34 +194,34 @@ const tagInfo = {
             title : 'Blink',
             desc : '<p><i>Movement Phase</i></p><p>This Unit may <b>ignore</b> <i>Terrain</i> movement restrictions, and may move through enemy units during the <i>Movement Phase</i>.</p>',
             excl : ['BMBR-AR','BMBR-DV','HIALT','FLY','JJ'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                if(sizeVal == 0){
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                if(sizeVal === 0){
                     sizeVal = 1;
                 }
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
+                let moveVal = unitData['move'];
 
-                return uc_calc_Move(moveVal, sizeVal) * 2;
+                return calcMove(moveVal, sizeVal) * 2;
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let moveVal = parseInt(document.getElementById(rowId + '_move'));
+                let moveVal = unitData['move']
                 if(moveVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Move]</b> greater than 0.</p>';
                 }
-                if(tags_checkByName('Bomber-Area')){
+                if(tags_checkByName('Bomber-Area', unitData['tags'])){
                     warn = warn + '<p>Unit <i>cannot have</i> [Bomber-Area] tag.</p>';
                 }
-                if(tags_checkByName('Bomber-Dive')){
+                if(tags_checkByName('Bomber-Dive', unitData['tags'])){
                     warn = warn + '<p>Unit <i>cannot have</i> [Bomber-Dive] tag.</p>';
                 }
-                if(tags_checkByName('High Altitude Flyer')){
+                if(tags_checkByName('High Altitude Flyer', unitData['tags'])){
                     warn = warn + '<p>Unit already has [High Altitude Flyer] tag.</p>';
                 }
-                if(tags_checkByName('Flyer')){
+                if(tags_checkByName('Flyer', unitData['tags'])){
                     warn = warn + '<p>Unit already has [Flyer] tag.</p>';
                 }
-                if(tags_checkByName('Jump Jets')){
+                if(tags_checkByName('Jump Jets', unitData['tags'])){
                     warn = warn + '<p>Unit already has [Jump Jets] tag.</p>';
                 }
                 return warn;
@@ -234,27 +233,27 @@ const tagInfo = {
             title : 'Bomber-Area',
             desc : '<p><i>Combat Phase</i></p><p>When Unit makes their <i>Ranged Attack</i> this Turn, Unit may make an <b>additional</b> <i>Ranged Attack</i> on <b>each</b> enemy Unit that it moves <b>over</b> during the <i>Movement Phase</i> within <b>2"</b> of the Unit.<ul><li><i>Damage</i> of each attack is 33% of total <b>Damage</b> value <b>rounded up</b>.</li><li> This attack <b>cannot be</b> <i>Indirect Fire</i></li><li>These attacks are at <b>-2 ATK</b>.</li></ul></p>',
             excl : ['BLNK','BMBR-DV'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
+                let rangeDamageVal = unitData['dmg_r'];
 
-                return uc_calc_Move(moveVal, sizeVal) * 0.5 + uc_calc_Damage_Range(rangeDamageVal) * 0.6;
+                return calcMove(moveVal, sizeVal) * 0.5 + calcDMG_R(rangeDamageVal) * 0.6;
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let hasJets = tags_checkByName('Jump Jets');
-                let hasFly = tags_checkByName('Flyer');
-                let hasHighFly = tags_checkByName('High Altitude Flyer');
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+                let hasJets = tags_checkByName('Jump Jets', unitData['tags']);
+                let hasFly = tags_checkByName('Flyer', unitData['tags']);
+                let hasHighFly = tags_checkByName('High Altitude Flyer', unitData['tags']);
+                let rangeDamageVal = unitData['dmg_r'];
 
                 if(rangeDamageVal < 1){
                     warn = warn + '<p><b>Range Damage</b> must be <i>greater than</i> 0.</p>';
                 }
-                if(tags_checkByName('Blink')){
+                if(tags_checkByName('Blink', unitData['tags'])){
                     warn = warn + '<p>Unit <i>cannot have</i> [Blink] tag.</p>';
                 }
-                if(tags_checkByName('Bomber-Dive')){
+                if(tags_checkByName('Bomber-Dive', unitData['tags'])){
                     warn = warn + '<p>Unit <i>cannot have</i> [Bomber-Dive] tag.</p>';
                 }
                 if(!hasJets && !hasFly && !hasHighFly){
@@ -269,26 +268,26 @@ const tagInfo = {
             title : 'Bomber-Dive',
             desc : '<p><i>Combat Phase</i></p><p>Instead of making a normal <i>Ranged Attack</i>, This Unit may make 1 <i>Ranged Attack</i> on a single target Unit that is within <b>2"</b> of this Units <i>end position</i> after its move. Any unit that is a target of a [Bomber-Dive] attack may make a <b>free</b> Attack on this unit at <b>-1 ATK</b>. <b>Damage</b> is 50% of total <b>Damage-Ranged</b> (round up, minimum of 1).</p>',
             excl : ['BMBR-AR','CHRGR'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
-                return Math.max(0, (moveVal / 2)- (sizeVal * 1.25) + (uc_calc_Damage_Range(rangeDamageVal) * 0.33 ));
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
+                let rangeDamageVal = unitData['dmg_r'];
+                return Math.max(0, (moveVal / 2)- (sizeVal * 1.25) + (calcDMG_R(rangeDamageVal) * 0.33 ));
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let hasJets = tags_checkByName('Jump Jets');
-                let hasFly = tags_checkByName('Flyer');
-                let hasHighFly = tags_checkByName('High Altitude Flyer');
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+                let hasJets = tags_checkByName('Jump Jets', unitData['tags']);
+                let hasFly = tags_checkByName('Flyer', unitData['tags']);
+                let hasHighFly = tags_checkByName('High Altitude Flyer', unitData['tags']);
+                let rangeDamageVal = unitData['dmg_r'];
 
                 if(rangeDamageVal < 1){
                     warn = warn + '<p><b>Range Damage</b> must be <i>greater than</i> 0.</p>';
                 }
-                if(tags_checkByName('Bomber-Area')){
+                if(tags_checkByName('Bomber-Area', unitData['tags'])){
                     warn = warn + '<p>Unit requires [Bomber-Area] tag.</p>';
                 }
-                if(tags_checkByName('Charger')){
+                if(tags_checkByName('Charger', unitData['tags'])){
                     warn = warn + '<p>Unit <i>cannot have</i> [Charger] tag.</p>';
                 }
                 if(!hasJets && !hasFly && !hasHighFly){
@@ -303,18 +302,18 @@ const tagInfo = {
             title : 'Brawler',
             desc : '<p><i>Combat Phase</i></p><p><b>+1 ATK</b> and <b>+1 DEF</b> in <i>Melee Attacks</i>.</p>',
             excl : ['RNGOPTLN'],
-            func : (rowId) => {
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let meleeDamageVal = parseInt(document.getElementById(rowId + '_DMGM').value);
-                return uc_calc_Damage_Melee(meleeDamageVal, moveVal) * 0.67;
+            func : (unitData) => {
+                let moveVal = unitData['move'];
+                let meleeDamageVal = unitData['dmg_m'];
+                return calcDMG_M(meleeDamageVal, moveVal) * 0.67;
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let meleeDamageVal = parseInt(document.getElementById(rowId + '_DMGM').value);
+                let meleeDamageVal = unitData['dmg_m'];
                 if(meleeDamageVal < 1){
                     warn = warn + '<p>Unit must have a <b>[Melee Damage]</b> greater than 0.</p>';
                 }
-                if(tags_checkByName('Optimal Range - Long')){
+                if(tags_checkByName('Optimal Range - Long', unitData['tags'])){
                     warn = warn + '<p>Unit already has the <b>[Optimal Range - Long]</b> tag.</p>';
                 }
                 return warn;
@@ -326,17 +325,17 @@ const tagInfo = {
             title : 'Broadside Fire Arc',
             desc : '<p><i>Combat Phase</i></p><p>Unit may <b>only</b> make <i>Ranged Attacks</i> against targets that are <i>LEFT or RIGHT</i> of Units <i>Forward facing</i>, <b>but</b> Unit may make <b>1</b> <i>Ranged Attacks</i> per side of Unit.</p><p>Target models must be <i>inside</i> this Units left or right side, and cannot be counted for <i>both</i> at the same time.</p>',
             excl : ['ARC-LFA','ARC-NAR'],
-            func : (rowId) => {
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+            func : (unitData) => {
+                let rangeDamageVal = unitData['dmg_r'];
 
-                return uc_calc_Damage_Range(rangeDamageVal) * 0.5;
+                return calcDMG_R(rangeDamageVal) * 0.5;
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                if(tags_checkByName('Limited Fire Arc')){
+                if(tags_checkByName('Limited Fire Arc', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Limited Fire Arc] tag.</p>';
                 }
-                if(tags_checkByName('Narrow Fire Arc')){
+                if(tags_checkByName('Narrow Fire Arc', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Limited Fire Arc] tag.</p>';
                 }
                 return warn;
@@ -348,13 +347,13 @@ const tagInfo = {
             title : 'Cargo',
             desc : '<p><i>Movement Phase</i></p><p>Unit can instantly Pick Up an object if equal or smaller Size. \n <b>Size</b> of 0 is 1 for this tag <i>but not for tag cost</i>.</p>',
             excl : [],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let armorVal = parseInt(document.getElementById(rowId + '_armor').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
+                let armorVal = unitData['armor'];
                 return Math.max(0,(((moveVal / 2) + armorVal) - (sizeVal*2)));
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 return '';
             },
             eqt:'(<b>Move</b> /2) + <b>Armor</b> - (<b>Size</b> * 2)'
@@ -364,21 +363,21 @@ const tagInfo = {
             title : 'Charger',
             desc : '<p><i>Movement Phase</i></p><p>Unit does not suffer <i>Stress</i> penalty for <i>Flanking</i>.</p>',
             excl : ['BMBR-DV'],
-            func : (rowId, ) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                if(sizeVal == 0){
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                if(sizeVal === 0){
                     sizeVal = 1;
                 }
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
+                let moveVal = unitData['move'];
                 return (sizeVal * 1.5) + (moveVal / 2);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let moveVal = parseInt(document.getElementById(rowId + '_move'));
+                let moveVal = unitData['move']
                 if(moveVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Move]</b> greater than 0.</p>';
                 }
-                if(tags_checkByName('Bomber-Dive')){
+                if(tags_checkByName('Bomber-Dive', unitData['tags'])){
                     warn = warn + '<p>Unit <i>cannot have</i> [Bomber-Dive] tag.</p>';
                 }
                 return warn;
@@ -390,22 +389,22 @@ const tagInfo = {
             title : 'Cloaking Systems',
             desc : '<p><i>Initiative Phase</i> <b>before</b> the roll off!</p><p>Unit <b>cannot</b> make any <i>Attacks</i> this turn. Unit does not <b>cause</b> <i>Flanking</i> stress. Unit may only move <b>half</b> their current <i>Move</i> value.</p><p>Unit gains <b>+2 DEF</b>, or <b>+3 DEF</b> IF <i>Stationary</i>.</p>',
             excl : ['HVYARM'],
-            func : (rowId, ) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                if(sizeVal == 0){
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                if(sizeVal === 0){
                     sizeVal = 1;
                 }
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                if(moveVal == 0){
+                let moveVal = unitData['move'];
+                if(moveVal === 0){
                     moveVal = 1;
                 }
-                let moveCost = uc_calc_Move(moveVal, sizeVal);
+                let moveCost = calcMove(moveVal, sizeVal);
                 
                 return (moveCost * 0.45) + (sizeVal / 2);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                if(tags_checkByName('Heavy Armor')){
+                if(tags_checkByName('Heavy Armor', unitData['tags'])){
                     warn = warn + '<p>Unit <i>cannot have</i> [Heavy Armor] tag.</p>';
                 }
                 return warn;
@@ -417,19 +416,19 @@ const tagInfo = {
             title : 'Counter-Battery',
             desc : '<p><i>Combat Phase</i></p><p>Unit may use <b>Indirect Fire</b> on a Target this <i>Attack Phase</i> when the Target has attempted an <b>Indirect Fire</b> attack location within Unit`s <b>Range</b>.</p>',
             excl : [],
-            func : (rowId) => {
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+            func : (unitData) => {
+                let moveVal = unitData['move'];
+                let rangeVal = unitData['range'];
+                let rangeDamageVal = unitData['dmg_r'];
                 return (moveVal / 3) + (rangeVal / 3) + (rangeDamageVal / 3); /*TODO*/
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+                let rangeVal = unitData['range'];
                 if(rangeVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
                 }
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+                let rangeDamageVal = unitData['dmg_r'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
@@ -442,33 +441,32 @@ const tagInfo = {
             title : 'Courage-I',
             desc : '<p><i>Resolution Phase</i>.</p><p>When Unit is making a <i>Stress Check</i>, Unit gets <b>+1</b> to the D6 roll.</p>',
             excl : ['CRG2','FRLS'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let armorVal = parseInt(document.getElementById(rowId + '_armor').value);
-                //let structVal = parseInt(document.getElementById(rowId + '_structure').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
+                let armorVal = unitData['armor'];
 
-                if(sizeVal == 0){
+                if(sizeVal === 0){
                     sizeVal = 1;
                 }
-                if(moveVal == 0){
+                if(moveVal === 0){
                     moveVal = 6;
                 }
 
-                val = (moveVal + armorVal + sizeVal) / 4; //+ structVal;
+                let val = (moveVal + armorVal + sizeVal) / 4;
 
                 return val * 3;
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let armorVal = parseInt(document.getElementById(rowId + '_armor').value);
+                let armorVal = unitData['armor'];
                 if(armorVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Armor]</b> greater than 0.';
                 }
-                if(tags_checkByName('Courage-II')){
+                if(tags_checkByName('Courage-II', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Courage-II] tag.</p>';
                 }
-                if(tags_checkByName('Fearless')){
+                if(tags_checkByName('Fearless', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Fearless] tag.</p>';
                 }
                 // if(tags_checkByName('Overheat')){
@@ -483,33 +481,33 @@ const tagInfo = {
             title : 'Courage-II',
             desc : '<p><i>Resolution Phase</i>.</p><p>When Unit is making a <i>Stress Check</i>, Unit gets <b>+2</b> to the D6 roll.</p>',
             excl : ['CRG1','FRLS'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let armorVal = parseInt(document.getElementById(rowId + '_armor').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
+                let armorVal = unitData['armor'];
                 //let structVal = parseInt(document.getElementById(rowId + '_structure').value);
 
-                if(sizeVal == 0){
+                if(sizeVal === 0){
                     sizeVal = 1;
                 }
-                if(moveVal == 0){
+                if(moveVal === 0){
                     moveVal = 6;
                 }
 
-                val = (moveVal + armorVal + sizeVal) / 4;//+ structVal;
+                let val = (moveVal + armorVal + sizeVal) / 4;//+ structVal;
 
                 return val * 5;
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let armorVal = parseInt(document.getElementById(rowId + '_armor').value);
+                let armorVal = unitData['armor'];
                 if(armorVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Armor]</b> greater than 0.</p>';
                 }
-                if(tags_checkByName('Courage-I')){
+                if(tags_checkByName('Courage-I', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Courage-I] tag.</p>';
                 }
-                if(tags_checkByName('Fearless')){
+                if(tags_checkByName('Fearless', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Fearless] tag.</p>';
                 }
                 // if(tags_checkByName('Overheat')){
@@ -524,14 +522,14 @@ const tagInfo = {
             title : 'Crew-I',
             desc : '<p><i>Resolution Phase</i>.</p>For stress rolls, roll 2D6 and take the highest (represents crew morale and squad morale). Limit of Crew Points is (Size / 3)  + 2.',
             excl : ['CRG1','CRG2','CRW2','FRLS','OVRHT'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let armorVal = parseInt(document.getElementById(rowId + '_armor').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let armorVal = unitData['armor'];
 
-                if(sizeVal == 0){
+                if(sizeVal === 0){
                     sizeVal = 1;
                 }
-                if(armorVal == 0){
+                if(armorVal === 0){
                     armorVal = 1;
                 }
 
@@ -539,27 +537,27 @@ const tagInfo = {
                 
                 return ((1/ sizeRaise) * 20) * armorVal;
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
                 
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                if(sizeVal == 0){
+                let sizeVal = unitData['size'];
+                if(sizeVal === 0){
                     warn = warn + '<p>Unit must have <i>Size</i> > 0.</p>';
                 }
 
-                if(tags_checkByName('Courage-I')){
+                if(tags_checkByName('Courage-I', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Courage-I] tag.</p>';
                 }
-                if(tags_checkByName('Courage-II')){
+                if(tags_checkByName('Courage-II', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Courage-II] tag.</p>';
                 }
-                if(tags_checkByName('Fearless')){
+                if(tags_checkByName('Fearless', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Fearless] tag.</p>';
                 }
-                if(tags_checkByName('Crew-II')){
+                if(tags_checkByName('Crew-II', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Crew-II] tag.</p>';
                 }
-                if(tags_checkByName('Overheat')){
+                if(tags_checkByName('Overheat', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Overheat] tag.</p>';
                 }
                 return warn;
@@ -571,39 +569,39 @@ const tagInfo = {
             title : 'Crew-II',
             desc : '<p><i>Resolution Phase</i>.</p>For stress rolls, roll 3D6 and take the highest (represents crew morale and squad morale). Limit of Crew Points is (Size / 3)  + 2.',
             excl : ['CRG1','CRG2','CRW1','FRLS','OVRHT'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let armorVal = parseInt(document.getElementById(rowId + '_armor').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let armorVal = unitData['armor'];
 
-                if(sizeVal == 0){
+                if(sizeVal === 0){
                     sizeVal = 1;
                 }
-                if(armorVal == 0){
+                if(armorVal === 0){
                     armorVal = 1;
                 }
                 let sizeRaise = Math.pow(sizeVal, 2);
 
                 return ((1 / sizeRaise) * 33) * armorVal;
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
+                let sizeVal = unitData['size'];
                 if(sizeVal < 3){
                     warn = warn + '<p><b>[Size]</b> must be <i>greater than</i> 2.</p>';
                 }
-                if(tags_checkByName('Courage-I')){
+                if(tags_checkByName('Courage-I', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Courage-I] tag.</p>';
                 }
-                if(tags_checkByName('Courage-II')){
+                if(tags_checkByName('Courage-II', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Courage-II] tag.</p>';
                 }
-                if(tags_checkByName('Fearless')){
+                if(tags_checkByName('Fearless', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Fearless] tag.</p>';
                 }
-                if(tags_checkByName('Crew-I')){
+                if(tags_checkByName('Crew-I', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Crew-I] tag.</p>';
                 }
-                if(tags_checkByName('Overheat')){
+                if(tags_checkByName('Overheat', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Overheat] tag.</p>';
                 }
                 return warn;
@@ -615,27 +613,27 @@ const tagInfo = {
             title : 'Fearless',
             desc : '<p><i>Resolution Phase</i>.</p><p>Unit <i>automatically</i> passes any <i>Stress Check</i>.</p>',
             excl : ['CRG1','CRG2','CRW1','CRW2','OVRHT','HERO'],
-            func : (rowId) => {
-                return ub_row_change_points(rowId) * 0.35;
+            func : (unitData) => {
+                return calculateUnitBaseCost(unitData) * 0.35;
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                if(tags_checkByName('Courage-I')){
+                if(tags_checkByName('Courage-I', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Courage-I] tag.</p>';
                 }
-                if(tags_checkByName('Courage-II')){
+                if(tags_checkByName('Courage-II', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Courage-II] tag.</p>';
                 }
-                if(tags_checkByName('Crew-I')){
+                if(tags_checkByName('Crew-I', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Crew-I] tag.</p>';
                 }
-                if(tags_checkByName('Crew-II')){
+                if(tags_checkByName('Crew-II', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Crew-II] tag.</p>';
                 }
-                if(tags_checkByName('Overheat')){
+                if(tags_checkByName('Overheat', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Overheat] tag.</p>';
                 }
-                if(tags_checkByName('Hero')){
+                if(tags_checkByName('Hero', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Hero] tag.</p>';
                 }
                 return warn;
@@ -647,22 +645,22 @@ const tagInfo = {
             title : 'Flyer',
             desc : 'Unit is considered as permanently above the ground. Unit may move and shoot <b>over</b> enemy Units and Terrain. Unit cannot use <b>Cover Bonus</b> for defense and <b>all</b> units have <i>Line of sight</i> to this unit. <b>Only</b> Units with <b>[Flyer]</b> or <b>[Jump Jets]</b> can choose <i>Melee Attacks</i> when applicable. ',
             excl : ['HIALT','BLNK','JJ'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let armorVal = parseInt(document.getElementById(rowId + '_armor').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
+                let armorVal = unitData['armor'];
 
                 return ((sizeVal - moveVal) / 2) + (armorVal * 2);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                if(tags_checkByName('High Altitude Flyer')){
+                if(tags_checkByName('High Altitude Flyer', unitData['tags'])){
                     warn = warn + '<p>Unit already has [High Altitude Flyer].</p>';
                 }
-                if(tags_checkByName('Blink')){
+                if(tags_checkByName('Blink', unitData['tags'])){
                     warn = warn + '<p>Unit already has [Blink].</p>';
                 }
-                if(tags_checkByName('Jump Jets')){
+                if(tags_checkByName('Jump Jets', unitData['tags'])){
                     warn = warn + '<p>Unit already has [Jump Jets].</p>';
                 }
                 return warn;
@@ -674,14 +672,14 @@ const tagInfo = {
             title : 'Fortification',
             desc : '<p><i>Movement Phase</i>.</p><p>Unit ignores <i>Flanking</i> penalty when <i>Stationary</i>. Enemy Units <i>Flanking</i> suffer additional <b>+1  Stress</i>.</p>',
             excl : [],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
+                let rangeDamageVal = unitData['dmg_r'];
 
                 return Math.max(0, (moveVal - sizeVal)) + (rangeDamageVal / 2);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 return '';
             },
             eqt:'(<b>Move</b> - <b>Size</b>) + (<b>Damage-Range</b> / 2)'
@@ -691,13 +689,13 @@ const tagInfo = {
             title : 'Forward Observer',
             desc : '<p><i>Movement Phase</i>.</p><p><b>Unit cannot be Panicked.</b></p><p>Unit suffers <b>-1 DEF</b> and <b>-2 Evade</b> to mark 1 enemy Unit in <i>Line of Sight</i>. Friendly Units may treat marked target as if in <i>Line of Sight</i> for this <i>Combat Phase</i>.</p>',
             excl : ['MHQ','RCN'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                if(sizeVal == 0){
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
+                if(sizeVal === 0){
                     sizeVal = 1;
                 }
-                if(moveVal == 0){
+                if(moveVal === 0){
                     moveVal = 1;
                 }
 
@@ -709,13 +707,13 @@ const tagInfo = {
                 return sub;
 
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
 
-                if(tags_checkByName('Recon')){
+                if(tags_checkByName('Recon', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Recon].';
                 }
-                if(tags_checkByName('Mobile HQ')){
+                if(tags_checkByName('Mobile HQ', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Mobile HQ].';
                 }
                 return warn;
@@ -727,26 +725,26 @@ const tagInfo = {
             title : 'Grappler',
             desc : '<p><i>Movement Phase</i></p><p>Unit may <b>ignore</b> the <i>Danger Close</i> movement rule when it moves.</p>',
             excl : [],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);                
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];                
                 
-                let moveCost = uc_calc_Move(moveVal, sizeVal);
+                let moveCost = calcMove(moveVal, sizeVal);
 
-                if(sizeVal == 0){
+                if(sizeVal === 0){
                     sizeVal = 2;
                 }
 
-                if(moveVal == 0){
+                if(moveVal === 0){
                     moveVal = 4;
                 }
 
                 return (0 - (sizeVal * 0.5)) + (moveCost * 0.25);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let meleeDamageVal = parseInt(document.getElementById(rowId + '_DMGM').value);
+                let moveVal = unitData['move'];
+                let meleeDamageVal = unitData['dmg_m'];
                 if(meleeDamageVal < 1){
                     warn = warn + '<p>Unit <b>Melee Damage</b> must be greater than <b>0</b>.</p>';
                 }
@@ -762,22 +760,22 @@ const tagInfo = {
             title : 'Heavy Armor',
             desc : '<p><i>Combat Phase</i>.</p><p>Unit may reduce <b>any</b> incoming <i>DMG</i> to itself by <b>half rounded down</b>, this occurs <b>before any other</b> TAGs are applied.</p>',
             excl : ['WKARM'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let armorVal = parseInt(document.getElementById(rowId + '_armor').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
+                let armorVal = unitData['armor'];
 
-                return uc_calc_Armor(armorVal, sizeVal) * 0.8 + (moveVal * 1.25);
+                return calcArmor(armorVal, sizeVal) * 0.8 + (moveVal * 1.25);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let evadeVal = parseInt(document.getElementById(rowId + '_evade').value);
+                let evadeVal = unitData['evade'];
                 
                 if(evadeVal > 0){
                     warn = warn + '<p>Unit <b>Evade<b> must be <b>0</b>.';
                 }
                 
-                if(tags_checkByName('Weak Rear Armor')){
+                if(tags_checkByName('Weak Rear Armor', unitData['tags'])){
                     warn = warn + "<p>Unit <i>already has</i> [Weak Rear Armor].";
                 }
                 return warn;
@@ -789,17 +787,17 @@ const tagInfo = {
             title : 'Hero',
             desc : '<p><i>Resolution Phase</i>.</p><p>Hero may suffer <b>+2 Stress</b> Point to allow every Friendly Unit in 8" to <b>reroll</b> 1 failed <i>Stress Check</i> per Turn. <b>IF</b> [Hero] unit is <b>destroyed</b>, <b>all</b> friendly units <b>immediately</b> suffer <b>+2 Stress</b>.</p>',
             excl : ['RNKG'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let evadeVal = parseInt(document.getElementById(rowId + '_evade').value);
-                let armorVal = parseInt(document.getElementById(rowId + '_armor').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
+                let evadeVal = unitData['evade'];
+                let armorVal = unitData['armor'];
 
                 return sizeVal + (armorVal / 2) + ((moveVal + evadeVal) / 2);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                if(tags_checkByName('Rank - Green')){
+                if(tags_checkByName('Rank - Green', unitData['tags'])){
                     warn = warn + '<p>Unit already has [Rank - Green] tag.</p>';
                 }
                 return warn;
@@ -811,29 +809,29 @@ const tagInfo = {
             title : 'High Altitude Flyer',
             desc : '<b>Ignore</b> [Indirect Fire] attacks. <b>Ignore</b> <i>Flanking</i> for <b>any</b> Unit missing the [High Altitude Flyer] or [Flyer] tag. Ground Units can only use <i>Long Range</i> attacks on this model. Any [High Altitude Flyer] or [Flyer] can use <i>Effective Range</i> and <i>Melee</i> attacks where applicable.',
             excl : ['BLNK','JJ','STBLFR'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let armorVal = parseInt(document.getElementById(rowId + '_armor').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
+                let armorVal = unitData['armor'];
 
                 return ((((moveVal / 2) + (sizeVal * 1.25)) / 2) + (armorVal * 0.7)) * 2;
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
 
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
+                let moveVal = unitData['move'];
 
                 if(moveVal < 1){
                     warn = warn + '<p>Unit <i>must have</i> <b>Move Value</b> greater than <b>0</b>.</p>';
                 }
 
-                if(tags_checkByName('Blink')){
+                if(tags_checkByName('Blink', unitData['tags'])){
                     warn = warn + '<p>Unit already has [Blink].</p>';
                 }
-                if(tags_checkByName('Jump Jets')){
+                if(tags_checkByName('Jump Jets', unitData['tags'])){
                     warn = warn + '<p>Unit already has [Jump Jets].</p>';
                 }
-                if(tags_checkByName('Stable Fire Platform')){
+                if(tags_checkByName('Stable Fire Platform', unitData['tags'])){
                     warn = warn + '<p>Unit already has [Stable Fire Platform].</p>';
                 }
 
@@ -846,20 +844,20 @@ const tagInfo = {
             title : 'Hull Gun - I',
             desc : '<p><i>Combat Phase</i>.</p><p>Unit <b>may</b> fire as if it has the <i>Limit Fire Arc</i> tag but may add <b>+25%</b> rounded-up of its DMG-R value to the attack.</p>',
             excl : ['ARC-LFA','ARC-NAR','HULLGN2'],
-            func : (rowId) => {
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+            func : (unitData) => {
+                let rangeDamageVal = unitData['dmg_r'];
 
-                return uc_calc_Damage_Range(rangeDamageVal) * 0.2;
+                return calcDMG_R(rangeDamageVal) * 0.2;
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                if(tags_checkByName('Limited Fire Arc')){
+                if(tags_checkByName('Limited Fire Arc', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Limited Fire Arc] tag.</p>';
                 }
-                if(tags_checkByName('Narrow Fire Arc')){
+                if(tags_checkByName('Narrow Fire Arc', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Narrow Fire Arc] tag.</p>';
                 }
-                if(tags_checkByName('Hull Gun - II')){
+                if(tags_checkByName('Hull Gun - II', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Hull Gun - II] tag.</p>';
                 }
                 return warn;
@@ -871,20 +869,20 @@ const tagInfo = {
             title : 'Hull Gun - II',
             desc : '<p><i>Combat Phase</i>.</p><p>Unit <b>may</b> fire as if it has the <i>Limit Fire Arc</i> tag but may add <b>+50%</b> rounded-up of its DMG-R value to the attack.</p>',
             excl : ['ARC-LFA','ARC-NAR','HULLGN1'],
-            func : (rowId) => {
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+            func : (unitData) => {
+                let rangeDamageVal = unitData['dmg_r'];
 
-                return uc_calc_Damage_Range(rangeDamageVal)*0.4;
+                return calcDMG_R(rangeDamageVal)*0.4;
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                if(tags_checkByName('Limited Fire Arc')){
+                if(tags_checkByName('Limited Fire Arc', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Limited Fire Arc] tag.</p>';
                 }
-                if(tags_checkByName('Narrow Fire Arc')){
+                if(tags_checkByName('Narrow Fire Arc', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Narrow Fire Arc] tag.</p>';
                 }
-                if(tags_checkByName('Hull Gun - I')){
+                if(tags_checkByName('Hull Gun - I', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Hull Gun - I] tag.</p>';
                 }
                 return warn;
@@ -896,27 +894,27 @@ const tagInfo = {
             title : 'Indirect Fire',
             desc : '<p><i>Combat Phase</i>.</p><p>Unit may select targets <b>outside</b> <i>Line of Sight</i> when making <i>Ranged Attacks</i>. Target <b>must</b> be within <b>50% of</b> <i>Effective Range</i> of the attacking Unit.</p>',
             excl : ['FLDART'],
-            func : (rowId) => {
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+            func : (unitData) => {
+                let moveVal = unitData['move'];
+                let rangeDamageVal = unitData['dmg_r'];
+                let rangeVal = unitData['range'];
                 
-                let rangeCost = uc_calc_Range(moveVal, rangeVal, rangeDamageVal);
+                let rangeCost = calcRange(moveVal, rangeVal, rangeDamageVal);
 
                 return (rangeDamageVal / 2) + (rangeCost * 0.45);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+                let rangeVal = unitData['range'];
                 if(rangeVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
                 }
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+                let rangeDamageVal = unitData['dmg_r'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
 
-                if(tags_checkByName('Field Artillery')){
+                if(tags_checkByName('Field Artillery', unitData['tags'])){
                     warn = warn + '<p>Unit must have the <i>[Field Artillery]</i> tag.</p>';
                 }
 
@@ -932,23 +930,23 @@ const tagInfo = {
             title : 'Inertial Dampers',
             desc : '<p><i>Movemnt Phase</i></p><p>"When Move is greater than 12", treat this Unit as having moved only 11" in the Combat Phase.</p>',
             excl : ['STBLFR'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                if(sizeVal == 0){
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                if(sizeVal === 0){
                     sizeVal = 1;
                 }
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let evadeVal = parseInt(document.getElementById(rowId + '_evade').value);
+                let moveVal = unitData['move'];
+                let evadeVal = unitData['evade'];
 
                 return (sizeVal * 1.25) + ((moveVal + evadeVal) / 1.5)
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
+                let moveVal = unitData['move'];
                 if(moveVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Move]</b> greater than 11".</p>';
                 }
-                if(tags_checkByName('Stable Fire Platform')){
+                if(tags_checkByName('Stable Fire Platform', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Stable Fire Platform] tag.</p>';
                 }
 
@@ -961,13 +959,13 @@ const tagInfo = {
             title : 'Inhibitor Munitions',
             desc : '<p><i>Combat Phase</i></p><p>Player must declare this <b>before</b> the Unit makes its <i>Ranged Attack</i>.</p><p>Units <i>Ranged Attack</i> <b>DMG set to 0</b>. <b>When</b> attack hits the target, the targets <b>next</b> <i>Movement Phase</i> move is reduced to 1/2 <b>before</b> any other modifiers.</p>',
             excl : [],
-            func : (rowId) => {
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+            func : (unitData) => {
+                let moveVal = unitData['move'];
+                let rangeVal = unitData['range'];
 
                 return (moveVal / 2) + (rangeVal / 2);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 return '';
             },
             eqt:'(<b>Move</b> / 2) + (<b>Range</b> / 2)'
@@ -977,24 +975,24 @@ const tagInfo = {
             title : 'Juggernaut',
             desc : '<p><i>Movement Phase</i><p/><p>Units <i>Ranged Attacks</i> suffer <b>-1 ATK</b>.</p><p>Any time Unit enters <i>Melee Range</i> after moving <b>1/2 or more</b> of their current <i>Move Value</i>, <b>+Size / 2</b> to Units next <i>Melee Attack</i>.</p>',
             excl : [],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let meleeDamageVal = parseInt(document.getElementById(rowId + '_DMGM').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
+                let meleeDamageVal = unitData['dmg_m'];
 
                 return (sizeVal * 0.5) + (moveVal * 0.5) + (meleeDamageVal * 0.25);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
+                let moveVal = unitData['move'];
                 if(moveVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Move]</b> greater than 0.</p>';
                 }
-                let armorVal = parseInt(document.getElementById(rowId + '_armor').value);
+                let armorVal = unitData['armor'];
                 if(armorVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Armor]</b> greater than 0.</p>';
                 }
-                let meleeDamageVal = parseInt(document.getElementById(rowId + '_DMGM').value);
+                let meleeDamageVal = unitData['dmg_m'];
                 if(meleeDamageVal < 1){
                     warn = warn + '<p>Unit must have <b>Damage-Melee</b> value.';
                 }
@@ -1007,27 +1005,27 @@ const tagInfo = {
             title : 'Jump Jets',
             desc : '<p><i>Movement Phase</i></p><p>Unit may traverse terrain vertically, uses [Flyer] rules when moving, but is otherwise treated as a ground unit. Unit still subject to <i>Flanking</i> check.</p>',
             excl : ['BLNK','HIALT','FLY'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                if(sizeVal == 0){
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                if(sizeVal === 0){
                     sizeVal = 1;
                 }
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                if(moveVal == 0){
+                let moveVal = unitData['move'];
+                if(moveVal === 0){
                     moveVal = 1;
                 }
                 return (sizeVal * 2) + (moveVal / 2);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
 
-                if(tags_checkByName('Blink')){
+                if(tags_checkByName('Blink', unitData['tags'])){
                     warn = warn + '<p>Unit already has [Blink] tag.</p>'
                 }
-                if(tags_checkByName('High Altitude Flyer')){
+                if(tags_checkByName('High Altitude Flyer', unitData['tags'])){
                     warn = warn + '<p>Unit already has [High Altitude Flyer] tag.</p>'
                 }
-                if(tags_checkByName('Flyer')){
+                if(tags_checkByName('Flyer', unitData['tags'])){
                     warn = warn + '<p>Unit already has [Flyer] tag.</p>'
                 }
                 return warn;
@@ -1039,15 +1037,15 @@ const tagInfo = {
             title : 'Limited Fire Arc',
             desc : '<p><i>Combat Phase</i></p><p>Unit may only make <i>Ranged Attacks</i> in the Forward or Rear Arc, you must choose before the game starts.</p>',
             excl : ['ARC-BRD','HULLGN1','HULLGN2','ARC-NAR'],
-            func : (rowId) => {
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+            func : (unitData) => {
+                let rangeDamageVal = unitData['dmg_r'];
 
-                return 0 - (uc_calc_Damage_Range(rangeDamageVal) * 0.45);
+                return 0 - (calcDMG_R(rangeDamageVal) * 0.45);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+                let rangeVal = unitData['range'];
+                let rangeDamageVal = unitData['dmg_r'];
 
                 if(rangeVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
@@ -1056,16 +1054,16 @@ const tagInfo = {
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
 
-                if(tags_checkByName('Broadside Fire Arc')){
+                if(tags_checkByName('Broadside Fire Arc', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Broadside Fire Arc] tag.</p>';
                 }
-                if(tags_checkByName('Hull Gun - I')){
+                if(tags_checkByName('Hull Gun - I', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Hull Gun - I] tag.</p>';
                 }
-                if(tags_checkByName('Hull Gun - II')){
+                if(tags_checkByName('Hull Gun - II', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Hull Gun - II] tag.</p>';
                 }
-                if(tags_checkByName('Narrow Fire Arc')){
+                if(tags_checkByName('Narrow Fire Arc', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Narrow Fire Arc] tag.</p>';
                 }
                 return warn;
@@ -1077,23 +1075,23 @@ const tagInfo = {
             title : 'Minimum Range',
             desc : "<p><i>Combat Phase</i></p><p>When making a <b>Range Attack</b>, the Target <b>cannot be</b> 25% <b>or less</b> of Unit's <i>Effective Range</i> close, <b>minimum 8\"</b>.</p><p><b>[Field Artillery]</b> if the Unit has this tag, Unit may select targets within <b>100%</b> of <i>Effective Range</i>.</p>",
             excl : ['RNGOPTSH','RNGOPTLN'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value)
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value)
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
-                let evadeVal  = parseInt(document.getElementById(rowId + '_evade').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
+                let rangeDamageVal = unitData['dmg_r'];
+                let rangeVal = unitData['range'];
+                let evadeVal  = unitData['evade'];
 
-                if(sizeVal == 0){
+                if(sizeVal === 0){
                     sizeVal  = 1;
                 }
 
-                return (0 + (uc_calc_Evade(sizeVal, evadeVal, moveVal) * 0.1)) - ((uc_calc_Range(moveVal, rangeVal, rangeDamageVal) * 0.5) + sizeVal);
+                return (0 + (calcEvade(sizeVal, evadeVal, moveVal) * 0.1)) - ((calcRange(moveVal, rangeVal, rangeDamageVal) * 0.5) + sizeVal);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+                let rangeVal = unitData['range'];
+                let rangeDamageVal = unitData['dmg_r'];
 
                 if(rangeVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
@@ -1101,10 +1099,10 @@ const tagInfo = {
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
-                if(tags_checkByName('Optimal Range - Long')){
+                if(tags_checkByName('Optimal Range - Long', unitData['tags'])){
                     warn = warn + '<p>Unit already has the <b>[Optimal Range - Long]</b> tag.</p>';
                 }
-                if(tags_checkByName('Optimal Range - Short')){
+                if(tags_checkByName('Optimal Range - Short', unitData['tags'])){
                     warn = warn + '<p>Unit already has the <b>[Optimal Range - Short]</b> tag.</p>';
                 }
                 
@@ -1118,15 +1116,15 @@ const tagInfo = {
             title : 'Mobile HQ',
             desc : '<p><i>Initiative Phase</i></p><p><b>Unit cannot be <i>Panicked</i>.</b></p><p>Player may add <b>+2</b> to their <i>initiative roll</i>.</p>',
             excl : ['FWRDOBS','RCN'],
-            func : (rowId) => {
-                return ub_row_change_points(rowId) * 0.33;
+            func : (unitData) => {
+                return calculateUnitBaseCost(unitData) * 0.33;
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                if(tags_checkByName('Forward Observer')){
+                if(tags_checkByName('Forward Observer', unitData['tags'])){
                     warn += '<p>Unit <i>already has</i> [Forward Observer].</p>';
                 }
-                if(tags_checkByName('Recon')){
+                if(tags_checkByName('Recon', unitData['tags'])){
                     warn += '<p>Unit <i>already has</i> [Recon].</p>';
                 }
                 return warn;
@@ -1138,15 +1136,15 @@ const tagInfo = {
             title : 'Narrow Fire Arc',
             desc : "<p><i>Combat Phase</i></p><p>Targets of this Unit's <i>Ranged Attacks</i> must be 1/2 Target-model width inside the <b>width</b> of this Unit`s model. <i>Minimum width of 1\" for Unit width.</i>.</p>",
             excl : ['ARC-BRD','ARC-LFA','HULLGN1','HULLGN2'],
-            func : (rowId) => {
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+            func : (unitData) => {
+                let rangeDamageVal = unitData['dmg_r'];
 
-                return 0 - (uc_calc_Damage_Range(rangeDamageVal) * 0.75);
+                return 0 - (calcDMG_R(rangeDamageVal) * 0.75);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+                let rangeVal = unitData['range'];
+                let rangeDamageVal = unitData['dmg_r'];
 
                 if(rangeVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
@@ -1155,16 +1153,16 @@ const tagInfo = {
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
 
-                if(tags_checkByName('Broadside Fire Arc')){
+                if(tags_checkByName('Broadside Fire Arc', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Broadside Fire Arc] tag.</p>';
                 }
-                if(tags_checkByName('Limited Fire Arc')){
+                if(tags_checkByName('Limited Fire Arc', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Limited Fire Arc] tag.</p>';
                 }
-                if(tags_checkByName('Hull Gun - I')){
+                if(tags_checkByName('Hull Gun - I', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Hull Gun - I] tag.</p>';
                 }
-                if(tags_checkByName('Hull Gun - II')){
+                if(tags_checkByName('Hull Gun - II', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Hull Gun - II] tag.</p>';
                 }
                 return warn;
@@ -1176,15 +1174,15 @@ const tagInfo = {
             title : 'Overheat',
             desc : '<p><i>Combat Phase</i></p><p><b>Unit cannot be Panicked.</b></p><p>During <i>Combat Phase</i>, Unit may suffer <b>3 Stress Points</b> to re-roll <i>up to 3</i> <b>ATK</b> dice. <b>Cannot</b> be combined with <b>[Fearless]</b>.</p>',
             excl : ['FRLS'],
-            func : (rowId) => {
-                let meleeDamageVal = parseInt(document.getElementById(rowId + '_DMGM').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+            func : (unitData) => {
+                let meleeDamageVal = unitData['dmg_m'];
+                let rangeDamageVal = unitData['dmg_r'];
+                let rangeVal = unitData['range'];
                 return (((meleeDamageVal + rangeDamageVal) / 2) * 3) + (rangeVal / 3);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                if(tags_checkByName('Fearless')){
+                if(tags_checkByName('Fearless', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Fearless] tag.</p>';
                 }
                 return warn;
@@ -1196,23 +1194,23 @@ const tagInfo = {
             title : 'Pack / Deploy',
             desc : '<p>Player must choose whether this unit <i>moves</i> <b>OR</b> <i>attacks</i> on this turn.</p><p>At the <b>end</b> of the <i>Initiative Phase</i>, Units with this tag must declare if they will move or shoot this turn.</p>',
             excl : [],
-            func : (rowId) => {
-                let meleeDamageVal = parseInt(document.getElementById(rowId + '_DMGM').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+            func : (unitData) => {
+                let meleeDamageVal = unitData['dmg_m'];
+                let rangeDamageVal = unitData['dmg_r'];
 
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
+                let moveVal = unitData['move'];
+                let sizeVal = unitData['size'];
 
-                let moveCost = uc_calc_Move(moveVal, sizeVal) * 0.85;
-                let rangeCost = uc_calc_Damage_Range(rangeDamageVal) * 0.85;
-                let meleeCost = uc_calc_Damage_Melee(meleeDamageVal, moveVal) * 0.85;
+                let moveCost = calcMove(moveVal, sizeVal) * 0.85;
+                let rangeCost = calcDMG_R(rangeDamageVal) * 0.85;
+                let meleeCost = calcDMG_M(meleeDamageVal, moveVal) * 0.85;
 
                 return 0 - (moveCost + rangeCost + meleeCost);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let dmgVal = parseInt(document.getElementById(rowId + '_DMGM').value) + parseInt(document.getElementById(rowId + '_DMGR').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value)
+                let dmgVal = unitData['dmg_m'] + unitData['dmg_r'];
+                let moveVal = unitData['move'];
 
                 if(dmgVal < 1){
                     warn = warn + '<p>Unit <b>must</b> have either a <i>Ranged</i> <b>or</b> <i>Melee</i> damage value.</p>';
@@ -1229,15 +1227,15 @@ const tagInfo = {
             title : 'Rank - Green',
             desc : "Unit's <i>base</i> <b>ATK/DEF</b> change to <b>2 ATK</b> and <b>2 DEF</b>.",
             excl : ['RNKV','RNKE'],
-            func : (rowId) => {
-                return 0 - ub_row_change_points(rowId) * 0.85; 
+            func : (unitData) => {
+                return 0 - calculateUnitBaseCost(unitData) * 0.85; 
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                if(tags_checkByName('Rank - Veteran')){
+                if(tags_checkByName('Rank - Veteran', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> <b>[Rank - Veteran]</b> tag.</p>';
                 }
-                if(tags_checkByName('Rank - Elite')){
+                if(tags_checkByName('Rank - Elite', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> <b>[Rank - Elite]</b> tag.</p>';
                 }
                 return warn;
@@ -1249,15 +1247,15 @@ const tagInfo = {
             title : 'Rank - Veteran',
             desc : "<p><i>Combat Phase</i></p><p>Unit may <i>re-roll</i> <b>1 ATK</b> and <b>1 DEF</b> <i>per-turn</i>.</p>",
             excl : ['RNKG','RNKE'],
-            func : (rowId) => {
-                return ub_row_change_points(rowId) * 0.4; 
+            func : (unitData) => {
+                return calculateUnitBaseCost(unitData) * 0.4; 
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                if(tags_checkByName('Rank - Green')){
+                if(tags_checkByName('Rank - Green', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> <b>[Rank - Green]</b> tag.</p>';
                 }
-                if(tags_checkByName('Rank - Elite')){
+                if(tags_checkByName('Rank - Elite', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> <b>[Rank - Elite]</b> tag.</p>';
                 }
                 return warn;
@@ -1269,15 +1267,15 @@ const tagInfo = {
             title : 'Rank - Elite',
             desc : "<p><i>Initiative Phase</i></p><p>Player gains <b>+1</b> to their initiative roll per-Unit with this tag.</p><p><i>Combat Phase</i></p><p>Unit may <i>re-roll</i> <b>2 ATK</b> and <b>2 DEF</b> <i>per-turn</i>.</p>",
             excl : ['RNKG','RNKV'],
-            func : (rowId) => {
-                return ub_row_change_points(rowId) * 0.6; 
+            func : (unitData) => {
+                return calculateUnitBaseCost(unitData) * 0.6; 
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                if(tags_checkByName('Rank - Green')){
+                if(tags_checkByName('Rank - Green', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> <b>[Rank - Green]</b> tag.</p>';
                 }
-                if(tags_checkByName('Rank - Veteran')){
+                if(tags_checkByName('Rank - Veteran', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> <b>[Rank - Veteran]</b> tag.</p>';
                 }
                 return warn;
@@ -1289,23 +1287,23 @@ const tagInfo = {
             title : 'Recon',
             desc : "<p><i>Initiative Phase</i></p><p><b>Unit cannot be Panicked.</b></p><p>Player may <b>+2</b> to their <i>Initiative</i> roll total <b>IF</b> this Unit has <i>Line of Sight</i> on <b>at least 2</b> target models in <b>Effective Range</b> during the <i>Initiative Phase</i>.</p><p>Unit suffers <b>-3 ATK</b> this <i>Combat Phase</i> to use the tag.</p>",
             excl : ['MHQ','FWRDOBS'],
-            func : (rowId) => {
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
-                let armorVal = parseInt(document.getElementById(rowId + '_armor').value);
+            func : (unitData) => {
+                let moveVal = unitData['move'];
+                let rangeVal = unitData['range'];
+                let armorVal = unitData['armor'];
 
                 rangeVal = Math.max(1, rangeVal);
 
                 return (((rangeVal / 2) + (moveVal / 2)) / 2) + armorVal / 2;
             },
-            reqs : (rowId, tagArr) => {
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+            reqs : (unitData) => {
+                let rangeVal = unitData['range'];
                 let warn = '';
 
-                if(tags_checkByName('Mobile HQ')){
+                if(tags_checkByName('Mobile HQ', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Mobile HQ].</p>';
                 }
-                if(tags_checkByName('Forward Observer')){
+                if(tags_checkByName('Forward Observer', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Forward Observer].</p>';
                 }
                 if(rangeVal < 1){
@@ -1319,18 +1317,18 @@ const tagInfo = {
         {
             abrv: 'ROLLSTP',
             title : 'Rolling Stop',
-            desc : '<p><i>Movement Phase</i></p><p><b>If</b> Unit is declared <i>Stationary</i> and they moved the <i>previous Turn</i>, Unit <b>must</b> move a distance of <b>25% <i>Move</i></b>, minimum <b>2\"</b>. <b>If</b> Unit enters melee range of an enemy, this <b>does not</b> count for <i>Danger Close</i> or any other melee, ramming effects.</p>',
+            desc : '<p><i>Movement Phase</i></p><p><b>If</b> Unit is declared <i>Stationary</i> and they moved the <i>previous Turn</i>, Unit <b>must</b> move a distance of <b>25% <i>Move</i></b>, minimum <b>2"</b>. <b>If</b> Unit enters melee range of an enemy, this <b>does not</b> count for <i>Danger Close</i> or any other melee, ramming effects.</p>',
             excl : ['STLLSPD'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
 
-                return 0 - (uc_calc_Move(moveVal, sizeVal) * 0.15);
+                return 0 - (calcMove(moveVal, sizeVal) * 0.15);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
 
-                if(tags_checkByName('Stall Speed')){
+                if(tags_checkByName('Stall Speed', unitData['tags'])){
                     warn = warn + "<p>Unit <i>already has</i> [Stall Speed] tag.</p>";
                 }
 
@@ -1343,32 +1341,32 @@ const tagInfo = {
             title : 'Secondary Turrets',
             desc : "<p><i>Combat Phase</i>.</p><p>Unit <b>may</b> make a <i>Ranged Attack</i> <b>outside</b> its fire arc, but <i>damage</i> of attack is only <b>33% rounded up, Min 1</b> of the total.</p>",
             excl : ['ARC-LFA','HULLGN1','HULLGN2'],
-            func : (rowId) => {
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+            func : (unitData) => {
+                let moveVal = unitData['move'];
+                let rangeDamageVal = unitData['dmg_r'];
+                let rangeVal = unitData['range'];
                 
-                let rangeDamageCost = uc_calc_Damage_Range(rangeDamageVal);
-                let rangeCost = uc_calc_Range(moveVal, rangeVal, rangeDamageVal);
+                let rangeDamageCost = calcDMG_R(rangeDamageVal);
+                let rangeCost = calcRange(moveVal, rangeVal, rangeDamageVal);
 
                 
                 return (rangeDamageCost * 0.2) + (rangeCost * 0.2);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
 
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+                let rangeDamageVal = unitData['dmg_r'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0".</p>';
                 }
 
-                if((tags_checkByName('Limited Fire Arc') == false) && (tags_checkByName('Narrow Fire Arc') == false) && (tags_checkByName('Broadside Fire Arc') == false)){
+                if((tags_checkByName('Limited Fire Arc', unitData['tags']) === false) && (tags_checkByName('Narrow Fire Arc', unitData['tags']) === false) && (tags_checkByName('Broadside Fire Arc', unitData['tags']) === false)){
                     warn = warn + '<p>Unit <i>must have</i> one of the following: [Broadside Fire Arc], [Limited Fire Arc], [Narrow Fire Arc] tags.</p>';
                 }
-                if(tags_checkByName('Hull Gun - I')){
+                if(tags_checkByName('Hull Gun - I', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Hull Gun - I] tag.</p>';
                 }
-                if(tags_checkByName('Hull Gun - II')){
+                if(tags_checkByName('Hull Gun - II', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Hull Gun - II] tag.</p>';
                 }
 
@@ -1381,16 +1379,16 @@ const tagInfo = {
             title : 'Self-Healing',
             desc : "<p><i>Movement Phase</i></p><p>Player declares using this tag, Unit's <i>Move Value</i> is <b>reduced by half round down.</b>. Unit <b>may not make any attacks this turn</b>.</p><p>Unit may <b>regain</b> a number of <i>Armor</i> equal to <i>Size</i> value.</p>",
             excl : [],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
                 
-                let armorVal = parseInt(document.getElementById(rowId + '_armor').value);
-                let armorCost = uc_calc_Armor(armorVal, sizeVal);
+                let armorVal = unitData['armor'];
+                let armorCost = calcArmor(armorVal, sizeVal);
 
                 return (armorCost * 0.2) + (moveVal / 2) + (sizeVal * 1.25);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 return '';
             },
             eqt:'(+20% of <b>Armor COST</b>) + (<b>Move</b> / 2) + (<b>Size</b> * 1.25)'
@@ -1400,31 +1398,31 @@ const tagInfo = {
             title : 'Sharpshooter',
             desc : "<p><i>Combat Phase</i></p></p>Unit may <b>subtract 1</b> from <i>Stress Penalty</i> to ranged attacks at non-closest target.</p>",
             excl : ['FRLS','RNGOPTSH','RNGOPTLN'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
+                let rangeDamageVal = unitData['dmg_r'];
+                let rangeVal = unitData['range'];
 
                 return Math.max(0, ((rangeDamageVal / 2) + (rangeVal / 2) + (moveVal / 4)) - sizeVal);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+                let rangeVal = unitData['range'];
                 if(rangeVal<= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0".</p>';
                 }
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+                let rangeDamageVal = unitData['dmg_r'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0".</p>';
                 }
-                if(tags_checkByName('Fearless')){
+                if(tags_checkByName('Fearless', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Fearless] tag.</p>';
                 }
-                if(tags_checkByName('Optimal Range - Short')){
+                if(tags_checkByName('Optimal Range - Short', unitData['tags'])){
                     warn = warn + '<p>Unit already has the <b>[Optimal Range - Short]</b> tag.</p>';
                 }
-                if(tags_checkByName('Optimal Range - Long')){
+                if(tags_checkByName('Optimal Range - Long', unitData['tags'])){
                     warn = warn + '<p>Unit already has the <b>[Optimal Range - Long]</b> tag.</p>';
                 }
                 return warn;
@@ -1436,25 +1434,25 @@ const tagInfo = {
             title : 'Stable Fire Platform',
             desc : "<p><i>Combat Phase</i></p><p>Unit may <b>reroll</b> up to <b>2</b> ATK dice when <b>Stationary</b> during the <i>Movement Phase</i>. Cost less for slower units.</p>",
             excl : ['AFTBRN','INERTIAL','SPRCHRGR','STLLSPD'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let evadeVal = parseInt(document.getElementById(rowId + '_evade').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
+                //let evadeVal = unitData['evade'];
 
                 return Math.max(5, ((moveVal / sizeVal) * moveVal));
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                if(tags_checkByName('Afterburner')){
+                if(tags_checkByName('Afterburner', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Afterburner] tag.</p>';
                 }
-                if(tags_checkByName('Inertial Dampers')){
+                if(tags_checkByName('Inertial Dampers', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Inertial Dampers] tag.</p>';
                 }
-                if(tags_checkByName('Supercharger')){
+                if(tags_checkByName('Supercharger', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Supercharger] tag.</p>';
                 }
-                if(tags_checkByName('Stall Speed')){
+                if(tags_checkByName('Stall Speed', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Stall Speed] tag.</p>';
                 }
                 return warn;
@@ -1466,17 +1464,17 @@ const tagInfo = {
             title : 'Stall Speed',
             desc : "<p><i>Movement Phase</i></p><p>Unit now has a Minimum Move distance of 1/3 normal move. It must always move AT LEAST this far in its Movement Phase. IF unit cannot complete this minimum move, it is destroyed in the Resolution Phase. This model cannot take <i>[Stable Firing Platform]</i> along with this.</p>",
             excl : ['STBLFR'],
-            func : (rowId) => {
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
+            func : (unitData) => {
+                let moveVal = unitData['move'];
 
                 return 0 - (moveVal / 2);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                if(tags_checkByName('Stable Fire Platform')){
+                if(tags_checkByName('Stable Fire Platform', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already</i> has [Stable Fire Platform] tag.</p>';
                 }
-                return '';
+                return warn;
             },
             eqt:'<i>subtract</i> (<b>Move</b> / 2)'
         },
@@ -1485,21 +1483,21 @@ const tagInfo = {
             title : 'Supercharger',
             desc : "<p><i>Movement Phase</i></p><p>If Unit moved in the <i>Movement Phase</i>, Unit may move up to 33% its total <b>Move</b> immediately after this Turn's <i>Attack Phase</i>.</p>",
             excl : ['STBLFR'],
-            func : (rowId) => {
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
+            func : (unitData) => {
+                let moveVal = unitData['move'];
+                let sizeVal = unitData['size'];
                 
                 let cost =((sizeVal / moveVal) * (moveVal * 0.4));
 
                 return cost;
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
+                let moveVal = unitData['move'];
                 if(moveVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Move]</b> greater than 0".</p>';
                 }
-                if(tags_checkByName('Stable Fire Platform')){
+                if(tags_checkByName('Stable Fire Platform', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Stable Fire Platform] tag.</p>';
                 }
                 return warn;
@@ -1511,12 +1509,12 @@ const tagInfo = {
             title : 'Terrifying',
             desc : '<p><i>Movement Phase</i></p><p>When Unit has finished its move, <b>all</b> Enemy Units within 6" <b>immediately</b> suffer <b>1 Stress Point</b></p>',
             excl : [],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
                 if(sizeVal === 0){
                     sizeVal = 1;
                 }
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
+                let moveVal = unitData['move'];
                 if(moveVal === 0){
                     moveVal = 1;
                 }
@@ -1526,9 +1524,9 @@ const tagInfo = {
                 return sub;
 
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
+                let moveVal = unitData['move'];
                 if(moveVal <= 0){
                     warn = warn + "<p>Unit must have a <i>Move val</i> <b>greater than 0</b>.";
                 }
@@ -1541,14 +1539,14 @@ const tagInfo = {
             title : 'Thunderous Report',
             desc : '<p><i>Combat Phase</i></p><p>Target of this Unit suffers <b>+1 Stress</b> from <i>Ranged Attacks.</i></p>',
             excl : [],
-            func : (rowId) => {
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+            func : (unitData) => {
+                let moveVal = unitData['move'];
+                let rangeVal = unitData['range'];
+                let rangeDamageVal = unitData['dmg_r'];
 
                 return ((moveVal/3) + (rangeVal * 1.15)) - rangeDamageVal;
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 return '';
             },
             eqt:'(<b>Move</b> / 2) + (<b>Range</b> * 1.25) - (<b>Range Damage</b>)'
@@ -1558,14 +1556,14 @@ const tagInfo = {
             title : 'Transport',
             desc : "<p><i>Movement Phase</i></p><p>Unit can carry a number of <i>Friendly Units</i> whose <b>Sizes</b> when totaled are equal to or less than half this Unit's Size. \nSize 0 becomes Size 1 for this.</p>",
             excl : [],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
                 if(sizeVal === 0){
                     sizeVal = 1;
                 }
                 return sizeVal + 2;
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 return '';
             },
             eqt:'(<b>Size</b> * 2) + (<b>Move</b> / 2) + (<b>Armor</b> / 3)'
@@ -1575,21 +1573,21 @@ const tagInfo = {
             title : 'Weak Rear Armor',
             desc : "<p><i>Combat Phase</i></p><p><b>If</b> Unit takes <i>any</i> <b>DMG</b> and the source of the damage is in the Unit's <i>Rear Facing Arc</i>, then Unit suffers <i>extra</i> <b>50% DMG</b> (<i>round up</i>) of the current attack.</p>",
             excl : ['HVYARM'],
-            func : (rowId) => {
-                let sizeVal = parseInt(document.getElementById(rowId + '_size').value);
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let armorVal = parseInt(document.getElementById(rowId + '_armor').value);
-                let evadeVal = parseInt(document.getElementById(rowId + '_evade').value);
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
+                let armorVal = unitData['armor'];
+                let evadeVal = unitData['evade'];
 
-                let armorCost = uc_calc_Armor(armorVal, sizeVal);
-                let moveCost = uc_calc_Move(moveVal, sizeVal);
+                let armorCost = calcArmor(armorVal, sizeVal);
+                let moveCost = calcMove(moveVal, sizeVal);
 
                 return (moveCost / 3) + (0 - (armorCost * 0.67)) + (evadeVal / 2);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
 
-                if(tags_checkByName('Heavy Armor')){
+                if(tags_checkByName('Heavy Armor', unitData['tags'])){
                     warn = warn + "<p>Unit <i>already has</i> [Heavy Armor].";
                 }
 
@@ -1602,21 +1600,21 @@ const tagInfo = {
             title : 'Coordinated Fire',
             desc : '<p><i>Combat Phase</i></p><p><b>Once per Turn</b>, when this Unit makes a <i>Ranged Attack</i>; <b>before</b> rolling, Player may declare <b>up to 2</b> other Friendly Units within <b>8”</b>. All selected units <b>must</b> fire at the same target, but each unit gains <b>+1 ATK</b>.</p><p>Ranged Attacks are resolved as normal but affected Units <b>cannot</b> use any <i>TAG</i> that would split their <i>Ranged Damage</i>,but <b>+1 Stress</b> for missed attacks. Secondary Units can only be selected <b>once</b> per Turn for this <i>TAG</i>.</p>',
             excl : ['STBLFR'],
-            func : (rowId) => {
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let armorVal = parseInt(document.getElementById(rowId + '_armor').value);
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+            func : (unitData) => {
+                let moveVal = unitData['move'];
+                let armorVal = unitData['armor'];
+                let rangeVal = unitData['range'];
+                let rangeDamageVal = unitData['dmg_r'];
 
                 return (moveVal / 1.5) + (armorVal / 3) + (rangeVal / 2) + (rangeDamageVal / 2);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
+                let moveVal = unitData['move'];
                 if(moveVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Move]</b> greater than 0.</p>';
                 }
-                if(tags_checkByName('Stable Fire Platform')){
+                if(tags_checkByName('Stable Fire Platform', unitData['tags'])){
                     warn = warn + '<p>Unit <i>already has</i> [Stable Fire Platform] tag.</p>';
                 }
                 return warn;
@@ -1628,26 +1626,26 @@ const tagInfo = {
             title : 'Field Artillery',
             desc : '<p><i>Combat Phase</i>.</p><p>Unit may select targets <b>outside</b> <i>Line of Sight</i> when making <i>Ranged Attacks</i>. Target <b>cannot</b> be at <i>Long Range</i> of the attacking Unit.</p>',
             excl : ['IF'],
-            func : (rowId) => {
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+            func : (unitData) => {
+                let moveVal = unitData['move'];
+                let rangeDamageVal = unitData['dmg_r'];
+                let rangeVal = unitData['range'];
                 
-                let rangeCost = uc_calc_Range(moveVal, rangeVal, rangeDamageVal);
+                let rangeCost = calcRange(moveVal, rangeVal, rangeDamageVal);
 
                 return (rangeDamageVal / 3) + (rangeCost * 0.65);
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+                let rangeVal = unitData['range'];
                 if(rangeVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
                 }
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+                let rangeDamageVal = unitData['dmg_r'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
-                if(tags_checkByName('Indirect Fire')){
+                if(tags_checkByName('Indirect Fire', unitData['tags'])){
                     warn = warn + '<p>Unit must have the <i>[Indirect Fire]</i> tag.</p>';
                 }
                 // if(!tags_checkByName('Minimum Range')){
@@ -1662,37 +1660,37 @@ const tagInfo = {
             title : 'Optimal Range - Short',
             desc : '<p><i>Combat Phase</i>.</p><p>Unit may extend <i>Close Range</i> bonus to <b>10"</b>. <b>Additional -1 ATK</b> at <i>Long Range</i>, and <i>Ranged Damage</i> reduce by <b>50% rounded down</b> for all attacks outside of <b>10"</b>.</p>',
             excl : ['RNGMIN','ADVGS','SHRPS','RNGOPTLN'],
-            func : (rowId) => {
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+            func : (unitData) => {
+                let moveVal = unitData['move'];
+                let rangeDamageVal = unitData['dmg_r'];
+                let rangeVal = unitData['range'];
                 
-                let rangeCost = uc_calc_Range(moveVal, rangeVal, rangeDamageVal);
+                let rangeCost = calcRange(moveVal, rangeVal, rangeDamageVal);
 
                 let rangeDiscount = (0 - (rangeCost * 0.67));
 
                 return rangeDiscount + rangeDamageVal/2;
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+                let rangeVal = unitData['range'];
                 if(rangeVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
                 }
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+                let rangeDamageVal = unitData['dmg_r'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
-                if(tags_checkByName('Minimum Range')){
+                if(tags_checkByName('Minimum Range', unitData['tags'])){
                     warn = warn + '<p>Unit already has the <i>[Minimum Range]</i> tag.</p>';
                 }
-                if(tags_checkByName('Advanced Gun Sights')){
+                if(tags_checkByName('Advanced Gun Sights', unitData['tags'])){
                     warn = warn + '<p>Unit already has the <i>[Advanced Gun Sights]</i> tag.</p>';
                 }
-                if(tags_checkByName('Sharpshooter')){
+                if(tags_checkByName('Sharpshooter', unitData['tags'])){
                     warn = warn + '<p>Unit already has the <i>[Sharpshooter]</i> tag.</p>';
                 }
-                if(tags_checkByName('Optimal Range - Long')){
+                if(tags_checkByName('Optimal Range - Long', unitData['tags'])){
                     warn = warn + '<p>Unit already has the <i>[Optimal Range - Long]</i> tag.</p>';
                 }
                 return warn;
@@ -1704,23 +1702,23 @@ const tagInfo = {
             title : 'Optimal Range - Long',
             desc : '<p><i>Combat Phase</i>.</p><p><b>-1 ATK</b> and <b>50%</b> <i>Ranged Damage</i> to any Target <b>at or under 16"</b> of range.</p>',
             excl : ['RNGMIN','ADVGS','SHRPS','RNGOPTSH'],
-            func : (rowId) => {
-                let moveVal = parseInt(document.getElementById(rowId + '_move').value);
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+            func : (unitData) => {
+                let moveVal = unitData['move'];
+                let rangeDamageVal = unitData['dmg_r'];
+                let rangeVal = unitData['range'];
                 
-                let rangeCost = uc_calc_Range(moveVal, rangeVal, rangeDamageVal);
+                let rangeCost = calcRange(moveVal, rangeVal, rangeDamageVal);
                 let rangeDiscount = rangeCost * 0.5;
 
                 return (0 - (rangeDiscount + (rangeDamageVal / 2)));
             },
-            reqs : (rowId, tagArr) => {
+            reqs : (unitData) => {
                 let warn = '';
-                let rangeVal = parseInt(document.getElementById(rowId + '_range').value);
+                let rangeVal = unitData['range'];
                 if(rangeVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
                 }
-                let rangeDamageVal = parseInt(document.getElementById(rowId + '_DMGR').value);
+                let rangeDamageVal = unitData['dmg_r'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
@@ -1738,7 +1736,7 @@ const tagInfo = {
                     warn = warn + '<p>Unit already has the <i>[Optimal Range - Short]</i> tag.</p>';
                 }*/
 
-                warn = tags_checkExclusions(this.excl, tagArr, warn);
+                //warn = tags_checkExclusions(tagInfo.data.find(item => item.abrv === 'RNGOPTLN').excl, unitData['tags'], warn);
 
                 return warn;
             },
@@ -1746,6 +1744,12 @@ const tagInfo = {
         }
    ]
 };
+
+
+export function getTagData(){
+    return tagInfo;
+}
+
 
 function tagInfo_hasTag(tagName){
     let tagId = -1;
@@ -1761,23 +1765,14 @@ function tagInfo_hasTag(tagName){
     return tagId;
 }
 
-function isTag(element, index, array){
-    if(element.abrv === this){
-        return element;
-    }
-    return undefined;
-}
-
-
-function tags_checkExclusions(exclusions, srcTagArray, warnMsg){
-
+export function tags_checkExclusions(exclusions, srcTagArray, warnMsg){
     if(srcTagArray.length === 0){
         return warnMsg;
     }
     for(let tagIdx in srcTagArray){
         let tagId = srcTagArray[tagIdx];
         if(exclusions.includes(tagId)){
-            let tag = sortedTags.find(isTag, tagId);
+            let tag = tagInfo['data'].find(tag => tag.abrv === tagId);
             if(tag !== null && tag !== undefined && Object.keys(tag).length > 0){
                 if(!tag["disabled"]){
                     warnMsg += "<p>Unit already has the <i>[" + tag.title +"]</i> tag.</p>";
@@ -1796,14 +1791,11 @@ function tags_checkByName(tagName, srcTagArray){
     for(let tagIdx in srcTagArray){
         
         let tagId = srcTagArray[tagIdx];
-
-        if(!Number.isNaN(tagId)){
-            let tag = sortedTags.find(isTag, tagId);
-            if(tag !== null && tag !== undefined && Object.keys(tag).length > 0){
-                if(!tag["disabled"]){
-                    if(tag.title === tagName){
-                        return true;
-                    }
+        let tag = tagInfo['data'].find(tag => tag.abrv === tagId);
+        if(tag !== null && tag !== undefined && Object.keys(tag).length > 0){
+            if(!tag["disabled"]){
+                if(tag.title === tagName){
+                    return true;
                 }
             }
         }
@@ -1813,14 +1805,16 @@ function tags_checkByName(tagName, srcTagArray){
 
 
 //run me once at app boot.
-function initializeSortedTagList(){
+export function initializeSortedTagList(){
     let tagCount = 0;
+    let sortTheTags = [];
+
     for(let tagId in tagInfo.data){
         let tag = tagInfo.data[tagId];
         tagCount++;
-        tag.id = tagCount;
-        console.log(tag.id + ":" + tag.title + " | " + tag.abrv);
-        sortedTags.push(tag);
+        console.log(tag.title + " | " + tag.abrv);
+        sortTheTags.push(tag);
     }
-    sortedTags = sortedTags.sort((a, b) => a.title.localeCompare(b.title));
+    let arr = [...sortTheTags.sort((a, b) => a.title.localeCompare(b.title))];
+    return arr;
 }

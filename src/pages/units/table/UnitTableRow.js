@@ -12,7 +12,7 @@ export default function UnitTableRow({rowId, rowData, handleRowDataUpdate, hasCh
 
     return (
         <tr key={rowId} id={rowId}>
-            <td><Checkbox key={rowId} type="checkbox" id={rowId} handleClick={handleRowClickCheck} isChecked={hasCheck}/> </td>
+            <td><Checkbox key={rowId} type="checkbox" id={rowId} handleOnChange={handleRowClickCheck} isChecked={hasCheck}/> </td>
             <td><input id={"name"} type="text" minLength={1} maxLength={32} onChange={(e)=>{rowOnChange(rowId,e);}} defaultValue={""}/></td>
             <td><input id={"size"} type="number" maxLength="4" min="0" onChange={(e)=>{rowOnChange(rowId,e);}} defaultValue={0}/></td>
             <td><input id={"move"} type="number" maxLength="4" min="0" onChange={(e)=>{rowOnChange(rowId,e);}} defaultValue={0}/></td>
