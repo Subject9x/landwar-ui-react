@@ -22,9 +22,9 @@ export default function UnitTableRow({rowId, rowData, handleRowDataUpdate, hasCh
             <td><input id={"range"} type="number" maxLength="4" min="0" onChange={(e)=>{rowOnChange(rowId,e);}} defaultValue={0}/></td>
             <td><input id={"armor"} type="number" maxLength="4" min="0" onChange={(e)=>{rowOnChange(rowId,e);}} defaultValue={0}/></td>
             <td><label id={"points"}>{rowData[rowId]['baseCost']}</label></td>
-            <td><button id={"tags"} type="button" className="button secondary" onClick={handleRowTagsClick}>TAGS</button><input type="hidden" /></td>
             <td><label id={"tagTotal"} >{rowData[rowId]['tagCost']}</label></td>
             <td><label id={"total"} >{rowData[rowId]['total']}</label></td>
+            <td><button id={"tags"} type="button" className="button secondary" onClick={(e)=>{handleRowTagsClick(rowId)}}>TAGS</button><input type="hidden" /></td>
         </tr> 
     );
 }

@@ -614,7 +614,7 @@ export const tagInfo = {
             desc : '<p><i>Resolution Phase</i>.</p><p>Unit <i>automatically</i> passes any <i>Stress Check</i>.</p>',
             excl : ['CRG1','CRG2','CRW1','CRW2','OVRHT','HERO'],
             func : (unitData) => {
-                return calculateUnitBaseCost(unitData) * 0.35;
+                return unitData['baseCost']  * 0.35;
             },
             reqs : (unitData) => {
                 let warn = '';
@@ -1117,7 +1117,7 @@ export const tagInfo = {
             desc : '<p><i>Initiative Phase</i></p><p><b>Unit cannot be <i>Panicked</i>.</b></p><p>Player may add <b>+2</b> to their <i>initiative roll</i>.</p>',
             excl : ['FWRDOBS','RCN'],
             func : (unitData) => {
-                return calculateUnitBaseCost(unitData) * 0.33;
+                return unitData['baseCost']  * 0.33;
             },
             reqs : (unitData) => {
                 let warn = '';
@@ -1228,7 +1228,7 @@ export const tagInfo = {
             desc : "Unit's <i>base</i> <b>ATK/DEF</b> change to <b>2 ATK</b> and <b>2 DEF</b>.",
             excl : ['RNKV','RNKE'],
             func : (unitData) => {
-                return 0 - calculateUnitBaseCost(unitData) * 0.85; 
+                return 0 - unitData['baseCost']  * 0.85; 
             },
             reqs : (unitData) => {
                 let warn = '';
@@ -1248,7 +1248,7 @@ export const tagInfo = {
             desc : "<p><i>Combat Phase</i></p><p>Unit may <i>re-roll</i> <b>1 ATK</b> and <b>1 DEF</b> <i>per-turn</i>.</p>",
             excl : ['RNKG','RNKE'],
             func : (unitData) => {
-                return calculateUnitBaseCost(unitData) * 0.4; 
+                return unitData['baseCost']  * 0.4; 
             },
             reqs : (unitData) => {
                 let warn = '';
@@ -1268,7 +1268,7 @@ export const tagInfo = {
             desc : "<p><i>Initiative Phase</i></p><p>Player gains <b>+1</b> to their initiative roll per-Unit with this tag.</p><p><i>Combat Phase</i></p><p>Unit may <i>re-roll</i> <b>2 ATK</b> and <b>2 DEF</b> <i>per-turn</i>.</p>",
             excl : ['RNKG','RNKV'],
             func : (unitData) => {
-                return calculateUnitBaseCost(unitData) * 0.6; 
+                return unitData['baseCost']  * 0.6; 
             },
             reqs : (unitData) => {
                 let warn = '';

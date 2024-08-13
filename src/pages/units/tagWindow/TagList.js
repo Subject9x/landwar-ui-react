@@ -39,7 +39,7 @@ export default function TagList({tagList, unitTags, tagExclusions, handleChecked
 
 
     return (
-<div id="tagRulesDescPanel" className="grid-container">
+<div id="tagRulesDescPanel">
     <div className="grid-y shrink">
         <div className="cell" >
             <table id="tagList">

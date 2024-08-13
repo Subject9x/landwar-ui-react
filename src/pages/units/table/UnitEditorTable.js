@@ -4,6 +4,8 @@ import UnitTableRow from "./UnitTableRow.js";
 import UnitTagWindow from "../tagWindow/UnitTagWindow.js";
 
 import {calculateUnitBaseCost, calculateUnitTagCost} from "./../../../components/data/UnitCalculator.js";
+import TagList from "../tagWindow/TagList.js";
+import {tagInfo} from '../../../components/data/tagInfo.js';
 
 function UnitEditorTable(){
 
@@ -14,10 +16,12 @@ function UnitEditorTable(){
     const [unitRows, setUnitRows] = 
         useState([{'id':0, 'name':"", 'size':0, 'move':0, 'evade':0, 'dmg_m':0, 'dmg_r':0, 'range':0, 'armor':0, 'tags':['FRLS'], 'baseCost':0, 'tagCost':0, 'total':0}]);
 
-
+    const [selectUnitId, setSelectUnitId] = useState(0);
     const [disableAdd, setDisableAdd] = useState(false);
     const [disableRemove, setDisableRemove] = useState(false);
     const [disableCopy, setDisableCopy] = useState(false);
+
+    const [showTagEdit, setShowTagEdit] = useState(false);
 
     function onSelectAll(){
         setSelectedRows(unitRows.map(item => item.id));
@@ -101,6 +105,20 @@ function UnitEditorTable(){
         else{
             tmpUnit[columnName] = Number(val);
             tmpUnit = calculateUnitBaseCost(tmpUnit);
+
+            let removeTag = [];
+
+            tmpUnit['tags'].forEach(tag => {
+                if(tagInfo['data'].find(item => item.abrv === tag).reqs(tmpUnit).length > 0 ){
+                    removeTag = [...removeTag, tag];
+                }
+            });
+
+            let cleanExclusion = [];
+            removeTag.forEach(tag => {
+                tmpUnit['tags'] = tmpUnit['tags'].filter(item => item !== tag);
+            });
+
             tmpUnit = calculateUnitTagCost(tmpUnit);
         }
         
@@ -109,15 +127,21 @@ function UnitEditorTable(){
         
         //update table data
         setUnitRows(tmpRows);
-        //console.log(tmpRows);
     }
 
 
-    function onClickTags(){
-       // onRowTagsClick(rowId);
+    function onClickTags(rowId){
+        setSelectUnitId(rowId);
+        setShowTagEdit(true);
     }
 
-    useEffect(() => {}, [unitRows, selectedRows]) 
+    function onCloseTagWindow(){
+        setShowTagEdit(false);
+    }
+
+    useEffect(() => {
+
+    }, [unitRows, selectedRows, showTagEdit, selectUnitId]) 
 
     return (
 <div className="grid-container fluid">
@@ -133,11 +157,14 @@ function UnitEditorTable(){
             />
         </div>
     </div>
-    <div className="grid-x grid-margin-x">
-        <div className="cell auto">
-            <UnitTagWindow unitData={unitRows[0]}/>
+    {showTagEdit &&     
+        <div className="grid-x grid-margin-x" >
+            <div className="cell small-10 medium-8 large-6">
+                <UnitTagWindow unitData={unitRows[selectUnitId]} handleWindowClose={onCloseTagWindow} handleWindowSave={onCloseTagWindow}/>
+            </div>
         </div>
-    </div>
+    }
+
     <div className="grid-x grid-margin-x">
         <div className="cell auto">
             <table id="unitTable">
@@ -160,7 +187,7 @@ function UnitEditorTable(){
                 </thead>
                 <tbody>  
                     {unitRows.map((item, idx)=>(
-                        <UnitTableRow key={idx} rowId={idx} rowData={unitRows} handleRowDataUpdate={updateRowData} hasCheck={selectedRows.includes(idx)} handleRowClickCheck={handleRowClickCheck} />
+                        <UnitTableRow key={idx} rowId={idx} rowData={unitRows} handleRowDataUpdate={updateRowData} hasCheck={selectedRows.includes(idx)} handleRowClickCheck={handleRowClickCheck} handleRowTagsClick={onClickTags}/>
                     ))}
                 </tbody>
             </table>

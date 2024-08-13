@@ -8,7 +8,7 @@
         these are distinct from the unitbuilder bindings to make them accessible anywhere.
 */
 
-import { tags_checkExclusions } from "./tagInfo";
+import { tags_checkExclusions, tagInfo } from "./tagInfo";
 
 // Beta 1.5 - size is more of a meta stat that affects other calcs, its a but redundant to factor this as a cost unto-itself, but it's a nice 'rounding
 // value for additional cost bulk.
@@ -119,24 +119,19 @@ export function calculateUnitBaseCost(unitData){
 export function calculateUnitTagCost(unitData){
     let tagCost = 0;
     let removeTag = [];
-    unitData['tags'].forEach(tag => {
-        let check = tag.req(unitData);
-        check = tags_checkExclusions(tag.excl, unitData['tags'], check);
+    unitData['tags'].forEach(tagAbrv => {
+        let tag = tagInfo['data'].find(item => item.abrv === tagAbrv);
 
-        if(check.length <= 0){
-            tagCost = tagCost + tag.func(unitData);
-        }
-        else{
-            removeTag = [...removeTag, tag]
-        }
+        tagCost = tagCost + tag.func(unitData);
     });
 
     removeTag.forEach(tag => {
         unitData['tags'].filter(rem => rem === tag);
     })
 
-    unitData['tagCost'] = tagCost;
-    unitData['total'] = unitData['baseCost'] + tagCost;
+    unitData['tagCost'] = Math.round((tagCost + Number.EPSILON) * 100) / 100;
+    unitData['total'] = unitData['baseCost'] + unitData['tagCost'];
+    unitData['total'] =  Math.round((unitData['total'] + Number.EPSILON) * 100) / 100
 
     
     return unitData;
