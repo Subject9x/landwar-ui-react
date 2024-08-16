@@ -69,10 +69,6 @@ export function calcArmor(armorVal, sizeVal){
     return Math.max(0, (armorVal - sizeVal / 2));
 }
 
-//function uc_calc_Structure(structVal,sizeVal){
-//    return Math.max(0, structVal - sizeVal);
-//}
-
 function calcBaseCost(sizeCost, moveCost, evadeCost, meleeCost, rangeDamageCost, rangeCost, armorCost){ //, structCost){
     return sizeCost + moveCost + evadeCost +  meleeCost +  rangeDamageCost +  rangeCost +  armorCost;// +  structCost;
 }

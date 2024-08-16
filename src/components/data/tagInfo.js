@@ -1,4 +1,5 @@
 
+import TagList from "../../pages/units/tagWindow/TagList";
 import { calcArmor, calcDMG_M, calcDMG_R, calcEvade, calcMove, calcRange, calculateUnitBaseCost } from "./UnitCalculator";
 
 export const tagInfo = {
@@ -25,12 +26,6 @@ export const tagInfo = {
                 if(rangeVal < 1){
                     warn = warn + "<p>Cannot have <b>[Range Distance]</b> of 0.</p>";
                 }
-                if(tags_checkByName('Optimal Range - Short', unitData['tags'])){
-                    warn = warn + '<p>Unit already has the <b>[Optimal Range - Short]</b> tag.</p>';
-                }
-                if(tags_checkByName('Optimal Range - Long', unitData['tags'])){
-                    warn = warn + '<p>Unit already has the <b>[Optimal Range - Long]</b> tag.</p>';
-                }
 
                 return warn;
             },
@@ -51,9 +46,6 @@ export const tagInfo = {
                 let moveVal = unitData['move'];
                 if(moveVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Move]</b> greater than 0.</p>';
-                }
-                if(tags_checkByName('Stable Fire Platform', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Stable Fire Platform] tag.</p>';
                 }
                 return warn;
             },
@@ -154,10 +146,6 @@ export const tagInfo = {
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
                 }
 
-                if(tags_checkByName('Blast', unitData['tags'])){
-                    warn = warn + '<p>Unit already has the <b>[Blast]</b> tag.</p>';
-                }
-
                 return warn;
             },
             eqt:'((<b>Range</b> / 2) + <b>Damage-Range</b>) - <b>Size</b>'
@@ -179,10 +167,6 @@ export const tagInfo = {
                 let rangeDamageVal = unitData['dmg_r'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
-                }
-
-                if(tags_checkByName('Battery', unitData['tags'])){
-                    warn = warn + '<p>Unit already has the <b>[Battery]</b> tag.</p>';
                 }
 
                 return warn;
@@ -209,21 +193,7 @@ export const tagInfo = {
                 if(moveVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Move]</b> greater than 0.</p>';
                 }
-                if(tags_checkByName('Bomber-Area', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>cannot have</i> [Bomber-Area] tag.</p>';
-                }
-                if(tags_checkByName('Bomber-Dive', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>cannot have</i> [Bomber-Dive] tag.</p>';
-                }
-                if(tags_checkByName('High Altitude Flyer', unitData['tags'])){
-                    warn = warn + '<p>Unit already has [High Altitude Flyer] tag.</p>';
-                }
-                if(tags_checkByName('Flyer', unitData['tags'])){
-                    warn = warn + '<p>Unit already has [Flyer] tag.</p>';
-                }
-                if(tags_checkByName('Jump Jets', unitData['tags'])){
-                    warn = warn + '<p>Unit already has [Jump Jets] tag.</p>';
-                }
+
                 return warn;
             },
             eqt:'<b>Move COST</b> * 2'
@@ -250,12 +220,7 @@ export const tagInfo = {
                 if(rangeDamageVal < 1){
                     warn = warn + '<p><b>Range Damage</b> must be <i>greater than</i> 0.</p>';
                 }
-                if(tags_checkByName('Blink', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>cannot have</i> [Blink] tag.</p>';
-                }
-                if(tags_checkByName('Bomber-Dive', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>cannot have</i> [Bomber-Dive] tag.</p>';
-                }
+                
                 if(!hasJets && !hasFly && !hasHighFly){
                     warn = warn + '<p>Unit <i>must have</i> [Flyer] <b>or</b> [High Altitude Flyer] <b>or</b> [Jump Jets] tags.</p>';
                 }
@@ -284,12 +249,7 @@ export const tagInfo = {
                 if(rangeDamageVal < 1){
                     warn = warn + '<p><b>Range Damage</b> must be <i>greater than</i> 0.</p>';
                 }
-                if(tags_checkByName('Bomber-Area', unitData['tags'])){
-                    warn = warn + '<p>Unit requires [Bomber-Area] tag.</p>';
-                }
-                if(tags_checkByName('Charger', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>cannot have</i> [Charger] tag.</p>';
-                }
+
                 if(!hasJets && !hasFly && !hasHighFly){
                     warn = warn + '<p>Unit <i>must have</i> [Flyer] <b>or</b> [High Altitude Flyer] <b>or</b> [Jump Jets] tags.</p>';
                 }
@@ -313,9 +273,6 @@ export const tagInfo = {
                 if(meleeDamageVal < 1){
                     warn = warn + '<p>Unit must have a <b>[Melee Damage]</b> greater than 0.</p>';
                 }
-                if(tags_checkByName('Optimal Range - Long', unitData['tags'])){
-                    warn = warn + '<p>Unit already has the <b>[Optimal Range - Long]</b> tag.</p>';
-                }
                 return warn;
             },
             eqt:'<b>Damage-Melee COST</b> * 67%'
@@ -331,14 +288,7 @@ export const tagInfo = {
                 return calcDMG_R(rangeDamageVal) * 0.5;
             },
             reqs : (unitData) => {
-                let warn = '';
-                if(tags_checkByName('Limited Fire Arc', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Limited Fire Arc] tag.</p>';
-                }
-                if(tags_checkByName('Narrow Fire Arc', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Limited Fire Arc] tag.</p>';
-                }
-                return warn;
+                return '';
             },
             eqt:'(<b>Damage-Range<b> <i>COST</i> * 0.5)'
         },
@@ -377,9 +327,7 @@ export const tagInfo = {
                 if(moveVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Move]</b> greater than 0.</p>';
                 }
-                if(tags_checkByName('Bomber-Dive', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>cannot have</i> [Bomber-Dive] tag.</p>';
-                }
+
                 return warn;
             },
             eqt:'(<b>Size</b> * 1.5) + (<b>Move</b> / 2)'
@@ -403,11 +351,7 @@ export const tagInfo = {
                 return (moveCost * 0.45) + (sizeVal / 2);
             },
             reqs : (unitData) => {
-                let warn = '';
-                if(tags_checkByName('Heavy Armor', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>cannot have</i> [Heavy Armor] tag.</p>';
-                }
-                return warn;
+                return '';
             },
             eqt:'(<b>Move COST</b> 45%) + (<b>Size</b> / 2)'
         },
@@ -463,15 +407,6 @@ export const tagInfo = {
                 if(armorVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Armor]</b> greater than 0.';
                 }
-                if(tags_checkByName('Courage-II', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Courage-II] tag.</p>';
-                }
-                if(tags_checkByName('Fearless', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Fearless] tag.</p>';
-                }
-                // if(tags_checkByName('Overheat')){
-                //     warn = warn + '<p>Unit <i>already has</i> [Overheat] tag.</p>';
-                // }
                 return warn;
             },
             eqt:'<i>average</i> [<b>Size</b>, <b>Move</b>, <b>Armor</b>] * 2'
@@ -504,15 +439,6 @@ export const tagInfo = {
                 if(armorVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Armor]</b> greater than 0.</p>';
                 }
-                if(tags_checkByName('Courage-I', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Courage-I] tag.</p>';
-                }
-                if(tags_checkByName('Fearless', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Fearless] tag.</p>';
-                }
-                // if(tags_checkByName('Overheat')){
-                //     warn = warn + '<p>Unit <i>already has</i> [Overheat] tag.</p>';
-                // }
                 return warn;
             },
             eqt:'<i>average</i> [<b>Size</b>, <b>Move</b>, <b>Armor</b>] * 5'
@@ -545,21 +471,6 @@ export const tagInfo = {
                     warn = warn + '<p>Unit must have <i>Size</i> > 0.</p>';
                 }
 
-                if(tags_checkByName('Courage-I', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Courage-I] tag.</p>';
-                }
-                if(tags_checkByName('Courage-II', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Courage-II] tag.</p>';
-                }
-                if(tags_checkByName('Fearless', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Fearless] tag.</p>';
-                }
-                if(tags_checkByName('Crew-II', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Crew-II] tag.</p>';
-                }
-                if(tags_checkByName('Overheat', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Overheat] tag.</p>';
-                }
                 return warn;
             },
             eqt:'((1 / <b>Size</b> ^ 2) * 20) * <b>Armor</b>'
@@ -589,21 +500,6 @@ export const tagInfo = {
                 if(sizeVal < 3){
                     warn = warn + '<p><b>[Size]</b> must be <i>greater than</i> 2.</p>';
                 }
-                if(tags_checkByName('Courage-I', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Courage-I] tag.</p>';
-                }
-                if(tags_checkByName('Courage-II', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Courage-II] tag.</p>';
-                }
-                if(tags_checkByName('Fearless', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Fearless] tag.</p>';
-                }
-                if(tags_checkByName('Crew-I', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Crew-I] tag.</p>';
-                }
-                if(tags_checkByName('Overheat', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Overheat] tag.</p>';
-                }
                 return warn;
             },
             eqt:'((1 / <b>Size</b> ^ 2) * 33) * <b>Armor</b>'
@@ -617,26 +513,7 @@ export const tagInfo = {
                 return unitData['baseCost']  * 0.35;
             },
             reqs : (unitData) => {
-                let warn = '';
-                if(tags_checkByName('Courage-I', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Courage-I] tag.</p>';
-                }
-                if(tags_checkByName('Courage-II', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Courage-II] tag.</p>';
-                }
-                if(tags_checkByName('Crew-I', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Crew-I] tag.</p>';
-                }
-                if(tags_checkByName('Crew-II', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Crew-II] tag.</p>';
-                }
-                if(tags_checkByName('Overheat', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Overheat] tag.</p>';
-                }
-                if(tags_checkByName('Hero', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Hero] tag.</p>';
-                }
-                return warn;
+                return '';
             },
             eqt:'<i>Unit base total COST</i> * 35%'
         },
@@ -653,17 +530,7 @@ export const tagInfo = {
                 return ((sizeVal - moveVal) / 2) + (armorVal * 2);
             },
             reqs : (unitData) => {
-                let warn = '';
-                if(tags_checkByName('High Altitude Flyer', unitData['tags'])){
-                    warn = warn + '<p>Unit already has [High Altitude Flyer].</p>';
-                }
-                if(tags_checkByName('Blink', unitData['tags'])){
-                    warn = warn + '<p>Unit already has [Blink].</p>';
-                }
-                if(tags_checkByName('Jump Jets', unitData['tags'])){
-                    warn = warn + '<p>Unit already has [Jump Jets].</p>';
-                }
-                return warn;
+                return '';
             },
             eqt:'((<b>Size</b> - <b>Move</b>) / 2) + (<b>Armor</b> * 2)'
         },
@@ -708,15 +575,7 @@ export const tagInfo = {
 
             },
             reqs : (unitData) => {
-                let warn = '';
-
-                if(tags_checkByName('Recon', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Recon].';
-                }
-                if(tags_checkByName('Mobile HQ', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Mobile HQ].';
-                }
-                return warn;
+                return '';
             },
             eqt:'((1 / <b>Size</b> ^ 2) * 10 ) + (<b>Move</b> / 2)'
         },
@@ -775,9 +634,6 @@ export const tagInfo = {
                     warn = warn + '<p>Unit <b>Evade<b> must be <b>0</b>.';
                 }
                 
-                if(tags_checkByName('Weak Rear Armor', unitData['tags'])){
-                    warn = warn + "<p>Unit <i>already has</i> [Weak Rear Armor].";
-                }
                 return warn;
             },
             eqt:'(<b>Armor Cost</b> * 0.8) + (<b>Move</b> * 1.25)'
@@ -796,11 +652,7 @@ export const tagInfo = {
                 return sizeVal + (armorVal / 2) + ((moveVal + evadeVal) / 2);
             },
             reqs : (unitData) => {
-                let warn = '';
-                if(tags_checkByName('Rank - Green', unitData['tags'])){
-                    warn = warn + '<p>Unit already has [Rank - Green] tag.</p>';
-                }
-                return warn;
+                return '';
             },
             eqt:'<b>Size</b> + (<b>Armor</b> / 2) + (<b>Move</b> + <b>Evade</b>) / 2'
         },
@@ -825,16 +677,6 @@ export const tagInfo = {
                     warn = warn + '<p>Unit <i>must have</i> <b>Move Value</b> greater than <b>0</b>.</p>';
                 }
 
-                if(tags_checkByName('Blink', unitData['tags'])){
-                    warn = warn + '<p>Unit already has [Blink].</p>';
-                }
-                if(tags_checkByName('Jump Jets', unitData['tags'])){
-                    warn = warn + '<p>Unit already has [Jump Jets].</p>';
-                }
-                if(tags_checkByName('Stable Fire Platform', unitData['tags'])){
-                    warn = warn + '<p>Unit already has [Stable Fire Platform].</p>';
-                }
-
                 return warn;
             },
             eqt:'((((<b>Move</b> / 2) + (<b>Size</b> * 1.25) / 2) + (<b>Armor</b> * 0.7)) * 2'
@@ -850,17 +692,7 @@ export const tagInfo = {
                 return calcDMG_R(rangeDamageVal) * 0.2;
             },
             reqs : (unitData) => {
-                let warn = '';
-                if(tags_checkByName('Limited Fire Arc', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Limited Fire Arc] tag.</p>';
-                }
-                if(tags_checkByName('Narrow Fire Arc', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Narrow Fire Arc] tag.</p>';
-                }
-                if(tags_checkByName('Hull Gun - II', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Hull Gun - II] tag.</p>';
-                }
-                return warn;
+                return '';
             },
             eqt:'<b>Damage-Range<b> COST * 0.2'
         },
@@ -875,17 +707,7 @@ export const tagInfo = {
                 return calcDMG_R(rangeDamageVal)*0.4;
             },
             reqs : (unitData) => {
-                let warn = '';
-                if(tags_checkByName('Limited Fire Arc', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Limited Fire Arc] tag.</p>';
-                }
-                if(tags_checkByName('Narrow Fire Arc', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Narrow Fire Arc] tag.</p>';
-                }
-                if(tags_checkByName('Hull Gun - I', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Hull Gun - I] tag.</p>';
-                }
-                return warn;
+                return '';
             },
             eqt:'<b>Damage-Range<b> COST * 0.4'
         },
@@ -909,18 +731,11 @@ export const tagInfo = {
                 if(rangeVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
                 }
+
                 let rangeDamageVal = unitData['dmg_r'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
-
-                if(tags_checkByName('Field Artillery', unitData['tags'])){
-                    warn = warn + '<p>Unit must have the <i>[Field Artillery]</i> tag.</p>';
-                }
-
-                // if(!tags_checkByName('Minimum Range')){
-                //     warn = warn + '<p>Unit must have the <i>[Minimum Range]</i> tag.</p>';
-                // }
                 return warn;
             },
             eqt:'(<b>Damage-Range</b> / 3) + (45% of <b>Range Cost</b>)'
@@ -945,9 +760,6 @@ export const tagInfo = {
                 let moveVal = unitData['move'];
                 if(moveVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Move]</b> greater than 11".</p>';
-                }
-                if(tags_checkByName('Stable Fire Platform', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Stable Fire Platform] tag.</p>';
                 }
 
                 return warn;
@@ -1017,18 +829,7 @@ export const tagInfo = {
                 return (sizeVal * 2) + (moveVal / 2);
             },
             reqs : (unitData) => {
-                let warn = '';
-
-                if(tags_checkByName('Blink', unitData['tags'])){
-                    warn = warn + '<p>Unit already has [Blink] tag.</p>'
-                }
-                if(tags_checkByName('High Altitude Flyer', unitData['tags'])){
-                    warn = warn + '<p>Unit already has [High Altitude Flyer] tag.</p>'
-                }
-                if(tags_checkByName('Flyer', unitData['tags'])){
-                    warn = warn + '<p>Unit already has [Flyer] tag.</p>'
-                }
-                return warn;
+                return '';
             },
             eqt:'(<b>Size</b> * 2) + (<b>Move</b> / 2)'
         },
@@ -1054,18 +855,6 @@ export const tagInfo = {
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
 
-                if(tags_checkByName('Broadside Fire Arc', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Broadside Fire Arc] tag.</p>';
-                }
-                if(tags_checkByName('Hull Gun - I', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Hull Gun - I] tag.</p>';
-                }
-                if(tags_checkByName('Hull Gun - II', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Hull Gun - II] tag.</p>';
-                }
-                if(tags_checkByName('Narrow Fire Arc', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Narrow Fire Arc] tag.</p>';
-                }
                 return warn;
             },
             eqt:'<i>Subtract</i> (<b>Damage-Range<b> <i>COST</i> * 45%)'
@@ -1099,14 +888,6 @@ export const tagInfo = {
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
-                if(tags_checkByName('Optimal Range - Long', unitData['tags'])){
-                    warn = warn + '<p>Unit already has the <b>[Optimal Range - Long]</b> tag.</p>';
-                }
-                if(tags_checkByName('Optimal Range - Short', unitData['tags'])){
-                    warn = warn + '<p>Unit already has the <b>[Optimal Range - Short]</b> tag.</p>';
-                }
-                
-
                 return warn;
             },
             eqt:'<i>Subtract</i> (<b>Range<b> <i>COST</i> * 50%) and <b>Size</b> <i>Value</i> from total.'
@@ -1120,14 +901,7 @@ export const tagInfo = {
                 return unitData['baseCost']  * 0.33;
             },
             reqs : (unitData) => {
-                let warn = '';
-                if(tags_checkByName('Forward Observer', unitData['tags'])){
-                    warn += '<p>Unit <i>already has</i> [Forward Observer].</p>';
-                }
-                if(tags_checkByName('Recon', unitData['tags'])){
-                    warn += '<p>Unit <i>already has</i> [Recon].</p>';
-                }
-                return warn;
+                return '';
             },
             eqt:'<i>Unit base total COST</i> * 33%'
         },
@@ -1152,19 +926,6 @@ export const tagInfo = {
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
-
-                if(tags_checkByName('Broadside Fire Arc', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Broadside Fire Arc] tag.</p>';
-                }
-                if(tags_checkByName('Limited Fire Arc', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Limited Fire Arc] tag.</p>';
-                }
-                if(tags_checkByName('Hull Gun - I', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Hull Gun - I] tag.</p>';
-                }
-                if(tags_checkByName('Hull Gun - II', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Hull Gun - II] tag.</p>';
-                }
                 return warn;
             },
             eqt:'<i>Subtract</i> (<b>Damage-Range<b> <i>COST</i> * 60%)'
@@ -1181,11 +942,7 @@ export const tagInfo = {
                 return (((meleeDamageVal + rangeDamageVal) / 2) * 3) + (rangeVal / 3);
             },
             reqs : (unitData) => {
-                let warn = '';
-                if(tags_checkByName('Fearless', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Fearless] tag.</p>';
-                }
-                return warn;
+                return '';
             },
             eqt:'(<i>average</i> <b>Damage-Melee</b> and <b>Damage-Range</b>) * 3 + (<b>Range</b> / 3)'
         },
@@ -1231,14 +988,7 @@ export const tagInfo = {
                 return 0 - unitData['baseCost']  * 0.85; 
             },
             reqs : (unitData) => {
-                let warn = '';
-                if(tags_checkByName('Rank - Veteran', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> <b>[Rank - Veteran]</b> tag.</p>';
-                }
-                if(tags_checkByName('Rank - Elite', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> <b>[Rank - Elite]</b> tag.</p>';
-                }
-                return warn;
+                return '';
             },
             eqt:'<i>subtract Unit base total COST</i> * 85%'
         },
@@ -1251,14 +1001,7 @@ export const tagInfo = {
                 return unitData['baseCost']  * 0.4; 
             },
             reqs : (unitData) => {
-                let warn = '';
-                if(tags_checkByName('Rank - Green', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> <b>[Rank - Green]</b> tag.</p>';
-                }
-                if(tags_checkByName('Rank - Elite', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> <b>[Rank - Elite]</b> tag.</p>';
-                }
-                return warn;
+                return '';
             },
             eqt:'<i>Unit base total COST</i> * 40%'
         },
@@ -1271,14 +1014,7 @@ export const tagInfo = {
                 return unitData['baseCost']  * 0.6; 
             },
             reqs : (unitData) => {
-                let warn = '';
-                if(tags_checkByName('Rank - Green', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> <b>[Rank - Green]</b> tag.</p>';
-                }
-                if(tags_checkByName('Rank - Veteran', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> <b>[Rank - Veteran]</b> tag.</p>';
-                }
-                return warn;
+                return '';
             },
             eqt:'<i>Unit base total COST</i> * 60%'
         },
@@ -1298,14 +1034,9 @@ export const tagInfo = {
             },
             reqs : (unitData) => {
                 let rangeVal = unitData['range'];
+                
                 let warn = '';
 
-                if(tags_checkByName('Mobile HQ', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Mobile HQ].</p>';
-                }
-                if(tags_checkByName('Forward Observer', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Forward Observer].</p>';
-                }
                 if(rangeVal < 1){
                     warn = warn + '<p><i>Effective Range</i> must be <b>at least 8"</b>.</p>';
                 }
@@ -1326,13 +1057,7 @@ export const tagInfo = {
                 return 0 - (calcMove(moveVal, sizeVal) * 0.15);
             },
             reqs : (unitData) => {
-                let warn = '';
-
-                if(tags_checkByName('Stall Speed', unitData['tags'])){
-                    warn = warn + "<p>Unit <i>already has</i> [Stall Speed] tag.</p>";
-                }
-
-                return warn;
+                return '';
             },
             eqt:'<i>subtract</i>  15% of <b>Move COST</b>'
         },
@@ -1358,16 +1083,6 @@ export const tagInfo = {
                 let rangeDamageVal = unitData['dmg_r'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0".</p>';
-                }
-
-                if((tags_checkByName('Limited Fire Arc', unitData['tags']) === false) && (tags_checkByName('Narrow Fire Arc', unitData['tags']) === false) && (tags_checkByName('Broadside Fire Arc', unitData['tags']) === false)){
-                    warn = warn + '<p>Unit <i>must have</i> one of the following: [Broadside Fire Arc], [Limited Fire Arc], [Narrow Fire Arc] tags.</p>';
-                }
-                if(tags_checkByName('Hull Gun - I', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Hull Gun - I] tag.</p>';
-                }
-                if(tags_checkByName('Hull Gun - II', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Hull Gun - II] tag.</p>';
                 }
 
                 return warn;
@@ -1416,15 +1131,6 @@ export const tagInfo = {
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0".</p>';
                 }
-                if(tags_checkByName('Fearless', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Fearless] tag.</p>';
-                }
-                if(tags_checkByName('Optimal Range - Short', unitData['tags'])){
-                    warn = warn + '<p>Unit already has the <b>[Optimal Range - Short]</b> tag.</p>';
-                }
-                if(tags_checkByName('Optimal Range - Long', unitData['tags'])){
-                    warn = warn + '<p>Unit already has the <b>[Optimal Range - Long]</b> tag.</p>';
-                }
                 return warn;
             },
             eqt:'(<b>Damage-Range</b> / 2) + (<b>Range</b> / 2) + (<b>Move</b> / 4) - <b>Size</b>'
@@ -1442,20 +1148,7 @@ export const tagInfo = {
                 return Math.max(5, ((moveVal / sizeVal) * moveVal));
             },
             reqs : (unitData) => {
-                let warn = '';
-                if(tags_checkByName('Afterburner', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Afterburner] tag.</p>';
-                }
-                if(tags_checkByName('Inertial Dampers', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Inertial Dampers] tag.</p>';
-                }
-                if(tags_checkByName('Supercharger', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Supercharger] tag.</p>';
-                }
-                if(tags_checkByName('Stall Speed', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Stall Speed] tag.</p>';
-                }
-                return warn;
+                return '';
             },
             eqt:'(<b>Move</b> / <b>Size</b>) * <b>Size</b> | min cost 5pts.'
         },
@@ -1470,11 +1163,7 @@ export const tagInfo = {
                 return 0 - (moveVal / 2);
             },
             reqs : (unitData) => {
-                let warn = '';
-                if(tags_checkByName('Stable Fire Platform', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already</i> has [Stable Fire Platform] tag.</p>';
-                }
-                return warn;
+                return '';
             },
             eqt:'<i>subtract</i> (<b>Move</b> / 2)'
         },
@@ -1494,11 +1183,9 @@ export const tagInfo = {
             reqs : (unitData) => {
                 let warn = '';
                 let moveVal = unitData['move'];
+
                 if(moveVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Move]</b> greater than 0".</p>';
-                }
-                if(tags_checkByName('Stable Fire Platform', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Stable Fire Platform] tag.</p>';
                 }
                 return warn;
             },
@@ -1585,13 +1272,7 @@ export const tagInfo = {
                 return (moveCost / 3) + (0 - (armorCost * 0.67)) + (evadeVal / 2);
             },
             reqs : (unitData) => {
-                let warn = '';
-
-                if(tags_checkByName('Heavy Armor', unitData['tags'])){
-                    warn = warn + "<p>Unit <i>already has</i> [Heavy Armor].";
-                }
-
-                return warn;
+                return '';
             },
             eqt:'(<b>Move</b> / 2) - (40% of <b>Armor COST</b>)'
         },
@@ -1613,9 +1294,6 @@ export const tagInfo = {
                 let moveVal = unitData['move'];
                 if(moveVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Move]</b> greater than 0.</p>';
-                }
-                if(tags_checkByName('Stable Fire Platform', unitData['tags'])){
-                    warn = warn + '<p>Unit <i>already has</i> [Stable Fire Platform] tag.</p>';
                 }
                 return warn;
             },
@@ -1644,9 +1322,6 @@ export const tagInfo = {
                 let rangeDamageVal = unitData['dmg_r'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
-                }
-                if(tags_checkByName('Indirect Fire', unitData['tags'])){
-                    warn = warn + '<p>Unit must have the <i>[Indirect Fire]</i> tag.</p>';
                 }
                 // if(!tags_checkByName('Minimum Range')){
                 //     warn = warn + '<p>Unit must have the <i>[Minimum Range]</i> tag.</p>';
@@ -1681,18 +1356,6 @@ export const tagInfo = {
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
-                if(tags_checkByName('Minimum Range', unitData['tags'])){
-                    warn = warn + '<p>Unit already has the <i>[Minimum Range]</i> tag.</p>';
-                }
-                if(tags_checkByName('Advanced Gun Sights', unitData['tags'])){
-                    warn = warn + '<p>Unit already has the <i>[Advanced Gun Sights]</i> tag.</p>';
-                }
-                if(tags_checkByName('Sharpshooter', unitData['tags'])){
-                    warn = warn + '<p>Unit already has the <i>[Sharpshooter]</i> tag.</p>';
-                }
-                if(tags_checkByName('Optimal Range - Long', unitData['tags'])){
-                    warn = warn + '<p>Unit already has the <i>[Optimal Range - Long]</i> tag.</p>';
-                }
                 return warn;
             },
             eqt:'(subtract 67% of <i>Ranged Cost</i>) then <b>add</b> <i>Ranged Attack</i> / 2 '
@@ -1722,22 +1385,6 @@ export const tagInfo = {
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
-                
-                /*if(tags_checkByName('Minimum Range')){
-                    warn = warn + '<p>Unit already has the <i>[Minimum Range]</i> tag.</p>';
-                }
-                if(tags_checkByName('Sharpshooter')){
-                    warn = warn + '<p>Unit already has the <i>[Sharpshooter]</i> tag.</p>';
-                }
-                if(tags_checkByName('Brawler')){
-                    warn = warn + '<p>Unit already has the <i>[Brawler]</i> tag.</p>';
-                }
-                if(tags_checkByName('Optimal Range - Short')){
-                    warn = warn + '<p>Unit already has the <i>[Optimal Range - Short]</i> tag.</p>';
-                }*/
-
-                //warn = tags_checkExclusions(tagInfo.data.find(item => item.abrv === 'RNGOPTLN').excl, unitData['tags'], warn);
-
                 return warn;
             },
             eqt:'subtract ((50% of <i>Ranged Cost</i>) + (<i>Ranged Attack</i> / 2))'
@@ -1784,6 +1431,20 @@ export function tags_checkExclusions(exclusions, srcTagArray, warnMsg){
     return warnMsg;
 }
 
+
+export function tags_validateExclusion(tag, unitTagArr, warnMsg){
+    if(unitTagArr.length === 0){
+        return warnMsg;
+    }
+    tag.excl.forEach(excl => {
+        if(unitTagArr.includes(excl)){
+            let exclTag = tagInfo['data'].find(t => t.abrv === excl);
+            warnMsg = warnMsg + "<p>Unit already has the <i>[" + exclTag.title +"]</i> tag.</p>";
+        }
+    });
+    return warnMsg;
+}
+
 function tags_checkByName(tagName, srcTagArray){
     if(srcTagArray.length === 0){
         return false;
@@ -1812,7 +1473,6 @@ export function initializeSortedTagList(){
     for(let tagId in tagInfo.data){
         let tag = tagInfo.data[tagId];
         tagCount++;
-        console.log(tag.title + " | " + tag.abrv);
         sortTheTags.push(tag);
     }
     let arr = [...sortTheTags.sort((a, b) => a.title.localeCompare(b.title))];

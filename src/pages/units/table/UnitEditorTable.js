@@ -4,14 +4,17 @@ import UnitTableRow from "./UnitTableRow.js";
 import UnitTagWindow from "../tagWindow/UnitTagWindow.js";
 
 import {calculateUnitBaseCost, calculateUnitTagCost} from "./../../../components/data/UnitCalculator.js";
-import TagList from "../tagWindow/TagList.js";
 import {tagInfo} from '../../../components/data/tagInfo.js';
+import {numRound2Decimal} from '../../../components/Utils.js';
 
 function UnitEditorTable(){
 
     const unitColumns = ['name', 'size', 'move', 'evade', 'dmg_m', 'dmg_r', 'range', 'armor', 'tags', 'baseCost', 'tagCost', 'total']
 
-    const [totalCosts, setTotalCosts] = useState([0,0,0]);    
+    const [totalTagCost, setTotalTagCost] = useState(0);
+    const [totalBaseCost, setTotalBaseCost] = useState(0);
+    const [totalCosts, setTotalCosts] = useState(0);
+
     const [selectedRows, setSelectedRows] = useState([]);
     const [unitRows, setUnitRows] = 
         useState([{'id':0, 'name':"", 'size':0, 'move':0, 'evade':0, 'dmg_m':0, 'dmg_r':0, 'range':0, 'armor':0, 'tags':['FRLS'], 'baseCost':0, 'tagCost':0, 'total':0}]);
@@ -55,7 +58,7 @@ function UnitEditorTable(){
         if(disableRemove){
             setDisableRemove(false);
         }
-        const row = {id : unitRows.length, 'name':"", 'size':0, 'move':0, 'evade':0, 'dmg-m':0, 'dmg-r':0, 'range':0, 'armor':0, 'tags':[], 'baseCost':0, 'tagCost':0, 'total':0};
+        let row = {id : unitRows.length, 'name':"", 'size':0, 'move':0, 'evade':0, 'dmg_m':0, 'dmg_r':0, 'range':0, 'armor':0, 'tags':[], 'baseCost':0, 'tagCost':0, 'total':0};
         setUnitRows([...unitRows, row]);
     }
 
@@ -73,11 +76,6 @@ function UnitEditorTable(){
 
     }
 
-
-    function onUnitRowTags(rowId){
-        console.log(rowId);
-    }
-
     //ROW CONTROLLERS
     function handleRowClickCheck(e){
         const { id, checked } = e.target;
@@ -92,11 +90,8 @@ function UnitEditorTable(){
 
     function updateRowData(unitRowId, columnName, val){
         
-        const tmpRows = [...unitRows];
+        let tmpRows = [...unitRows];
         let tmpUnit = unitRows[unitRowId];
-
-
-        tmpUnit[columnName] = val;
         
         //update costs
         if(columnName === "name"){
@@ -106,15 +101,15 @@ function UnitEditorTable(){
             tmpUnit[columnName] = Number(val);
             tmpUnit = calculateUnitBaseCost(tmpUnit);
 
+            //find tags to be removed due to validation
             let removeTag = [];
-
             tmpUnit['tags'].forEach(tag => {
                 if(tagInfo['data'].find(item => item.abrv === tag).reqs(tmpUnit).length > 0 ){
                     removeTag = [...removeTag, tag];
                 }
             });
 
-            let cleanExclusion = [];
+            //remove invalid tags
             removeTag.forEach(tag => {
                 tmpUnit['tags'] = tmpUnit['tags'].filter(item => item !== tag);
             });
@@ -129,6 +124,17 @@ function UnitEditorTable(){
         setUnitRows(tmpRows);
     }
 
+    function handleTagUpdate(unitRowId){
+        let tmpRows = [...unitRows];
+        let tmpUnit = unitRows[unitRowId];
+
+        tmpUnit = calculateUnitTagCost(tmpUnit);
+        //bind changes
+        tmpRows[unitRowId] = tmpUnit;
+
+        //update table data
+        setUnitRows(tmpRows);
+    }
 
     function onClickTags(rowId){
         setSelectUnitId(rowId);
@@ -140,6 +146,17 @@ function UnitEditorTable(){
     }
 
     useEffect(() => {
+        let base = 0;
+        let tags = 0;
+        let total = 0;
+        unitRows.forEach(unit => {
+            base += unit['baseCost'];
+            tags += unit['tagCost'];
+            total += unit['total'];
+        });
+        setTotalBaseCost(numRound2Decimal(base));
+        setTotalTagCost(numRound2Decimal(tags));
+        setTotalCosts(numRound2Decimal(total));
 
     }, [unitRows, selectedRows, showTagEdit, selectUnitId]) 
 
@@ -153,14 +170,14 @@ function UnitEditorTable(){
                 onSaveSelectRow={onSaveSelectRow}
                 onLoadCSV={onLoadCSV}
                 onPrintPDF={onPrintPDF}
-                totalCosts={totalCosts}
+                totalCosts={[totalBaseCost, totalTagCost, totalCosts]}
             />
         </div>
     </div>
     {showTagEdit &&     
         <div className="grid-x grid-margin-x" >
             <div className="cell small-10 medium-8 large-6">
-                <UnitTagWindow unitData={unitRows[selectUnitId]} handleWindowClose={onCloseTagWindow} handleWindowSave={onCloseTagWindow}/>
+                <UnitTagWindow rowId={selectUnitId} unitData={unitRows[selectUnitId]} handleWindowClose={onCloseTagWindow} handleWindowSave={onCloseTagWindow} handleUnitDataUpdate={handleTagUpdate}/>
             </div>
         </div>
     }
@@ -179,10 +196,10 @@ function UnitEditorTable(){
                         <th>DMG Range</th>
                         <th>Range</th>
                         <th>Armor</th>
-                        <th>Points</th>
-                        <th>TAGs</th>
-                        <th>TAG total</th>
-                        <th>TOTAL</th>
+                        <th>Base Cost</th>
+                        <th>TAG Cost</th>
+                        <th>Total</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>  
