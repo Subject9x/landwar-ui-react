@@ -79,8 +79,8 @@ export function calculateUnitBaseCost(unitData){
     let sizeVal = unitData['size'];
     let moveVal = unitData['move'];
     let evadeVal =  unitData['evade'];
-    let dmgMeleeVal = unitData['dmg_m'];
-    let dmgRangeVal = unitData['dmg_r'];
+    let dmgMeleeVal = unitData['dmgMelee'];
+    let dmgRangeVal = unitData['dmgRange'];
     let rangeVal = unitData['range'];
     let armorVal =unitData['armor'];
 
@@ -107,7 +107,7 @@ export function calculateUnitBaseCost(unitData){
     let pointsVal = calcBaseCost(sizeCost, moveCost, evadeCost, dmgMeleeCost, dmgRangeCost, rangeCost, armorCost);
     pointsVal = Math.round((pointsVal + Number.EPSILON) * 100) / 100;
     
-    unitData['baseCost'] = pointsVal;
+    unitData['points'] = pointsVal;
 
     return unitData;
 }
@@ -125,9 +125,9 @@ export function calculateUnitTagCost(unitData){
         unitData['tags'].filter(rem => rem === tag);
     })
 
-    unitData['tagCost'] = Math.round((tagCost + Number.EPSILON) * 100) / 100;
-    unitData['total'] = unitData['baseCost'] + unitData['tagCost'];
-    unitData['total'] =  Math.round((unitData['total'] + Number.EPSILON) * 100) / 100
+    unitData['tagTotal'] = Math.round((tagCost + Number.EPSILON) * 100) / 100;
+    unitData['completeTotal'] = unitData['points'] + unitData['tagTotal'];
+    unitData['completeTotal'] =  Math.round((unitData['completeTotal'] + Number.EPSILON) * 100) / 100
 
     
     return unitData;

@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
-import { mergePrimitiveArrs } from "../../../components/Utils.js";
-import {initializeSortedTagList, tags_validateExclusion} from '../../../components/data/tagInfo.js';
-import TagList from "./TagList";
+import { mergePrimitiveArrs } from "../../Utils.js";
+import {initializeSortedTagList, tags_validateExclusion} from '../../data/tagInfo.js';
+import TagList from "./TagList.js";
 
 export default function UnitTagWindow({rowId, unitData, handleWindowClose, handleUnitDataUpdate}){
 
@@ -69,13 +69,13 @@ export default function UnitTagWindow({rowId, unitData, handleWindowClose, handl
                     <div className="cell">
                         <div className="grid-x">
                             <div className="cell small-3 medium-3 large-3">
-                                Base: <b>{unitData['baseCost']}</b>
+                                Base: <b>{unitData['points']}</b>
                             </div>
                             <div className="cell small-3 medium-3 large-3">
-                                Tag total:<i>{unitData['tagCost']}</i>
+                                Tag total:<i>{unitData['tagTotal']}</i>
                             </div>
                             <div className="cell small-3 medium-3 large-3">
-                                Total Cost:<b>{unitData['total']}</b>
+                                Total Cost:<b>{unitData['completeTotal']}</b>
                             </div>
                             {/*<div className="cell shrink"><button className="button success" onClick={(e)=>{handleWindowSave()}}>Save</button></div>*/}
                             <div className="cell small-3 medium-3 large-3">

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
-import Checkbox from "../../../components/CheckBox.js";
-import { numRound2Decimal } from "../../../components/Utils.js";
+import Checkbox from "../../CheckBox.js";
+import { numRound2Decimal } from "../../Utils.js";
 
 export default function TagList({tagList, unitData, tagExclusions, invalidTags, handleCheckedTag, handleRowClick }){
 
@@ -46,7 +46,7 @@ export default function TagList({tagList, unitData, tagExclusions, invalidTags, 
 <div id="tagRulesDescPanel">
     <div className="grid-y shrink">
         <div className="cell" >
-            <table id="tagList">
+            <table id="tagList" >
                 <thead>
                     <tr>
                         <td></td>
