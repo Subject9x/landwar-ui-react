@@ -23,9 +23,6 @@ export default function UnitTagWindow({rowId, unitData, handleWindowClose, handl
         });
 
         setExcludedTags(exclTag);
-
-
-
         handleUnitDataUpdate(rowId);
     };
 

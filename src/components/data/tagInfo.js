@@ -1,5 +1,5 @@
 
-import TagList from "../../pages/units/tagWindow/TagList";
+import TagList from "../unitEditor/tagWindow/TagList";
 import { calcArmor, calcDMG_M, calcDMG_R, calcEvade, calcMove, calcRange, calculateUnitBaseCost } from "./UnitCalculator";
 
 export const tagInfo = {
@@ -12,13 +12,13 @@ export const tagInfo = {
             excl : ['RNGOPTSH','RNGOPTLN'],
             func : (unitData) =>{
                 let moveVal = unitData['move'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 let rangeVal = unitData['range'];
                 return ((moveVal / 4) + (rangeDamageVal / 2) + (rangeVal / 2));
             },
             reqs : (unitData) =>{
                 let warn = '';
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 let rangeVal = unitData['range'];
                 if(rangeDamageVal < 1){
                     warn = warn + "<p>Cannot have <b>[Range Damage]</b> of 0.</p>";
@@ -73,8 +73,8 @@ export const tagInfo = {
                 if(rangeVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
                 }
-                let rangeDamageVal = unitData['dmg_r'];
-                let meleeDamageVal = unitData['dmg_m'];
+                let rangeDamageVal = unitData['dmgRange'];
+                let meleeDamageVal = unitData['dmgMelee'];
                 if(rangeDamageVal <= 0 || meleeDamageVal <= 0){
                     warn = warn + '<p>Unit must have <i>either</i> <b>Range Damage</b> <i>or</i> <b>Melee Damage</b> greater than 0.</p>';
                 }
@@ -89,12 +89,12 @@ export const tagInfo = {
             excl : [],
             func : (unitData) => {
                 let moveVal = unitData['move'];
-                let meleeDamageVal = unitData['dmg_m'];
+                let meleeDamageVal = unitData['dmgMelee'];
                 return (calcDMG_M(meleeDamageVal, moveVal) * 0.6);
             },
             reqs : (unitData) => {
                 let warn = '';
-                let meleeDamageVal = unitData['dmg_m'];
+                let meleeDamageVal = unitData['dmgMelee'];
                 if(meleeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Melee Damage]</b> greater than 0.</p>';
                 }
@@ -108,12 +108,12 @@ export const tagInfo = {
             desc : "<p><i>Combat Phase</i></p><p>When applying Damage from this unit's <i>Ranged</i> attack; <b>If</b> Target has the <i>[Heavy Armor]</b> tag, <b>ignore it</b>. If Target does not have this tag, Target suffers <b>+2 Stress</b> along with the damage of the attack.</p>",
             excl : [],
             func : (unitData) => {
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 return (calcDMG_R(rangeDamageVal) * 0.8);
             },
             reqs : (unitData) => {
                 let warn = '';
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 if(rangeDamageVal < 4){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 3.</p>';
                 }
@@ -131,13 +131,13 @@ export const tagInfo = {
                 if(sizeVal === 0){
                     sizeVal = 1;
                 }
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 let rangeVal = unitData['range'];
                 return Math.max(0, ((rangeVal/2) + rangeDamageVal) - sizeVal);
             },
             reqs : (unitData) => {
                 let warn = '';
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 if(rangeDamageVal <= 1){
                     warn = warn + '<p>Unit must have a <b>[Damage-Range]</b> greater than 1.</p>';
                 }
@@ -157,14 +157,14 @@ export const tagInfo = {
             excl : ['BTRY'],
             func : (unitData) => {
                 let moveVal = unitData['move'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 let rangeVal = unitData['range'];
 
                 return (moveVal / 4) + (rangeVal / 3) + (rangeDamageVal / 2);
             },
             reqs : (unitData) => {
                 let warn = '';
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
@@ -206,7 +206,7 @@ export const tagInfo = {
             func : (unitData) => {
                 let sizeVal = unitData['size'];
                 let moveVal = unitData['move'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
 
                 return calcMove(moveVal, sizeVal) * 0.5 + calcDMG_R(rangeDamageVal) * 0.6;
             },
@@ -215,7 +215,7 @@ export const tagInfo = {
                 let hasJets = tags_checkByName('Jump Jets', unitData['tags']);
                 let hasFly = tags_checkByName('Flyer', unitData['tags']);
                 let hasHighFly = tags_checkByName('High Altitude Flyer', unitData['tags']);
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
 
                 if(rangeDamageVal < 1){
                     warn = warn + '<p><b>Range Damage</b> must be <i>greater than</i> 0.</p>';
@@ -236,7 +236,7 @@ export const tagInfo = {
             func : (unitData) => {
                 let sizeVal = unitData['size'];
                 let moveVal = unitData['move'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 return Math.max(0, (moveVal / 2)- (sizeVal * 1.25) + (calcDMG_R(rangeDamageVal) * 0.33 ));
             },
             reqs : (unitData) => {
@@ -244,7 +244,7 @@ export const tagInfo = {
                 let hasJets = tags_checkByName('Jump Jets', unitData['tags']);
                 let hasFly = tags_checkByName('Flyer', unitData['tags']);
                 let hasHighFly = tags_checkByName('High Altitude Flyer', unitData['tags']);
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
 
                 if(rangeDamageVal < 1){
                     warn = warn + '<p><b>Range Damage</b> must be <i>greater than</i> 0.</p>';
@@ -264,12 +264,12 @@ export const tagInfo = {
             excl : ['RNGOPTLN'],
             func : (unitData) => {
                 let moveVal = unitData['move'];
-                let meleeDamageVal = unitData['dmg_m'];
+                let meleeDamageVal = unitData['dmgMelee'];
                 return calcDMG_M(meleeDamageVal, moveVal) * 0.67;
             },
             reqs : (unitData) => {
                 let warn = '';
-                let meleeDamageVal = unitData['dmg_m'];
+                let meleeDamageVal = unitData['dmgMelee'];
                 if(meleeDamageVal < 1){
                     warn = warn + '<p>Unit must have a <b>[Melee Damage]</b> greater than 0.</p>';
                 }
@@ -283,7 +283,7 @@ export const tagInfo = {
             desc : '<p><i>Combat Phase</i></p><p>Unit may <b>only</b> make <i>Ranged Attacks</i> against targets that are <i>LEFT or RIGHT</i> of Units <i>Forward facing</i>, <b>but</b> Unit may make <b>1</b> <i>Ranged Attacks</i> per side of Unit.</p><p>Target models must be <i>inside</i> this Units left or right side, and cannot be counted for <i>both</i> at the same time.</p>',
             excl : ['ARC-LFA','ARC-NAR'],
             func : (unitData) => {
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
 
                 return calcDMG_R(rangeDamageVal) * 0.5;
             },
@@ -363,7 +363,7 @@ export const tagInfo = {
             func : (unitData) => {
                 let moveVal = unitData['move'];
                 let rangeVal = unitData['range'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 return (moveVal / 3) + (rangeVal / 3) + (rangeDamageVal / 3); /*TODO*/
             },
             reqs : (unitData) => {
@@ -372,7 +372,7 @@ export const tagInfo = {
                 if(rangeVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
                 }
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
@@ -510,7 +510,7 @@ export const tagInfo = {
             desc : '<p><i>Resolution Phase</i>.</p><p>Unit <i>automatically</i> passes any <i>Stress Check</i>.</p>',
             excl : ['CRG1','CRG2','CRW1','CRW2','OVRHT','HERO'],
             func : (unitData) => {
-                return unitData['baseCost']  * 0.35;
+                return unitData['points']  * 0.35;
             },
             reqs : (unitData) => {
                 return '';
@@ -542,7 +542,7 @@ export const tagInfo = {
             func : (unitData) => {
                 let sizeVal = unitData['size'];
                 let moveVal = unitData['move'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
 
                 return Math.max(0, (moveVal - sizeVal)) + (rangeDamageVal / 2);
             },
@@ -603,7 +603,7 @@ export const tagInfo = {
             reqs : (unitData) => {
                 let warn = '';
                 let moveVal = unitData['move'];
-                let meleeDamageVal = unitData['dmg_m'];
+                let meleeDamageVal = unitData['dmgMelee'];
                 if(meleeDamageVal < 1){
                     warn = warn + '<p>Unit <b>Melee Damage</b> must be greater than <b>0</b>.</p>';
                 }
@@ -687,7 +687,7 @@ export const tagInfo = {
             desc : '<p><i>Combat Phase</i>.</p><p>Unit <b>may</b> fire as if it has the <i>Limit Fire Arc</i> tag but may add <b>+25%</b> rounded-up of its DMG-R value to the attack.</p>',
             excl : ['ARC-LFA','ARC-NAR','HULLGN2'],
             func : (unitData) => {
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
 
                 return calcDMG_R(rangeDamageVal) * 0.2;
             },
@@ -702,7 +702,7 @@ export const tagInfo = {
             desc : '<p><i>Combat Phase</i>.</p><p>Unit <b>may</b> fire as if it has the <i>Limit Fire Arc</i> tag but may add <b>+50%</b> rounded-up of its DMG-R value to the attack.</p>',
             excl : ['ARC-LFA','ARC-NAR','HULLGN1'],
             func : (unitData) => {
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
 
                 return calcDMG_R(rangeDamageVal)*0.4;
             },
@@ -718,7 +718,7 @@ export const tagInfo = {
             excl : ['FLDART'],
             func : (unitData) => {
                 let moveVal = unitData['move'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 let rangeVal = unitData['range'];
                 
                 let rangeCost = calcRange(moveVal, rangeVal, rangeDamageVal);
@@ -732,7 +732,7 @@ export const tagInfo = {
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
                 }
 
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
@@ -790,7 +790,7 @@ export const tagInfo = {
             func : (unitData) => {
                 let sizeVal = unitData['size'];
                 let moveVal = unitData['move'];
-                let meleeDamageVal = unitData['dmg_m'];
+                let meleeDamageVal = unitData['dmgMelee'];
 
                 return (sizeVal * 0.5) + (moveVal * 0.5) + (meleeDamageVal * 0.25);
             },
@@ -804,7 +804,7 @@ export const tagInfo = {
                 if(armorVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Armor]</b> greater than 0.</p>';
                 }
-                let meleeDamageVal = unitData['dmg_m'];
+                let meleeDamageVal = unitData['dmgMelee'];
                 if(meleeDamageVal < 1){
                     warn = warn + '<p>Unit must have <b>Damage-Melee</b> value.';
                 }
@@ -839,14 +839,14 @@ export const tagInfo = {
             desc : '<p><i>Combat Phase</i></p><p>Unit may only make <i>Ranged Attacks</i> in the Forward or Rear Arc, you must choose before the game starts.</p>',
             excl : ['ARC-BRD','HULLGN1','HULLGN2','ARC-NAR'],
             func : (unitData) => {
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
 
                 return 0 - (calcDMG_R(rangeDamageVal) * 0.45);
             },
             reqs : (unitData) => {
                 let warn = '';
                 let rangeVal = unitData['range'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
 
                 if(rangeVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
@@ -867,7 +867,7 @@ export const tagInfo = {
             func : (unitData) => {
                 let sizeVal = unitData['size'];
                 let moveVal = unitData['move'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 let rangeVal = unitData['range'];
                 let evadeVal  = unitData['evade'];
 
@@ -880,7 +880,7 @@ export const tagInfo = {
             reqs : (unitData) => {
                 let warn = '';
                 let rangeVal = unitData['range'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
 
                 if(rangeVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
@@ -898,7 +898,7 @@ export const tagInfo = {
             desc : '<p><i>Initiative Phase</i></p><p><b>Unit cannot be <i>Panicked</i>.</b></p><p>Player may add <b>+2</b> to their <i>initiative roll</i>.</p>',
             excl : ['FWRDOBS','RCN'],
             func : (unitData) => {
-                return unitData['baseCost']  * 0.33;
+                return unitData['points']  * 0.33;
             },
             reqs : (unitData) => {
                 return '';
@@ -911,14 +911,14 @@ export const tagInfo = {
             desc : "<p><i>Combat Phase</i></p><p>Targets of this Unit's <i>Ranged Attacks</i> must be 1/2 Target-model width inside the <b>width</b> of this Unit`s model. <i>Minimum width of 1\" for Unit width.</i>.</p>",
             excl : ['ARC-BRD','ARC-LFA','HULLGN1','HULLGN2'],
             func : (unitData) => {
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
 
                 return 0 - (calcDMG_R(rangeDamageVal) * 0.75);
             },
             reqs : (unitData) => {
                 let warn = '';
                 let rangeVal = unitData['range'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
 
                 if(rangeVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
@@ -936,8 +936,8 @@ export const tagInfo = {
             desc : '<p><i>Combat Phase</i></p><p><b>Unit cannot be Panicked.</b></p><p>During <i>Combat Phase</i>, Unit may suffer <b>3 Stress Points</b> to re-roll <i>up to 3</i> <b>ATK</b> dice. <b>Cannot</b> be combined with <b>[Fearless]</b>.</p>',
             excl : ['FRLS'],
             func : (unitData) => {
-                let meleeDamageVal = unitData['dmg_m'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let meleeDamageVal = unitData['dmgMelee'];
+                let rangeDamageVal = unitData['dmgRange'];
                 let rangeVal = unitData['range'];
                 return (((meleeDamageVal + rangeDamageVal) / 2) * 3) + (rangeVal / 3);
             },
@@ -952,8 +952,8 @@ export const tagInfo = {
             desc : '<p>Player must choose whether this unit <i>moves</i> <b>OR</b> <i>attacks</i> on this turn.</p><p>At the <b>end</b> of the <i>Initiative Phase</i>, Units with this tag must declare if they will move or shoot this turn.</p>',
             excl : [],
             func : (unitData) => {
-                let meleeDamageVal = unitData['dmg_m'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let meleeDamageVal = unitData['dmgMelee'];
+                let rangeDamageVal = unitData['dmgRange'];
 
                 let moveVal = unitData['move'];
                 let sizeVal = unitData['size'];
@@ -966,7 +966,7 @@ export const tagInfo = {
             },
             reqs : (unitData) => {
                 let warn = '';
-                let dmgVal = unitData['dmg_m'] + unitData['dmg_r'];
+                let dmgVal = unitData['dmgMelee'] + unitData['dmgRange'];
                 let moveVal = unitData['move'];
 
                 if(dmgVal < 1){
@@ -985,7 +985,7 @@ export const tagInfo = {
             desc : "Unit's <i>base</i> <b>ATK/DEF</b> change to <b>2 ATK</b> and <b>2 DEF</b>.",
             excl : ['RNKV','RNKE'],
             func : (unitData) => {
-                return 0 - unitData['baseCost']  * 0.85; 
+                return 0 - unitData['points']  * 0.85; 
             },
             reqs : (unitData) => {
                 return '';
@@ -998,7 +998,7 @@ export const tagInfo = {
             desc : "<p><i>Combat Phase</i></p><p>Unit may <i>re-roll</i> <b>1 ATK</b> and <b>1 DEF</b> <i>per-turn</i>.</p>",
             excl : ['RNKG','RNKE'],
             func : (unitData) => {
-                return unitData['baseCost']  * 0.4; 
+                return unitData['points']  * 0.4; 
             },
             reqs : (unitData) => {
                 return '';
@@ -1011,7 +1011,7 @@ export const tagInfo = {
             desc : "<p><i>Initiative Phase</i></p><p>Player gains <b>+1</b> to their initiative roll per-Unit with this tag.</p><p><i>Combat Phase</i></p><p>Unit may <i>re-roll</i> <b>2 ATK</b> and <b>2 DEF</b> <i>per-turn</i>.</p>",
             excl : ['RNKG','RNKV'],
             func : (unitData) => {
-                return unitData['baseCost']  * 0.6; 
+                return unitData['points']  * 0.6; 
             },
             reqs : (unitData) => {
                 return '';
@@ -1068,7 +1068,7 @@ export const tagInfo = {
             excl : ['ARC-LFA','HULLGN1','HULLGN2'],
             func : (unitData) => {
                 let moveVal = unitData['move'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 let rangeVal = unitData['range'];
                 
                 let rangeDamageCost = calcDMG_R(rangeDamageVal);
@@ -1080,7 +1080,7 @@ export const tagInfo = {
             reqs : (unitData) => {
                 let warn = '';
 
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0".</p>';
                 }
@@ -1116,7 +1116,7 @@ export const tagInfo = {
             func : (unitData) => {
                 let sizeVal = unitData['size'];
                 let moveVal = unitData['move'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 let rangeVal = unitData['range'];
 
                 return Math.max(0, ((rangeDamageVal / 2) + (rangeVal / 2) + (moveVal / 4)) - sizeVal);
@@ -1127,7 +1127,7 @@ export const tagInfo = {
                 if(rangeVal<= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0".</p>';
                 }
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0".</p>';
                 }
@@ -1229,7 +1229,7 @@ export const tagInfo = {
             func : (unitData) => {
                 let moveVal = unitData['move'];
                 let rangeVal = unitData['range'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
 
                 return ((moveVal/3) + (rangeVal * 1.15)) - rangeDamageVal;
             },
@@ -1285,7 +1285,7 @@ export const tagInfo = {
                 let moveVal = unitData['move'];
                 let armorVal = unitData['armor'];
                 let rangeVal = unitData['range'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
 
                 return (moveVal / 1.5) + (armorVal / 3) + (rangeVal / 2) + (rangeDamageVal / 2);
             },
@@ -1306,7 +1306,7 @@ export const tagInfo = {
             excl : ['IF'],
             func : (unitData) => {
                 let moveVal = unitData['move'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 let rangeVal = unitData['range'];
                 
                 let rangeCost = calcRange(moveVal, rangeVal, rangeDamageVal);
@@ -1319,7 +1319,7 @@ export const tagInfo = {
                 if(rangeVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
                 }
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
@@ -1337,7 +1337,7 @@ export const tagInfo = {
             excl : ['RNGMIN','ADVGS','SHRPS','RNGOPTLN'],
             func : (unitData) => {
                 let moveVal = unitData['move'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 let rangeVal = unitData['range'];
                 
                 let rangeCost = calcRange(moveVal, rangeVal, rangeDamageVal);
@@ -1352,7 +1352,7 @@ export const tagInfo = {
                 if(rangeVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
                 }
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
@@ -1367,7 +1367,7 @@ export const tagInfo = {
             excl : ['RNGMIN','ADVGS','SHRPS','RNGOPTSH'],
             func : (unitData) => {
                 let moveVal = unitData['move'];
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 let rangeVal = unitData['range'];
                 
                 let rangeCost = calcRange(moveVal, rangeVal, rangeDamageVal);
@@ -1381,7 +1381,7 @@ export const tagInfo = {
                 if(rangeVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
                 }
-                let rangeDamageVal = unitData['dmg_r'];
+                let rangeDamageVal = unitData['dmgRange'];
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
@@ -1462,6 +1462,25 @@ function tags_checkByName(tagName, srcTagArray){
         }
     }
     return false;
+}
+
+export function tags_getByName(tagAbbrev, srcTagArray){
+    if(srcTagArray.length === 0){
+        return false;
+    }
+    for(let tagIdx in srcTagArray){
+        
+        let tagId = srcTagArray[tagIdx];
+        let tag = tagInfo['data'].find(tag => tag.abrv === tagId);
+        if(tag !== null && tag !== undefined && Object.keys(tag).length > 0){
+            if(!tag["disabled"]){
+                if(tag.abrv === tagAbbrev){
+                    return tag;
+                }
+            }
+        }
+    }
+    return {};
 }
 
 

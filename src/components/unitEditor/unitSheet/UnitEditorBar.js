@@ -1,6 +1,28 @@
-import React from "react";
+import React, {useRef} from "react";
+import { parseCSVFileInput } from "../../Utils";
+
 
 function UnitEditorBar({onSelectAll, onDeselectAll, onDeleteSelectRow, onSaveSelectRow, onLoadCSV, onPrintPDF, disableDelete, disableSave, disablePrint}){
+
+    const importCSVRef = useRef(null);
+
+    function handleImportClick(){
+        importCSVRef.current.click();
+    };
+
+    async function handleImportCSVFileChange(event){
+        const fileObj = event.target.files && event.target.files[0];
+        if (!fileObj) {
+            return;
+        }
+
+        event.target.value = null;
+
+        const csv = await fileObj.text();
+        let result = parseCSVFileInput(csv);
+        
+        onLoadCSV(result);
+    }; 
 
     return(
 <div className="grid-container fluid">
@@ -19,7 +41,8 @@ function UnitEditorBar({onSelectAll, onDeselectAll, onDeleteSelectRow, onSaveSel
         </div>
 
         <div className="cell shrink small-1 medium-1 large-1">
-            <button type="button" title="Load .csv file" onClick={onLoadCSV} className="button primary">LOAD CSV<span className="ui-icon ui-icon-folder-open"></span></button>
+            <button type="button" className="button primary" onClick={handleImportClick}>Import unit .csv</button>
+            <input style={{ display: 'none' }} ref={importCSVRef} type="file" onChange={handleImportCSVFileChange} />
         </div>
     </div>
 </div>

@@ -1,37 +1,35 @@
 import React from 'react';
+import NavBar from '../../components/NavBar';
 
 
-function UnitEditorPage(){
+function UnitEditorPage({props}){
 
     return(
-    <div className="grd">
-        <div className="grd-row">
-            <div className="grd-row-col-4--sm grd-row-col-4--md grd-row-col-5-lg txt--center">
-                <h3>Unit Editor - Core</h3>
+    <div className="grid-container fluid">
+        <NavBar />
+        <div className="grid-x grid-margin-x">
+            <div className="cell auto small-12 medium-10 large-8 medium-offset-1 large-offset-2" >
+                <h2>Unit Editor</h2>
             </div>
         </div>
         
-        <div className="grd-row">
-            <div className="grd-row-col-4--sm grd-row-col-3--md grd-row-col-2--lg">
-                <p>
-                    The Unit Editor is a spread-sheet style tool that allows players to generate game stats for any type of unit they can think of.
-                </p>
+        <div className="grid-x grid-margin-x">
+            <div className="cell auto small-12 medium-10 large-8 medium-offset-1 large-offset-2">
+                <p>The Unit Editor is a spread-sheet style tool that allows players to generate game stats for any type of unit they can think of.</p>
                 <p>
                     Starting a new sheet or opening an existing <i>.csv*</i> file will open a new window for editing.
                     Template unit lists can be found with the folder this app came in, or on the LANDWAR itch.io site.
                 </p>
-                <p>
-                    *<i>.csv</i> files must have been written by the UnitBuilder tool or formatted to its expected template.
-                </p>
+                <p>*<i>.csv</i> files must have been written by the UnitBuilder tool or formatted to its expected template.</p>
             </div>
         </div>
         
-        <div className="grd-row row-fill-s row-fill row-fill-l"></div>
-        
-        <div className="grd-row">
-            <div className="grd-row-col-4-6--sm grd-row-col-3-6--md grd-row-col-2-6--lg">
-                <button type="button" title="Create blank Unit Editor Sheet" onclick="ub_control_sheet_new();" className="btn--green ui-icon-white"><span className="ui-icon ui-icon-document"></span></button>
-                <button type="button" title="Open a valid Unit Editor or Army List CSV." onclick="ub_control_sheet_import();" className="btn--blue ui-icon-white"><span className="ui-icon ui-icon-folder-open"></span></button>
+        <div className="grid-x grid-margin-x row-fill-s row-fill row-fill-l"></div>
+        <div className="grid-x grid-margin-x">
+            <div className="cell auto small-4 medium-3 large-2 small-offset-1 medium-offset-1 large-offset-2" >
+                <a className="btn--green ui-icon-white" href="http://localhost:3000/editor/unit" target="_blank" rel="noopener noreferrer">
+                    Create, edit, import, export Unit stats.
+                </a>
             </div>
         </div>
     </div>

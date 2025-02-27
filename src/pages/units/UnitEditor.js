@@ -1,15 +1,19 @@
 import React, {useEffect, useState} from "react";
+import 'foundation-sites/dist/css/foundation.min.css';
 
 import UserInfoBar from "../../components/UserInfoBar";
 import UnitEditorTable from "../../components/unitEditor/unitSheet/UnitEditorTable";
 
+import { unitObj, convertCSVUnitToRaw } from "../../components/data/unitInfo";
 import { calculateUnitBaseCost, calculateUnitTagCost } from "../../components/data/UnitCalculator";
 import { tagInfo } from "../../components/data/tagInfo";
+import { utilCheckMatchUnit } from "../../components/Utils";
 
-function UnitEditor(){
+import UnitInfoCard from "../../components/printUnits/UnitInfoCard";
 
-    const unitObj = {'id':0, 'name':"", 'size':0, 'move':0, 'evade':0, 'dmgMelee':0, 'dmgRange':0, 'range':0, 'armor':0, 'tags':[], 'points':0, 'tagTotal':0, 'completeTotal':0};
-    const [unitData, setUnitData] = useState([{'id':0, 'name':"", 'size':0, 'move':0, 'evade':0, 'dmgMelee':0, 'dmgRange':0, 'range':0, 'armor':0, 'tags':[], 'points':0, 'tagTotal':0, 'completeTotal':0}]);
+function UnitEditor({props}){
+
+    const [unitData, setUnitData] = useState([]);
 
     function unitNewEntry(){
         return structuredClone(unitObj);
@@ -61,7 +65,40 @@ function UnitEditor(){
         });
         setUnitData(updateUnitData);
     }
+    
+    function onImportCSV(unitsArr){
+        
+        if(unitsArr.length === 0){
+            return;
+        }
 
+        let unitIndex = unitData.length;
+        let addUnits = [...unitData];
+        
+        console.log(unitsArr);
+        unitsArr.forEach((unit, unitId)=>{
+            let duplicate = false;
+            unitData.forEach((existingUnit,idx)=>{
+                if(duplicate !== true){
+                    duplicate = utilCheckMatchUnit(unit, existingUnit);
+                }
+            });
+
+            if(!duplicate){
+                //TODO - bug with taglist
+                unit["id"] = unitIndex;
+                unit["name"] = unit.unitName;
+                unit["tags"] = unit.tags.split(" ");
+                unit["tags"].pop();
+
+                let convertUnit = convertCSVUnitToRaw(unit);
+
+                unitIndex = unitIndex + 1;
+                addUnits = [...addUnits, convertUnit];
+            }
+        });
+        setUnitData(addUnits);
+    }
 
     function updateUnitEntryData(unitRowId, columnName, val){
         
@@ -116,9 +153,7 @@ function UnitEditor(){
 
     return(
 <div className="grid-container fluid">
-    <div className="grid-x grid-margin-x">
-        <div className="cell small-4"><UserInfoBar /></div>
-    </div>
+    <UserInfoBar />
 
     <div className="grid-x grid-margin-x">
         <div className="cell small-8">
@@ -126,17 +161,21 @@ function UnitEditor(){
         </div>
     </div>
     
-    <div className="grid-x grid-margin-x">
-        <UnitEditorTable 
-            unitDataSet={unitData} 
-            unitRowDataChange={updateUnitEntryData} 
-            unitRowTagChange={updateUnitEntryTags}
-            handleDeleteUnits={onDeleteUnits}
-            handleAddNewUnit={onAddNewUnit}
-            handleRemoveRowLast={onRemoveLastRow}
-            handleCopyUnits={onCopyUnits}
-            />
-    </div>
+    {/* DEBUG */}
+    {/*<div className="grid-x grid-margin-x">
+        <UnitInfoCard unitInfo={unitData[0]} />
+    </div>*/}
+
+    <UnitEditorTable 
+        unitDataSet={unitData} 
+        unitRowDataChange={updateUnitEntryData} 
+        unitRowTagChange={updateUnitEntryTags}
+        handleDeleteUnits={onDeleteUnits}
+        handleAddNewUnit={onAddNewUnit}
+        handleRemoveRowLast={onRemoveLastRow}
+        handleCopyUnits={onCopyUnits}
+        handleImportCSV={onImportCSV}
+        />
 </div>
     );  
 };

@@ -1,47 +1,42 @@
 import React from "react";
-
 import NavBar from "../../components/NavBar.js";
-
-function HomePage(){
+import 'foundation-sites/dist/css/foundation.min.css';
+function HomePage() {
 
     return (
-<div className="grd">
-    <NavBar />
-    <div className="grd-row">
-        <div className="grd-row-col-6">
-            <div className="grd">
-                <div className="grd-row">
-                    <div className="grd-row-col-6--sm grd-row-col-6--md grd-row-col-6--lg txt--center">
-                        <h1>LANDWAR</h1>
-                    </div>
+        <div className="grid-container fluid">
+            <NavBar />
+            <div className="grid-x grid-margin-x">
+                <div className="cell auto small-6 medium-4 large-2 small-offset-3 medium-offset-4 large-offset-5">
+                    <img src="/img/logo.png" alt="LANDWAR" />
                 </div>
-                <div className="grd-row">
-                    <div className="grd-row-col-6--sm grd-row-col-6--md grd-row-col-6--lg txt--center">
-                        <h2><i>Game Development Kit</i></h2>
-                    </div>
+            </div>
+            <div className="grid-x grid-margin-x">
+                <div className="cell auto small-6 medium-5 large-4 small-offset-3 medium-offset-4 large-offset-4">
+                    <p>
+                    <i>LANDWAR</i> is a free and open-source, miniatures-agnostic set of rules for tabletop wargaming. This website provides everything players need to
+                    play the game, generate custom units, organize force lists, refer to / read up on rules.</p>
+                    <ul className="list--unstyled">
+                        <li>Core Rules section</li>
+                        <li>TAG library</li>
+                        <li>Generate custom unit cards.</li>
+                        <li>Calculate unit point costs.</li>
+                        <li>Create custom armies.</li>
+                    </ul>
                 </div>
-                <div className="grd-row">
-                    <div className="grd-row-col-6--sm grd-row-col-6--md grd-row-col-6--lg txt--center">
-                        <p><i>LANDWAR</i> is primarily a rules-set or framework for tabletop wargaming. This application empowers Players and Game Masters
-                        to acces and utilize the following:</p>
-                        <ul className="list--unstyled">
-                            <li>Core Rules section</li>
-                            <li>TAG library</li>
-                            <li>Generate custom unit cards.</li>
-                            <li>Calculate unit point costs.</li>
-                            <li>Create custom armies.</li>
-                        </ul>
-                    </div>
+            </div>
+            <div className="grid-x grid-margin-x">
+                <div className="cell auto small-8 medium-6 large-4 small-offset-3 medium-offset-3 large-offset-4">
+                    <h5>You can also find the rules and documents for free on itch.io!</h5>
+                </div>
+            </div>
+            <div className="grid-x grid-margin-x">
+                <div className="cell auto small-6 medium-6 large-6 small-offset-5 medium-offset-5 large-offset-5">
+                    <iframe title="itch.io page" frameborder="0" src="https://itch.io/embed/1636645" width="552" height="167"><a href="https://subject9x.itch.io/landwar">LANDWAR by Subject9x</a></iframe>
                 </div>
             </div>
         </div>
-    </div>
-</div>
     );
 };
 
 export default HomePage;
-
-
-
-

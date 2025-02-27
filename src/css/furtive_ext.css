@@ -1,0 +1,26 @@
+.btn--white {
+    border-color: rgba(255, 255, 255, 0.99);
+    background-color: rgba(255, 255, 255, 0.99);
+    color: #313131;
+}
+
+.btn--white:hover,
+.btn--white:focus,
+.btn--white:active {
+    color: #000000;
+    border-color: rgba(174, 174, 174, 0.99);
+    background-color: rgba(155, 155, 155, 0.99);
+}
+
+.btn--light-gray {
+    border-color: rgba(59, 59, 59, 0.99);
+    background-color: rgba(72, 72, 72, 0.99);
+    color: #fff;
+}
+
+.btn--light-gray:hover,
+.btn--light-gray:focus,
+.btn--light-gray:active {
+    color: #fff;
+    background-color: rgba(47, 47, 47, 0.99);
+}
