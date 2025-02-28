@@ -234,14 +234,16 @@ function UnitEditorTable({unitDataSet, unitRowDataChange, unitRowTagChange, hand
         )}
         {(selectUnitId === -1) && 
         <div className="grid-x grid-margin-x">
-            <div className="cell shrink small-1 medium-1 large-1 medium-offset-1 large-offset-2">
-                <button type="button" id="btnAddUnit" title="Add row to bottom" className="button sucesss" onClick={(e)=>{onAddNewUnit();}} disabled={disableAdd}>ADD UNIT<span className="ui-icon ui-icon-plusthick"></span></button>
-            </div>
-            <div className="cell shrink small-1 medium-1 large-1">
-                <button type="button" id="btnRemoveUnit" title="Delete LAST row" className="button alert" onClick={(e)=>{onRemoveLastRow();}} disabled={disableRemove}>DELETE LAST<span className="ui-icon ui-icon-minusthick"></span></button>
-            </div>
-            <div className="cell shrink small-1 medium-1 large-1">
-                <button type="button" id="btnCopyUnit" title="Copy LAST row" className="button secondary" onClick={(e)=>{onCopyUnits();}} disabled={disableCopy}>COPY LAST<span className="ui-icon ui-icon-copy"></span></button>
+            <div className="cell auto small-6 medium-5 large-3 large-offset-1">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td><button type="button" id="btnAddUnit" title="Add row to bottom" className="button sucesss" onClick={(e)=>{onAddNewUnit();}} disabled={disableAdd}>ADD UNIT<span className="ui-icon ui-icon-plusthick"></span></button></td>
+                            <td><button type="button" id="btnRemoveUnit" title="Delete LAST row" className="button alert" onClick={(e)=>{onRemoveLastRow();}} disabled={disableRemove}>DELETE LAST<span className="ui-icon ui-icon-minusthick"></span></button></td>
+                            <td><button type="button" id="btnCopyUnit" title="Copy LAST row" className="button secondary" onClick={(e)=>{onCopyUnits();}} disabled={disableCopy}>COPY LAST<span className="ui-icon ui-icon-copy"></span></button></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div> }
     </div>

@@ -85,7 +85,6 @@ function UnitEditor({props}){
             });
 
             if(!duplicate){
-                //TODO - bug with taglist
                 unit["id"] = unitIndex;
                 unit["name"] = unit.unitName;
                 unit["tags"] = unit.tags.split(" ");
