@@ -13,56 +13,67 @@ import UnitInfoCard from "../../components/printUnits/UnitInfoCard";
 
 function UnitEditor({props}){
 
+    const [unitListName, setUnitListName] = useState("");
+    const [unitDataIndex, setUnitDataIndex] = useState(0);
     const [unitData, setUnitData] = useState([]);
 
     function unitNewEntry(){
-        return structuredClone(unitObj);
+        let unit = structuredClone(unitObj);
+        unit['tags'] = [];
+        return unit;
     }
 
+    //selectedUnits == array of ID
     function onDeleteUnits(selectedUnits){
-
+        if(selectedUnits.length <= 0){
+            return;
+        }
+        // NOTE - disabled at the moment
         //shortcut reset so user doesn't have to click 'add unit' again after wiping the table
-        if(unitData.length === 1){
-            let updateArr = unitData.filter(unit => unit.id !== 0);
-            updateArr = [...updateArr, unitNewEntry()];
-            setUnitData(updateArr);
-        }
-        else{
-            let updateData = [...unitData];
-            selectedUnits.forEach(unit => {
-                updateData = updateData.filter(u => u.id !== unit);
-            });
+        // if(unitData.length === 1){
+        //     let updateArr = unitData.filter(unit => unit.id !== 0);
+        //     updateArr = [...updateArr, unitNewEntry()];
+        //     setUnitData(updateArr);
+        // }
+        // else{
+        let updateData = [...unitData];
+        updateData = updateData.filter(({id}) => !selectedUnits.includes(id));
 
-            if(updateData.length === 0){
-                setUnitData([unitNewEntry()]);
-            }
-            else{
-                setUnitData(updateData);
-            }
-        }
+        // if(updateData.length === 0){
+        //     setUnitData([unitNewEntry()]);
+        // }
+        // else{
+        setUnitData(updateData);
+        // }
+        // }
     }
 
     function onAddNewUnit(){
         let newUnit = unitNewEntry();
-        newUnit['id'] = unitData.length;
+        let incIndex = unitDataIndex;
+        newUnit['id'] = incIndex;
         let addUnit = [...unitData, newUnit];
         setUnitData(addUnit);
+        incIndex = incIndex + 1;
+        setUnitDataIndex(incIndex);
     }
 
     function onRemoveLastRow(){
-        let updateUnits = unitData.filter(unit => unit.id !== unitData.length-1);
+        let updateUnits = [...unitData];
+        updateUnits.pop();
         setUnitData([...updateUnits]);
     }
 
     function onCopyUnits(copyUnits){
         let updateUnitData = [...unitData];
-        let idx = unitData.length;
+        let incIndex = unitDataIndex;
         copyUnits.forEach(unit => {
             let newUnit = structuredClone(unit);
-            newUnit['id'] = idx;
+            newUnit['id'] = incIndex;
             updateUnitData = [...updateUnitData, newUnit];
-            idx += 1;
+            incIndex += 1;
         });
+        setUnitDataIndex(incIndex);
         setUnitData(updateUnitData);
     }
     
@@ -72,13 +83,12 @@ function UnitEditor({props}){
             return;
         }
 
-        let unitIndex = unitData.length;
+        let unitIndex = unitDataIndex;
         let addUnits = [...unitData];
         
-        console.log(unitsArr);
-        unitsArr.forEach((unit, unitId)=>{
+        unitsArr.forEach((unit)=>{
             let duplicate = false;
-            unitData.forEach((existingUnit,idx)=>{
+            unitData.forEach((existingUnit)=>{
                 if(duplicate !== true){
                     duplicate = utilCheckMatchUnit(unit, existingUnit);
                 }
@@ -96,14 +106,18 @@ function UnitEditor({props}){
                 addUnits = [...addUnits, convertUnit];
             }
         });
+        setUnitDataIndex(unitIndex);
         setUnitData(addUnits);
     }
 
-    function updateUnitEntryData(unitRowId, columnName, val){
+    function updateUnitEntryData(unitIndex, columnName, val){
         
         let tmpRows = [...unitData];
-        let tmpUnit = unitData[unitRowId];
-        
+        let tmpUnit = unitData.find(({id}) => (id === unitIndex));
+        const arrIdx = tmpRows.findIndex(unit => {
+            return unit.id === unitIndex;
+        });
+
         //update costs
         if(columnName === "name"){
             tmpUnit[columnName] = val;
@@ -129,24 +143,27 @@ function UnitEditor({props}){
         }
         
         //bind changes
-        tmpRows[unitRowId] = tmpUnit;
+        tmpRows[arrIdx] = tmpUnit;
         
         //update table data
         setUnitData(tmpRows);
     }
 
-    function updateUnitEntryTags(unitRowId){
+    function updateUnitEntryTags(unitIndex){
         let tmpRows = [...unitData];
-        let tmpUnit = unitData[unitRowId];
+        let tmpUnit = unitData.find(unit => unit.id === unitIndex);
+        const arrIdx = tmpRows.findIndex(unit => {
+            return unit.id === unitIndex;
+        });
 
         tmpUnit = calculateUnitTagCost(tmpUnit);
+        
         //bind changes
-        tmpRows[unitRowId] = tmpUnit;
+        tmpRows[arrIdx] = tmpUnit;
 
         //update table data
         setUnitData(unitData);
     }
-
 
     useEffect(()=>{},[unitData]);
 
@@ -155,18 +172,14 @@ function UnitEditor({props}){
     <UserInfoBar />
 
     <div className="grid-x grid-margin-x">
-        <div className="cell small-8">
-            Unit Set:<input type="text" />
+        <div className="cell small-10 medium-8 large-6 medium-offset-2 large-offset-1">
+            <span> Unit Set:</span><input type="text" placeholder="worksheet name" onChange={(e)=>{setUnitListName(e.target.value)}}/>
         </div>
     </div>
-    
-    {/* DEBUG */}
-    {/*<div className="grid-x grid-margin-x">
-        <UnitInfoCard unitInfo={unitData[0]} />
-    </div>*/}
 
     <UnitEditorTable 
         unitDataSet={unitData} 
+        worksheetName={unitListName}
         unitRowDataChange={updateUnitEntryData} 
         unitRowTagChange={updateUnitEntryTags}
         handleDeleteUnits={onDeleteUnits}

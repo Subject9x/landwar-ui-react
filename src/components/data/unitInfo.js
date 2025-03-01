@@ -10,9 +10,9 @@ export const unitCSVColumns = [
     {label : 'dmgMelee', key : 'dmgMelee'}, 
     {label : 'dmgRange', key : 'dmgRange'}, 
     {label : 'range', key : 'range'},
-    {label : 'armor', key : 'armor'}, 
-    {label : 'tags', key : 'tags'}, 
+    {label : 'armor', key : 'armor'},
     {label : 'points', key : 'points'}, 
+    {label : 'tags', key : 'tags'}, 
     {label : 'tagTotal', key : 'tagTotal'},
     {label : 'completeTotal', key : 'completeTotal'}];
 

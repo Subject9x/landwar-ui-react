@@ -9,7 +9,7 @@ import { exportUnitToCSVRow, unitCSVColumns } from "../../data/unitInfo.js";
 
 import { CSVLink } from "react-csv";
 
-function UnitEditorTable({unitDataSet, unitRowDataChange, unitRowTagChange, handleDeleteUnits, handleAddNewUnit, handleRemoveRowLast, handleCopyUnits, handleImportCSV}){
+function UnitEditorTable({unitDataSet, worksheetName, unitRowDataChange, unitRowTagChange, handleDeleteUnits, handleAddNewUnit, handleRemoveRowLast, handleCopyUnits, handleImportCSV}){
     
     const [totalTagCost, setTotalTagCost] = useState(0);
     const [totalBaseCost, setTotalBaseCost] = useState(0);
@@ -28,7 +28,11 @@ function UnitEditorTable({unitDataSet, unitRowDataChange, unitRowTagChange, hand
     const [disabledDelete, setDisabledDelete] = useState(true);
 
     function onSelectAll(){
-        setSelectedRows(unitDataSet.map(item => item.id));
+        let selected = unitDataSet.map(item => item.id);
+        if(selected.length === 0){
+            return;
+        }
+        setSelectedRows(selected);
         setDisabledSave(false);
         setDisabledDelete(false);
         setDisabledPrint(false);
@@ -42,15 +46,13 @@ function UnitEditorTable({unitDataSet, unitRowDataChange, unitRowTagChange, hand
     };
 
     function onSaveSelectRow(){
-        let saveUnits = [];
-        selectedRows.forEach(id => {
-            let exportUnit = exportUnitToCSVRow(unitDataSet[id]);
-            if(exportUnit !== null){
-                saveUnits = [...saveUnits, exportUnit];
-            }
-        });
+        let saveUnits = unitDataSet.filter(({id}) => (selectedRows.includes(id)));
+        let exportUnits = [];
+        saveUnits.forEach((unit)=>{
+            exportUnits = [...exportUnits, exportUnitToCSVRow(unit)];
+        })
         
-        setTimeout(()=>{setDownloadUnits(saveUnits);}, 200);
+        setTimeout(()=>{setDownloadUnits(exportUnits);}, 200);
     };
 
     function onDeleteRows(){
@@ -69,22 +71,20 @@ function UnitEditorTable({unitDataSet, unitRowDataChange, unitRowTagChange, hand
     }
 
     function onRemoveLastRow(){
-        if(unitDataSet.length === 1){
-            setDisableRemove(true);
-        }
-        setSelectedRows(selectedRows.filter(item => item !== unitDataSet.length));
+        //FIXME
         handleRemoveRowLast();
     };
 
     function onCopyUnits(){
         let unitsCopy = [];
         if(selectedRows.length > 0){
-            selectedRows.forEach(rid => {
-                unitsCopy = [...unitsCopy, unitDataSet[rid]];
-            });
+            unitsCopy = [...unitsCopy, unitDataSet.filter(({id})=>(selectedRows.includes(id)))];
         }
         else{
-            unitsCopy = [...unitsCopy, unitDataSet[unitDataSet.length - 1]];
+            if(unitDataSet.length !== 0){
+                unitsCopy = [...unitsCopy, unitDataSet[unitDataSet.length - 1]];
+            }
+            
         }
         handleCopyUnits(unitsCopy);
     };
@@ -138,28 +138,6 @@ function UnitEditorTable({unitDataSet, unitRowDataChange, unitRowTagChange, hand
     return (
 <div className="grid-x grid-margin-x">
     <div className="cell auto">
-        <div className="grid-x grid-margin-x" >
-            <div className="cell auto small-10 medium-10 large-8 small-offset-1 medium-offset-1 large-offset-2" >
-                <div className="grid-x" >
-                    <div className="cell shrink small-5 medium-4 large-2 small-offset-1 medium-offset-1 large-offset-1">
-                        <h4>Total costs</h4>
-                    </div>
-                    <div className="cell auto small-5 medium-5 large-5">
-                        <table id="tagRulesListPanel">
-                            <thead></thead>
-                            <tbody>
-                                <tr>
-                                    <td><b>Base : </b>{totalBaseCost}</td>
-                                    <td><b>TAGs : </b>{totalTagCost}</td>
-                                    <td><b>Complete : </b>{totalCosts}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            
-        </div>
         {(downloadUnits !== null) &&
             <div className="grid-x grid-margin-x">
                 <div className="cell small-auto medium-auto large-10 large-offset-1">
@@ -167,9 +145,10 @@ function UnitEditorTable({unitDataSet, unitRowDataChange, unitRowTagChange, hand
                         data={downloadUnits} 
                         headers={unitCSVColumns} 
                         enclosingCharacter={""}
-                        separator={","} 
+                        separator={","}
+                        filename={worksheetName}
                         className="button primary" 
-                        onClick={(e)=>{setDownloadUnits(null);}}>Download Ready</CSVLink>
+                        onClick={(e)=>{setDownloadUnits(null);}}>Download {worksheetName}.csv</CSVLink>
                 </div>
             </div>
         }
@@ -179,7 +158,7 @@ function UnitEditorTable({unitDataSet, unitRowDataChange, unitRowTagChange, hand
         {(selectUnitId !== -1) &&     
             <div className="grid-x grid-margin-x" >
                 <div className="cell small-auto medium-10 large-8 large-offset-2 medium-offset-1">
-                    <UnitTagWindow rowId={selectUnitId} unitData={unitDataSet[selectUnitId]} handleWindowClose={onCloseTagWindow} handleWindowSave={onCloseTagWindow} handleUnitDataUpdate={unitRowTagChange}/>
+                    <UnitTagWindow rowId={selectUnitId} unitData={unitDataSet.find(({id})=>(id===selectUnitId))} handleWindowClose={()=>{onCloseTagWindow()}} handleWindowSave={()=>{onCloseTagWindow()}} handleUnitDataUpdate={unitRowTagChange}/>
                 </div>
             </div>
         }
@@ -188,7 +167,7 @@ function UnitEditorTable({unitDataSet, unitRowDataChange, unitRowTagChange, hand
         */}
         {(selectUnitId === -1) &&
         (<div className="grid-x grid-margin-x">
-            <div className="cell small-auto medium-auto large-10 large-offset-1">
+            <div className="cell small-9 medium-8 large-5 large-offset-1">
                 <UnitEditorBar onSelectAll={onSelectAll}
                     onDeselectAll={onDeselectAll}
                     onDeleteSelectRow={onDeleteRows}
@@ -200,6 +179,18 @@ function UnitEditorTable({unitDataSet, unitRowDataChange, unitRowTagChange, hand
                     disableDelete={disabledDelete}
                 />
             </div>
+            <div className="cell small-3 medium-4 large-3 large-offset-2">
+                <table id="tagRulesListPanel">
+                    <thead></thead>
+                    <tbody>
+                        <tr>
+                            <td><b>Base : </b>{totalBaseCost}</td>
+                            <td><b>TAGs : </b>{totalTagCost}</td>
+                            <td><b>Complete : </b>{totalCosts}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         )}
         {(selectUnitId === -1) &&
@@ -208,7 +199,7 @@ function UnitEditorTable({unitDataSet, unitRowDataChange, unitRowTagChange, hand
                 <table id="unitTable" className="hover">
                     <thead>
                         <tr key={0} className="unitTableHead">
-                            <th>Select</th>
+                            <th></th>
                             <th>Name</th>
                             <th>Size</th>
                             <th>Move</th>
@@ -225,7 +216,7 @@ function UnitEditorTable({unitDataSet, unitRowDataChange, unitRowTagChange, hand
                     </thead>
                     <tbody>  
                         {unitDataSet.map((item, idx)=>(
-                            <UnitTableRow key={idx} rowId={idx} rowData={item} handleRowDataUpdate={unitRowDataChange} hasCheck={selectedRows.includes(idx)} handleRowClickCheck={handleRowClickCheck} handleRowTagsClick={onClickTags}/>
+                            <UnitTableRow key={item.id} rowId={item.id} rowData={item} handleRowDataUpdate={unitRowDataChange} hasCheck={selectedRows.includes(item.id)} handleRowClickCheck={handleRowClickCheck} handleRowTagsClick={onClickTags}/>
                         ))}
                     </tbody>
                 </table>
