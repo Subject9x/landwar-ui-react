@@ -9,8 +9,6 @@ import { calculateUnitBaseCost, calculateUnitTagCost } from "../../components/da
 import { tagInfo } from "../../components/data/tagInfo";
 import { utilCheckMatchUnit } from "../../components/Utils";
 
-import UnitInfoCard from "../../components/printUnits/UnitInfoCard";
-
 function UnitEditor({props}){
 
     const [unitListName, setUnitListName] = useState("");
@@ -28,24 +26,9 @@ function UnitEditor({props}){
         if(selectedUnits.length <= 0){
             return;
         }
-        // NOTE - disabled at the moment
-        //shortcut reset so user doesn't have to click 'add unit' again after wiping the table
-        // if(unitData.length === 1){
-        //     let updateArr = unitData.filter(unit => unit.id !== 0);
-        //     updateArr = [...updateArr, unitNewEntry()];
-        //     setUnitData(updateArr);
-        // }
-        // else{
         let updateData = [...unitData];
         updateData = updateData.filter(({id}) => !selectedUnits.includes(id));
-
-        // if(updateData.length === 0){
-        //     setUnitData([unitNewEntry()]);
-        // }
-        // else{
         setUnitData(updateData);
-        // }
-        // }
     }
 
     function onAddNewUnit(){
@@ -169,7 +152,7 @@ function UnitEditor({props}){
 
     return(
 <div className="grid-container fluid">
-    <UserInfoBar />
+    {/*<UserInfoBar /> */}
 
     <div className="grid-x grid-margin-x">
         <div className="cell small-10 medium-8 large-6 medium-offset-2 large-offset-1">

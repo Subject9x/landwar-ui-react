@@ -1,5 +1,3 @@
-
-
 //https://stackoverflow.com/a/1584377
 export const mergePrimitiveArrs = (a, b, predicate = (a, b) => a === b) => {
     const c = [...a]; // copy to avoid side effects
@@ -38,4 +36,10 @@ export function parseCSVFileInput(csvObj){
         }
     }
     return result;
+}
+
+export function roundUsing(func, number, prec) {
+    var tempnumber = number * Math.pow(10, prec);
+    tempnumber = func(tempnumber);
+    return tempnumber / Math.pow(10, prec);
 }

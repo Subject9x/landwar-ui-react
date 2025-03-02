@@ -1,5 +1,5 @@
 
-import React, {useState, useEffect, useCallback} from "react";
+import React, {useState, useEffect} from "react";
 import UnitEditorBar from "./UnitEditorBar";
 import UnitTableRow from "./UnitTableRow.js";
 import UnitTagWindow from "../tagWindow/UnitTagWindow.js";
@@ -60,8 +60,21 @@ function UnitEditorTable({unitDataSet, worksheetName, unitRowDataChange, unitRow
         setSelectedRows([]);
     }
 
-    function onPrintPDF(){
-        console.log("onPrintPDF");
+    function onPrintPDF(e){
+        e.preventDefault();
+        if(worksheetName === undefined || worksheetName === null || worksheetName.length === 0 || worksheetName === ""){
+            console.log("error, missing worksheet name for printing!");
+            //TODO
+            return;
+        }
+        if(unitDataSet.length <= 0){
+            console.log("error, no units to print!");
+            //TODO
+            return;
+        }
+        localStorage.setItem(worksheetName, JSON.stringify(unitDataSet));
+        let printLink = document.getElementById("printUnits");
+        printLink.click();
     };
 
     function onAddNewUnit(){
@@ -133,11 +146,22 @@ function UnitEditorTable({unitDataSet, worksheetName, unitRowDataChange, unitRow
         setTotalTagCost(numRound2Decimal(tags));
         setTotalCosts(numRound2Decimal(total));
 
+        if(unitDataSet.length === 0){
+            setDisabledSave(true);
+            setDisabledDelete(true);
+            setDisabledPrint(true);
+        }
     }, [unitDataSet, selectedRows, selectUnitId, downloadUnits]) 
 
     return (
 <div className="grid-x grid-margin-x">
     <div className="cell auto">
+        <div className="grid-x">
+            <div className="cell auto">
+                <a id="printUnits" style={{display:"none"}} href={"http://localhost:3000/print/units/" + worksheetName}target="_blank" rel="noopener noreferrer" />
+            </div>
+        </div>
+
         {(downloadUnits !== null) &&
             <div className="grid-x grid-margin-x">
                 <div className="cell small-auto medium-auto large-10 large-offset-1">

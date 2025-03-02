@@ -138,10 +138,10 @@ return (
                                     <td>{row.dmgRange}</td>
                                     <td>{row.range}</td>
                                     <td>{row.armor}</td>
-                                    <td>{row.tagList.length > 0 &&
+                                    <td>{row.tags.length > 0 &&
                                         <ul style={{listStyle : "none"}}>
                                             {
-                                                row.tagList.map((tag, idx)=>(<li>{tag}</li>))
+                                                row.tags.map((tag, idx)=>(<li>{tag}</li>))
                                             }
                                         </ul>
                                         }

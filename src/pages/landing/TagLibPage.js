@@ -95,7 +95,7 @@ export default function TagLibPage({ props }) {
         && (    
         <div className="grid-x grid-margin-x">
             <div className="cell auto small-10 medium-8 large-6 small-offset-1 medium-offset-2 large-offset-3">
-                <TagInfoCard tagItem={selectedTag}/>
+                <TagInfoCard tagItem={selectedTag} showCostEquation={true} showRequirements={true}/>
             </div>
         </div>
         )

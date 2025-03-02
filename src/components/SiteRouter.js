@@ -8,6 +8,7 @@ import TagLibPage from "../pages/landing/TagLibPage";
 import ArmyListPage from "../pages/landing/ArmyListPage";
 import CardGenPage from "../pages/landing/CardGenPage";
 import ArmyEditor from "../pages/army/ArmyEditor";
+import UnitPrintedPage from "../pages/units/UnitPrintedPage";
 
 export default function SiteRouter({props}){
 
@@ -23,6 +24,8 @@ export default function SiteRouter({props}){
                 <Route exact path="/info/tags" element={<TagLibPage />}/>
                 <Route exact path="/info/army" element={<ArmyListPage />}/>
                 <Route exact path="/info/cardgen" element={<CardGenPage />}/>
+
+                <Route exact path="/print/units/:listName" element={<UnitPrintedPage />}/>
             </Routes>
         </BrowserRouter>
     );

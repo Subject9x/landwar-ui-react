@@ -18,11 +18,12 @@ export default function NavBar({ props }) {
                 <button id="navArmyList" type="button" className="btn btn--white" onClick={() => { navigation("/info/army") }}>Army List</button>
                 <button id="navCardGen" type="button" className="btn btn--white" onClick={() => { navigation("/info/cardgen") }}>Unit Card Gen</button>
             </div>
-            <div className="cell shrink small-3 medium-3 large-3">
-                user: {/*user name*/}
+            
+            {/*<div className="cell shrink small-3 medium-3 large-3">
+                user: {usename}
                 <button id="login" type="button" className="btn--green">Login</button>
                 <button id="login" type="button" className="btn--red">Logout</button>
-            </div>
+            </div>*/}
         </div>
     </div>
 </div>

@@ -108,6 +108,12 @@
     left: 0;*/
 }
 
+@media print{
+    #tagRulesPanel{
+        page-break-inside: avoid;
+    }
+}
+
 #tagRulesListPanel {
     background-color: white;
     border-color: rgb(116, 115, 115);

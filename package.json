@@ -16,12 +16,13 @@
     "furtive": "^2.4.0",
     "landwar-ui-react": "file:",
     "node-csv": "0.1.2",
+    "npm": "^10.9.2",
     "react": "^18.3.1",
     "react-csv": "^2.2.2",
-    "react-data-table-component": "^7.6.2",
     "react-dom": "^18.3.1",
     "react-router": "^7.2.0",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
+    "react-to-print": "^3.0.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

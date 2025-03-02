@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { unitCSVColumns } from "../data/unitInfo";
 import { CSVLink } from "react-csv";
+import { numRound2Decimal } from "../Utils";
+import { Link } from "react-router";
 
 export default function ArmyUnitTable({ idExt, unitList, onRemoveUnit }) {
 
@@ -33,7 +35,9 @@ export default function ArmyUnitTable({ idExt, unitList, onRemoveUnit }) {
             total += Number(unit.completeTotal, 100);
         });
 
-        setCostValues([basePoints, tagPoints, total]);
+        setCostValues([numRound2Decimal(basePoints), 
+                        numRound2Decimal(tagPoints), 
+                        numRound2Decimal(total)]);
         setTableUnitList(unitList);
     }, [unitList]);
 
@@ -73,6 +77,14 @@ export default function ArmyUnitTable({ idExt, unitList, onRemoveUnit }) {
         setTableUnitList(updateArr);
     }
 
+    function onClickPrint(e){
+        e.preventDefault();
+        let jsondat = JSON.stringify(tableUnitList);
+        localStorage.setItem(armyListName, jsondat);
+        let printLink = document.getElementById("printUnits");
+        printLink.click();
+    }
+
 return (
 <div className="grid-x">
     <div className="cell auto">
@@ -93,7 +105,8 @@ return (
                         headers={unitCSVColumns} 
                         separator={","} 
                         className="btn btn--blue">.CSV</CSVLink>
-                <button type="button" className="btn btn--green">PRNT</button>
+                <button type="button" className="btn btn--green" onClick={(e)=>{onClickPrint(e);}}>PRNT</button>
+                <a id="printUnits" style={{display:"none"}} href={"http://localhost:3000/print/units/" + armyListName}target="_blank" rel="noopener noreferrer" />
             </div>
         </div>
         <div className="grid-x grid-margin-x">
@@ -138,10 +151,10 @@ return (
                                     <td>{row.dmgRange}</td>
                                     <td>{row.range}</td>
                                     <td>{row.armor}</td>
-                                    <td>{row.tagList.length > 0 &&
+                                    <td>{row.tags.length > 0 &&
                                         <ul style={{listStyle : "none"}}>
                                             {
-                                                row.tagList.map((tag, idx)=>(<li>{tag}</li>))
+                                                row.tags.map((tag, idx)=>(<li>{tag}</li>))
                                             }
                                         </ul>
                                         }

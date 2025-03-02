@@ -3,6 +3,7 @@ import UserInfoBar from "../../components/UserInfoBar";
 import ArmyUnitPool from "../../components/armyEditor/ArmyUnitPool";
 import ArmyUnitTable from "../../components/armyEditor/ArmyUnitTable";
 import { utilCheckMatchUnit } from "../../components/Utils";
+import { convertCSVUnitToRaw } from "../../components/data/unitInfo";
 
 export default function ArmyEditor({props}){
 
@@ -27,10 +28,11 @@ export default function ArmyEditor({props}){
             });
 
             if(!duplicate){
+                unit = convertCSVUnitToRaw(unit);
                 unit["id"] = unitCount;
                 unit["name"] = unit.unitName;
-                unit["tagList"] = unit.tags.split(" ");
-                unit["tagList"].pop();
+                unit["tags"] = unit.tags.split(" ");
+                unit["tags"].pop();
                 unitCount += 1;
                 addUnits = [...addUnits, unit];
             }
