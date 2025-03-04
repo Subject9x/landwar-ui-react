@@ -1,7 +1,9 @@
 import React from "react";
+import { Link } from "react-router";
 import NavBar from "../../components/NavBar";
 import 'foundation-sites/dist/css/foundation.min.css';
 import 'foundation-sites/dist/css/foundation-icons.css';
+
 
 function RulebooksPage({ props }) {
     return (
@@ -15,7 +17,7 @@ function RulebooksPage({ props }) {
             <div className="grid-x grid-margin-x">
                 <div className="cell auto small-12 medium-10 large-8 medium-offset-1 large-offset-2" >
                     <h3>Getting Started</h3>
-                    <p>First-time players should use any of the <i>BEGINNER</i> unit cards and unit lists supplied with this application. These units do not use the more advanced <i>TAG</i> rules but are there to get you playing quickly.</p>
+                    <p>First-time players should use any of the <i>BEGINNER</i> unit cards and unit lists. These units do not use the more advanced <i>TAG</i> rules but are there to get you playing quickly.</p>
                     <p>After a few games with <i>BEGINNER</i> units, we recommend trying the <i>INTERMEDIATE</i> units; these stats offer 1-2 <i>TAGS</i> per unit to give them some character but keep things easy to remember.</p>
                     <p>Finally, when you feel ready, <i>ADVANCED</i> is using <i>LANDWAR</i> to its full potential. Each unit has several or many <i>TAGS</i> to make them play in very unique ways.</p>
                 </div>
@@ -39,27 +41,19 @@ function RulebooksPage({ props }) {
                         <tbody>
                             <tr>
                                 <td><u>Rulebook</u></td>
-                                <td><button id="btnCoreRules" type="button" className="button primary"><i className="fi-page"></i></button></td>
-                                <td><button id="btnCoreRulesSave" type="button" className="button secondary hollow" ><i className="fi-download"></i></button></td>
+                                <td><a rel="noopener noreferrer" className="button primary" href={require("../../assets/rules_core_b1.4.pdf")} target="_blank"><i className="fi-download"></i></a></td>
                             </tr>
                             <tr>
                                 <td><u>Quickplay Sheet</u></td>
-                                <td><button type="button" id="btnCoreQuick" className="button primary"><i className="fi-page"></i></button></td>
-                                <td><button id="btnCoreQuickplaySave" type="button" className="button secondary hollow"><i className="fi-download"></i></button></td>
+                                <td><a rel="noopener noreferrer" className="button primary" href={require("../../assets/rules_quick_b1.4.pdf")} target="_blank"><i className="fi-download"></i></a></td>
                             </tr>
                             <tr>
                                 <td><u>Scenarios</u></td>
-                                <td><button type="button" id="btnCoreScenarios" className="button primary"><i className="fi-page"></i></button></td>
-                                <td><button id="btnCoreScenariosSave" type="button" className="button secondary hollow"><i className="fi-download"></i></button> </td>
+                                <td><a rel="noopener noreferrer" className="button primary" href={require("../../assets/rules_scenario_b1.4.pdf")} target="_blank"><i className="fi-download"></i></a></td>
                             </tr>
-
                             <tr>
-                                <td>
-                                    <label><b>Token Sheet</b></label>
-                                </td>
-                                <td>
-                                    <p><i>tokens.pdf</i></p>
-                                </td>
+                                <td><label><b>Token Sheet</b> optional</label></td>
+                                <td><a rel="noopener noreferrer" className="button primary" href={require("../../assets/tokens.pdf")} target="_blank"><i className="fi-download"></i></a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -72,23 +66,19 @@ function RulebooksPage({ props }) {
                         <tbody>
                             <tr>
                                 <td>Advanced <i>CORE</i> Rules</td>
-                                <td><button type="button" id="btnAdvanceRules" className="button success"><i className="fi-page"></i></button></td>
-                                <td><button id="btnAdvanceRulesSave" type="button" className="button secondary hollow"><i className="fi-download"></i></button></td>
+                                <td><a rel="noopener noreferrer" className="button warning" href={require("../../assets/rules_adv_b1.4.pdf")} target="_blank"><i className="fi-download"></i></a></td>
                             </tr>
                             <tr>
                                 <td><i>Composite Units</i></td>
-                                <td><button type="button" id="btnModuleComposite" className="button success"><i className="fi-page"></i></button></td>
-                                <td><button id="btnModuleCompositeSave" type="button" className="button secondary hollow"><i className="fi-download"></i></button> </td>
+                                <td><a rel="noopener noreferrer" className="button warning" href={require("../../assets/rules_module_compunit_b1.4.pdf")} target="_blank"><i className="fi-download"></i></a></td>
                             </tr>
                             <tr>
                                 <td><i>Multi-Mode Units</i></td>
-                                <td><button type="button" id="btnModuleMultiMode" className="button success"><i className="fi-page"></i></button></td>
-                                <td><button id="btnModuleMultiModeSave" type="button" className="button secondary hollow"><i className="fi-download"></i></button> </td>
+                                <td><a rel="noopener noreferrer" className="button warning" href={require("../../assets/rules_module_multiunit_b1.4.pdf")} target="_blank"><i className="fi-download"></i></a></td>
                             </tr>
                             <tr>
                                 <td><i>Limited-Use Weapons</i></td>
-                                <td><button type="button" id="btnModuleLimitWeapon" className="button success"><i className="fi-page"></i></button></td>
-                                <td><button id="btnModuleLimitWeaponSave" type="button" className="button secondary hollow"><i className="fi-download"></i></button></td>
+                                <td><a rel="noopener noreferrer" className="button warning" href={require("../../assets/rules_module_limited_item_b1.4.pdf")} target="_blank"><i className="fi-download"></i></a></td>
                             </tr>
 
                             {/*
