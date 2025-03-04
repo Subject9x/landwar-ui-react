@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
-import { tags_getByName } from "../data/tagInfo";
 import { initializeSortedTagList } from "../../components/data/tagInfo";
-import { parseCSVFileInput } from "../Utils";
+import { parseCSVFileInput, roundUsing} from "../Utils";
 
 export default function ArmyUnitPool({unitList, onUnitImport, onAddUnitToList }) {
 
@@ -82,18 +81,16 @@ export default function ArmyUnitPool({unitList, onUnitImport, onAddUnitToList })
         setTableUnitList(updateArr);
     }
 
-    function generateTagListNames(tagString){
-        let tags = tagString.split(" ");
-        let tagList = "";
-
-
-        tags.array.forEach(tag => {
-            let findTag = tags_getByName(tag, tagList)
-            // tagList += 
-        });
-    }
-
-    
+    function setSortIcon(boolVal){
+        if(columnSortStates[boolVal]){
+            return (
+                <i className="fi-arrow-up"></i>
+            );
+        }
+        return (
+            <i className="fi-arrow-down"></i>
+        );
+    }    
 
 return (
 <div className="grid-x">
@@ -105,25 +102,25 @@ return (
         </div>
         <div className="grid-x">
             <div className="cell auto">
-                <button type="button" className="btn btn--blue" onClick={handleImportClick}>Import unit .csv</button>
+                <button type="button" className="button primary" onClick={handleImportClick}><i className="fi-upload"></i></button>
                 <input style={{ display: 'none' }} ref={inputRef} type="file" onChange={handleFileChange} />
             </div>
         </div>
         <div className="grid-x">
-            <div className="cell">
+            <div className="cell auto">
                 <table id="armyUnitTable" className="hover">
                     <thead>
                         <tr>
-                            <th>Name<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnTxt("size") }}>^</button></th>
-                            <th>SZ<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnNum("size") }}>^</button></th>
-                            <th>MV<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnNum("move") }}>^</button></th>
-                            <th>EV<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnNum("evade") }}>^</button></th>
-                            <th>MEL<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnNum("dmgMelee") }}>^</button></th>
-                            <th>SH<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnNum("dmgRange") }}>^</button></th>
-                            <th>RNG<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnNum("range") }}>^</button></th>
-                            <th>ARM<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnNum("armor") }}>^</button></th>
-                            <th>TAG<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnTxt("size") }}>^</button></th>
-                            <th>PTS<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnNum("completeTotal") }}>^</button></th>
+                            <th>Name<button type="button" className="button secondary clear" onClick={() => { sortOnColumnTxt("unitName") }}>{setSortIcon("unitName")}</button></th>
+                            <th>SZ<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("size") }}>{setSortIcon("size")}</button></th>
+                            <th>MV<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("move") }}>{setSortIcon("move")}</button></th>
+                            <th>EV<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("evade") }}>{setSortIcon("evade")}</button></th>
+                            <th>MEL<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("dmgMelee") }}>{setSortIcon("dmgMelee")}</button></th>
+                            <th>SH<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("dmgRange") }}>{setSortIcon("dmgRange")}</button></th>
+                            <th>RNG<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("range") }}>{setSortIcon("range")}</button></th>
+                            <th>ARM<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("armor") }}>{setSortIcon("armor")}</button></th>
+                            <th>TAG<button type="button" className="button secondary clear" onClick={() => { sortOnColumnTxt("size") }}>{setSortIcon("size")}</button></th>
+                            <th>PTS<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("completeTotal") }}>{setSortIcon("completeTotal")}</button></th>
                             <th></th>
                         </tr>
                     </thead>
@@ -146,8 +143,8 @@ return (
                                         </ul>
                                         }
                                     </td>
-                                    <td>{row.completeTotal}</td>
-                                    <td><button type="button" className="btn btn--green" onClick={() => { onAddUnitToList(row.id) }}>+</button></td>
+                                    <td>{ roundUsing(Math.ceil, row.completeTotal, 0)}</td>
+                                    <td><button type="button" className="btn btn--green" onClick={() => { onAddUnitToList(row.id) }}><i className="fi-arrow-right"></i></button></td>
                                 </tr>
                             ))
                         }

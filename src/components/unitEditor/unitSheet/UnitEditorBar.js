@@ -25,23 +25,21 @@ function UnitEditorBar({onSelectAll, onDeselectAll, onDeleteSelectRow, onSaveSel
     }; 
 
     return(
-<div className="grid-container">
-    <div className="grid-x">
-        <div className="cell auto">
-            <table>
-                <tbody>
-                    <tr>
-                        <td><button type="button" title="Delete" onClick={()=>{onDeleteSelectRow()}} className="button alert" disabled={disableDelete}>DELETE<span className="ui-icon ui-icon-trash"></span></button></td>
-                        <td><button type="button" title="Select +" onClick={()=>{onSelectAll()}} className="button primary">SELECT<span className="ui-icon ui-icon-check"></span></button></td>
-                        <td><button type="button" title="Deselect" onClick={()=>{onDeselectAll()}} className="button secondary">DESELECT<span className="ui-icon ui-icon-squaresmall-minus"></span></button></td>
-                        <td><button type="button" title="Save Selected rows" onClick={()=>{onSaveSelectRow()}} className="button success" disabled={disableSave}>SAVE SELECT<span className="ui-icon ui-icon-disk"></span></button>    </td>
-                        <td><button type="button" title="Print Selected to PDF" onClick={(e)=>{onPrintPDF(e)}} className="button primary" disabled={disablePrint}>PRINT SELECTED<span className="ui-icon ui-icon-print"></span></button></td>
-                        <td><button type="button" className="button primary" onClick={()=>{handleImportClick()}}>Import unit .csv</button>
-                        <input style={{ display: 'none' }} ref={importCSVRef} type="file" onChange={(event)=>{handleImportCSVFileChange(event)}} /></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+<div className="grid-x">
+    <div className="cell shrink">
+        <table>
+            <tbody>
+                <tr>
+                    <td><button type="button" title="Delete" onClick={()=>{onDeleteSelectRow()}} className="button alert" disabled={disableDelete}><i className="fi-trash"></i></button></td>
+                    <td><button type="button" title="Select +" onClick={()=>{onSelectAll()}} className="button primary"><i className="fi-check"></i></button></td>
+                    <td><button type="button" title="Deselect" onClick={()=>{onDeselectAll()}} className="button secondary"><i className="fi-minus"></i></button></td>
+                    <td><button type="button" title="Save Selected rows" onClick={()=>{onSaveSelectRow()}} className="button success" disabled={disableSave}><i className="fi-download"></i></button>    </td>
+                    <td><button type="button" title="Print Selected to PDF" onClick={(e)=>{onPrintPDF(e)}} className="button primary" disabled={disablePrint}><i className="fi-print"></i></button></td>
+                    <td><button type="button" className="button primary" onClick={()=>{handleImportClick()}}><i className="fi-upload"></i></button>
+                    <input style={{ display: 'none' }} ref={importCSVRef} type="file" onChange={(event)=>{handleImportCSVFileChange(event)}} /></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
     );

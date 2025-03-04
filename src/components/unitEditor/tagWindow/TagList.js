@@ -43,10 +43,10 @@ export default function TagList({tagList, unitData, tagExclusions, invalidTags, 
 
 
     return (
-<div id="tagRulesDescPanel">
+<div id="tagRulesDescPanel" >
     <div className="grid-y shrink">
         <div className="cell" >
-            <table id="tagList" >
+            <table id="tagList">
                 <thead>
                     <tr>
                         <td></td>

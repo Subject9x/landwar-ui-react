@@ -29,7 +29,7 @@ export default function UnitTableRow({rowId, rowData, handleRowDataUpdate, hasCh
             <td><label id={"points"}>{rowData['points']}</label></td>
             <td><label id={"tagTotal"} >{rowData['tagTotal']}</label></td>
             <td><label id={"completeTotal"} >{rowData['completeTotal']}</label></td>
-            <td><button id={"tags"} type="button" className="button secondary" onClick={(e)=>{handleRowTagsClick(rowId)}}>TAGS</button></td>
+            <td><button id={"tags"} type="button" className="button secondary" onClick={(e)=>{handleRowTagsClick(rowId)}}><i className="fi-widget"></i></button></td>
         </tr> 
     );
 }

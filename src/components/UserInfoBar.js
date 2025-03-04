@@ -11,8 +11,8 @@ return (
             user: username
             </div>
             <div className="cell shrink small-3 medium-3 large-3">
-                <button id="login" type="button" className="btn--green">Login</button>
-                <button id="login" type="button" className="btn--red">Logout</button>
+                <button id="login" type="button" className="button success">Login</button>
+                <button id="login" type="button" className="alert button">Logout</button>
             </div>
         </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from "react";
+import React, { useState} from "react";
 import 'foundation-sites/dist/css/foundation.min.css';
 import { initializeSortedTagList } from "../../components/data/tagInfo";
 import NavBar from "../../components/NavBar";
@@ -9,15 +9,13 @@ export default function TagLibPage({ props }) {
     const [tagList] = useState([...initializeSortedTagList()]);
     const [selectedTag, setSelectedTag] = useState({"tag" : {}, "warnMsg":""});
 
-    let tagWarnMsg = "";
-
     const dummyUnit = {
         'name' : "",
         'size' : 0,
         'move' : 0,
         'evade' : 0,
-        'dmg-mel' : 0,
-        'dmg-rng' : 0,
+        'dmgMelee' : 0,
+        'dmgRange' : 0,
         'range' : 0,
         'armor' : 0,
         'tags' : [],
@@ -25,50 +23,9 @@ export default function TagLibPage({ props }) {
     }
 
     function selectATag(tagId){
-        let tag = tagList[tagId];
+        let tag = tagList.find(({abrv}) => (abrv === tagId));
         setSelectedTag({...selectedTag, tag : tag, warnMsg : tag.reqs(dummyUnit)});
     }
-
-    function renderTagTable(){
-
-        let startTagList = [...initializeSortedTagList()];
-
-        let tagTable = document.querySelector('#tagLib_list>tbody');
-        let celCount = 5;
-        let tagRow;
-    
-        for(let tagId in startTagList){
-            let tagItem = startTagList[tagId];
-    
-            if(tagItem === null || tagItem === undefined || Object.keys(tagItem).length <= 0 || tagItem["disabled"]){
-                continue;
-            }
-    
-            if(celCount === 5){
-                tagRow = tagTable.insertRow();
-                celCount = 0;
-            }
-            
-            let cel = document.createElement('td');
-            cel.style = 'text-align:center;'
-            cel.innerHTML = '<button class="btn tagViewButton" type="button"></button>';
-            tagRow.appendChild(cel) ;
-    
-            let button = cel.children[0];
-    
-            button.innerHTML = tagItem.title
-            button.id = tagItem.abrv;
-            button.addEventListener('click', ()=>{
-                selectATag(tagId);
-            });
-    
-            celCount+=1;
-        }
-    };
-
-    useEffect(()=>{
-        renderTagTable();
-    },[]);
 
     return (
 <div className="grid-container fluid">
@@ -113,17 +70,17 @@ export default function TagLibPage({ props }) {
             </button>
         </div>
     </div> */}
-
-
-
     <div className="grid-x grid-margin-x row-fill-s row-fill row-fill-l">
     </div>
-    <div className="grid-x grid-margin-x">
+    <div className="grid-x">
         <div className="cell auto small-12 medium-10 large-8 medium-offset-1 large-offset-2">
-            <table id='tagLib_list' className="tagButtonTable">
-                <tbody>
-                </tbody>
-            </table>
+            <div className="grid-x">
+                {tagList.map((tag)=>(
+                    <div className="cell shrink large-2 medium-3 small-4">
+                        <button id={tag.abrv} type="button" className="button primary hollow" onClick={()=>{ selectATag(tag.abrv)}}>{tag.title}</button>
+                    </div>
+                ))}
+            </div>
         </div>
     </div>
 </div>

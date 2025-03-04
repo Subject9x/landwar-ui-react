@@ -1,4 +1,6 @@
 import React, {useState} from "react";
+import 'foundation-sites/dist/css/foundation.min.css';
+import 'foundation-sites/dist/css/foundation-icons.css';
 import UserInfoBar from "../../components/UserInfoBar";
 import ArmyUnitPool from "../../components/armyEditor/ArmyUnitPool";
 import ArmyUnitTable from "../../components/armyEditor/ArmyUnitTable";

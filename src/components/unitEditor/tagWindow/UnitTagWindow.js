@@ -76,7 +76,7 @@ export default function UnitTagWindow({rowId, unitData, handleWindowClose, handl
                             </div>
                             {/*<div className="cell shrink"><button className="button success" onClick={(e)=>{handleWindowSave()}}>Save</button></div>*/}
                             <div className="cell small-3 medium-3 large-3">
-                                <button name={rowId} className="button alert" onClick={(e)=>{handleWindowClose()}}>Close</button>
+                                <button name={rowId} className="button alert" onClick={(e)=>{handleWindowClose()}}><i className="fi-x"></i></button>
                             </div>
                         </div>
                     </div>

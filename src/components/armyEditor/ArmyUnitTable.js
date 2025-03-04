@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { unitCSVColumns } from "../data/unitInfo";
 import { CSVLink } from "react-csv";
-import { numRound2Decimal } from "../Utils";
-import { Link } from "react-router";
+import { roundUsing } from "../Utils";
 
 export default function ArmyUnitTable({ idExt, unitList, onRemoveUnit }) {
 
+    const [validateList, setValidateList] = useState({listNameNotEmpty:false, listNotEmpty:false});
     const [armyListName, setArmyListName] = useState("");
     const [tableUnitList, setTableUnitList] = useState([]);
     const [costValues, setCostValues] = useState([]);
@@ -27,19 +27,29 @@ export default function ArmyUnitTable({ idExt, unitList, onRemoveUnit }) {
     useEffect(() => {
         let basePoints = 0;
         let tagPoints = 0;
-        let total = 0;
+        // let total = 0;
 
         unitList.forEach((unit, idx) => {
             basePoints += Number(unit.points, 100);
             tagPoints += Number(unit.tagTotal, 100);
-            total += Number(unit.completeTotal, 100);
+            // total += Number(unit.completeTotal, 100);
         });
 
-        setCostValues([numRound2Decimal(basePoints), 
-                        numRound2Decimal(tagPoints), 
-                        numRound2Decimal(total)]);
+
+        setCostValues([
+            roundUsing(Math.ceil, basePoints, 0),
+            roundUsing(Math.ceil, tagPoints, 0),
+            roundUsing(Math.ceil, basePoints, 0) + roundUsing(Math.ceil, tagPoints, 0)
+        ]);
+
+        if(unitList.length === 0){
+            setValidateList({...validateList, listNotEmpty : false});
+        }
+        else{
+            setValidateList({...validateList, listNotEmpty : true});
+        }
         setTableUnitList(unitList);
-    }, [unitList]);
+    }, [unitList, setValidateList]);
 
     function sortOnColumnNum(colId) {
         let updateArr = tableUnitList;
@@ -85,6 +95,31 @@ export default function ArmyUnitTable({ idExt, unitList, onRemoveUnit }) {
         printLink.click();
     }
 
+    function validForPrint(){
+        return validateList.listNameNotEmpty && validateList.listNotEmpty;
+    }
+
+    function onArmyNameChange(text){
+
+        setArmyListName(text);
+        if(text === null || text === "" || text.length === 0){
+            setValidateList({...validateList, listNameNotEmpty : false});
+        }
+        else{
+            setValidateList({...validateList, listNameNotEmpty : true});
+        }
+    }
+    function setSortIcon(boolVal){
+        if(columnSortStates[boolVal]){
+            return (
+                <i className="fi-arrow-up"></i>
+            );
+        }
+        return (
+            <i className="fi-arrow-down"></i>
+        );
+    } 
+
 return (
 <div className="grid-x">
     <div className="cell auto">
@@ -95,30 +130,41 @@ return (
         </div>
         <div className="grid-x grid-margin-x">
             <div className="cell auto small-7 medium-8 large-9">
-                <span>List name:</span><input type="text" placeholder="army list name" onChange={(e)=>{setArmyListName(e.target.value)}}/>
+                <span>List name:</span><input type="text" placeholder="army list name" onChange={(e)=>{onArmyNameChange(e.target.value)}}/>
             </div>
             <div className="cell auto small-5 medium-4 large-3">
-                <button type="button" className="btn btn--green">SV</button>
-                <CSVLink filename={armyListName} 
-                        data={unitList} 
-                        enclosingCharacter={""}
-                        headers={unitCSVColumns} 
-                        separator={","} 
-                        className="btn btn--blue">.CSV</CSVLink>
-                <button type="button" className="btn btn--green" onClick={(e)=>{onClickPrint(e);}}>PRNT</button>
-                <a id="printUnits" style={{display:"none"}} href={"http://localhost:3000/print/units/" + armyListName}target="_blank" rel="noopener noreferrer" />
+                <div className="button-group">
+                    <button type="button" className="button secondary" disabled={!validForPrint()}><i className="fi-save"></i></button>{validForPrint() && 
+                    <CSVLink filename={armyListName} 
+                            data={unitList} 
+                            enclosingCharacter={""}
+                            headers={unitCSVColumns} 
+                            separator={","} 
+                            className="button warning"><i className="fi-download"></i></CSVLink>
+                    }
+                    <button type="button" className="button success" onClick={(e)=>{onClickPrint(e);}} disabled={!validForPrint()}><i className="fi-print"></i></button>
+                    <a id="printUnits" style={{display:"none"}} href={"http://localhost:3000/print/units/" + armyListName} target="_blank" rel="noopener noreferrer" ></a>
+                </div>
+
             </div>
         </div>
-        <div className="grid-x grid-margin-x">
-            <div className="cell auto small-4 medium-4 large-4">
-                <b><u>Total Unit points :</u>  </b>{costValues[0]}
+        <div className="grid-x">
+            <div className="cell auto">
+                <table>
+                        <tr>
+                            <th><b><u>Total Unit points</u></b></th>
+                            <th><b><u>Total TAG points</u></b></th>
+                            <th><b><u>Army total</u></b></th>
+                        </tr>
+
+                        <tr>
+                            <td>{costValues[0]}</td>
+                            <td>{costValues[1]}</td>
+                            <td>{costValues[2]}</td>
+                        </tr>
+                </table>
             </div>
-            <div className="cell auto small-4 medium-4 large-4">
-                <b><u>Total TAG points :</u>  </b>{costValues[1]}
-            </div>
-            <div className="cell auto small-4 medium-4 large-4">
-                <b><u>Complete Army total :</u>  </b>{costValues[2]}
-            </div>
+
         </div>
         <div className="grid-x">
             <div className="cell auto">
@@ -126,23 +172,23 @@ return (
                     <thead>
                         <tr>
                             <th></th>
-                            <th>Name<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnTxt("size") }}>^</button></th>
-                            <th>SZ<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnNum("size") }}>^</button></th>
-                            <th>MV<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnNum("move") }}>^</button></th>
-                            <th>EV<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnNum("evade") }}>^</button></th>
-                            <th>MEL<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnNum("dmgMelee") }}>^</button></th>
-                            <th>SH<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnNum("dmgRange") }}>^</button></th>
-                            <th>RNG<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnNum("range") }}>^</button></th>
-                            <th>ARM<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnNum("armor") }}>^</button></th>
-                            <th>TAG<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnTxt("size") }}>^</button></th>
-                            <th>PTS<button type="button" className="btn btn--s btn--white" onClick={() => { sortOnColumnNum("completeTotal") }}>^</button></th>
+                            <th>Name<button type="button" className="button secondary clear" onClick={() => { sortOnColumnTxt("unitName") }}>{setSortIcon("unitName")}</button></th>
+                            <th>SZ<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("size") }}>{setSortIcon("size")}</button></th>
+                            <th>MV<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("move") }}>{setSortIcon("move")}</button></th>
+                            <th>EV<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("evade") }}>{setSortIcon("evade")}</button></th>
+                            <th>MEL<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("dmgMelee") }}>{setSortIcon("dmgMelee")}</button></th>
+                            <th>SH<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("dmgRange") }}>{setSortIcon("dmgRange")}</button></th>
+                            <th>RNG<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("range") }}>{setSortIcon("range")}</button></th>
+                            <th>ARM<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("armor") }}>{setSortIcon("armor")}</button></th>
+                            <th>TAG<button type="button" className="button secondary clear" onClick={() => { sortOnColumnTxt("size") }}>{setSortIcon("size")}</button></th>
+                            <th>PTS<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("completeTotal") }}>{setSortIcon("completeTotal")}</button></th>
                         </tr>
                     </thead>
                     <tbody>
                         {tableUnitList.length > 0 &&
                             tableUnitList.map((row, idx) => (
                                 <tr key={idx} id={idx}>
-                                    <td><button type="button" className="btn btn--red" onClick={() => { onRemoveUnit(row.id) }}>-</button></td>
+                                    <td><button type="button" className="btn btn--red" onClick={() => { onRemoveUnit(row.id) }}><i className="fi-minus"></i></button></td>
                                     <td>{row.unitName}</td>
                                     <td>{row.size}</td>
                                     <td>{row.move}</td>
@@ -159,7 +205,7 @@ return (
                                         </ul>
                                         }
                                     </td>
-                                    <td>{row.completeTotal}</td>
+                                    <td>{roundUsing(Math.ceil, row.completeTotal, 0) }</td>
                                 </tr>
                             ))
                         }

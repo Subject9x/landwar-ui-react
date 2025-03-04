@@ -203,14 +203,20 @@ function UnitEditorTable({unitDataSet, worksheetName, unitRowDataChange, unitRow
                     disableDelete={disabledDelete}
                 />
             </div>
-            <div className="cell small-3 medium-4 large-3 large-offset-2">
+            <div className="cell shrink small-3 medium-4 large-3 large-offset-2">
                 <table id="tagRulesListPanel">
-                    <thead></thead>
+                    <thead>
+                        <tr>
+                            <th><b>Base</b></th>
+                            <th><b>TAGs</b></th>
+                            <th><b>Total</b></th>
+                        </tr>
+                    </thead>
                     <tbody>
                         <tr>
-                            <td><b>Base : </b>{totalBaseCost}</td>
-                            <td><b>TAGs : </b>{totalTagCost}</td>
-                            <td><b>Complete : </b>{totalCosts}</td>
+                            <td>{totalBaseCost}</td>
+                            <td>{totalTagCost}</td>
+                            <td>{totalCosts}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -249,13 +255,13 @@ function UnitEditorTable({unitDataSet, worksheetName, unitRowDataChange, unitRow
         )}
         {(selectUnitId === -1) && 
         <div className="grid-x grid-margin-x">
-            <div className="cell auto small-6 medium-5 large-3 large-offset-1">
+            <div className="cell auto small-3 medium-2 large-1 large-offset-1">
                 <table>
                     <tbody>
                         <tr>
-                            <td><button type="button" id="btnAddUnit" title="Add row to bottom" className="button sucesss" onClick={(e)=>{onAddNewUnit();}} disabled={disableAdd}>ADD UNIT<span className="ui-icon ui-icon-plusthick"></span></button></td>
-                            <td><button type="button" id="btnRemoveUnit" title="Delete LAST row" className="button alert" onClick={(e)=>{onRemoveLastRow();}} disabled={disableRemove}>DELETE LAST<span className="ui-icon ui-icon-minusthick"></span></button></td>
-                            <td><button type="button" id="btnCopyUnit" title="Copy LAST row" className="button secondary" onClick={(e)=>{onCopyUnits();}} disabled={disableCopy}>COPY LAST<span className="ui-icon ui-icon-copy"></span></button></td>
+                            <td><button type="button" id="btnAddUnit" title="Add row to bottom" className="button success" onClick={(e)=>{onAddNewUnit();}} disabled={disableAdd}><i className="fi-plus"></i></button></td>
+                            <td><button type="button" id="btnRemoveUnit" title="Delete LAST row" className="button alert" onClick={(e)=>{onRemoveLastRow();}} disabled={disableRemove}><i className="fi-x"></i></button></td>
+                            <td><button type="button" id="btnCopyUnit" title="Copy LAST row" className="button secondary" onClick={(e)=>{onCopyUnits();}} disabled={disableCopy}><i className="fi-clipboard"></i></button></td>
                         </tr>
                     </tbody>
                 </table>
