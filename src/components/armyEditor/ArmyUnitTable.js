@@ -130,7 +130,7 @@ return (
         </div>
         <div className="grid-x grid-margin-x">
             <div className="cell auto small-7 medium-8 large-9">
-                <span>List name:</span><input type="text" placeholder="army list name" onChange={(e)=>{onArmyNameChange(e.target.value)}}/>
+                <label>List name:</label><input type="text" placeholder="army list name" onChange={(e)=>{onArmyNameChange(e.target.value)}}/>
             </div>
             <div className="cell auto small-5 medium-4 large-3">
                 <div className="button-group">
@@ -143,7 +143,7 @@ return (
                             className="button warning"><i className="fi-download"></i></CSVLink>
                     }
                     <button type="button" className="button success" onClick={(e)=>{onClickPrint(e);}} disabled={!validForPrint()}><i className="fi-print"></i></button>
-                    <a id="printUnits" style={{display:"none"}} href={"http://localhost:3000/print/units/" + armyListName} target="_blank" rel="noopener noreferrer" ></a>
+                    <a id="printUnits" style={{display:"none"}} href={"http://landwargame.net/print/units/" + armyListName} target="_blank" rel="noopener noreferrer" ></a>
                 </div>
 
             </div>
@@ -168,7 +168,7 @@ return (
         </div>
         <div className="grid-x">
             <div className="cell auto">
-                <table id={"armyUnitTable" + idExt} className="hover">
+                <table id={"armyUnitTable" + idExt} className="hover scroll">
                     <thead>
                         <tr>
                             <th></th>

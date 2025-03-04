@@ -99,8 +99,6 @@ return (
             <div className="cell auto">
                 <h4>Available units</h4>
             </div>
-        </div>
-        <div className="grid-x">
             <div className="cell auto">
                 <button type="button" className="button primary" onClick={handleImportClick}><i className="fi-upload"></i></button>
                 <input style={{ display: 'none' }} ref={inputRef} type="file" onChange={handleFileChange} />
@@ -108,7 +106,7 @@ return (
         </div>
         <div className="grid-x">
             <div className="cell auto">
-                <table id="armyUnitTable" className="hover">
+                <table id="armyUnitTable" className="hover scroll">
                     <thead>
                         <tr>
                             <th>Name<button type="button" className="button secondary clear" onClick={() => { sortOnColumnTxt("unitName") }}>{setSortIcon("unitName")}</button></th>

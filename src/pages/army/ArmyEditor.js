@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import 'foundation-sites/dist/css/foundation.min.css';
 import 'foundation-sites/dist/css/foundation-icons.css';
+import '../../css/rulebook.css';
 import UserInfoBar from "../../components/UserInfoBar";
 import ArmyUnitPool from "../../components/armyEditor/ArmyUnitPool";
 import ArmyUnitTable from "../../components/armyEditor/ArmyUnitTable";
@@ -66,11 +67,15 @@ return(
 <div className="grid-container fluid">
     <UserInfoBar />
     <div className="grid-x grid-margin-x">
-        <div className="cell auto small-6 medium-6 large-5 large-offset-1 rulesPanel">
-            <ArmyUnitPool unitList={importedUnits} onUnitImport={onImportUnits} onAddUnitToList={addUnitToList}/>
-        </div>
-        <div className="cell auto small-6 medium-6 large-5">
-            <ArmyUnitTable unitList={unitList} onRemoveUnit={unitListRemoveEntry}/>
+        <div className="cell auto small-12 medium-12 large-10 large-offset-1">
+            <div className="grid-x grid-margin-x">
+                <div className="cell auto small-6 medium-6 large-5">
+                    <ArmyUnitPool unitList={importedUnits} onUnitImport={onImportUnits} onAddUnitToList={addUnitToList}/>
+                </div>
+                <div className="cell auto small-6 medium-6 large-5 rulePanel">
+                    <ArmyUnitTable unitList={unitList} onRemoveUnit={unitListRemoveEntry}/>
+                </div>
+            </div>
         </div>
     </div>
 </div>

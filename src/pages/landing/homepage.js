@@ -12,7 +12,7 @@ function HomePage() {
                 </div>
             </div>
             <div className="grid-x grid-margin-x">
-                <div className="cell auto small-6 medium-5 large-4 small-offset-3 medium-offset-4 large-offset-4">
+                <div className="cell auto small-12 medium-8 large-6 medium-offset-2 large-offset-3">
                     <p>
                     <i>LANDWAR</i> is a free and open-source, miniatures-agnostic set of rules for tabletop wargaming. This website provides everything players need to
                     play the game, generate custom units, organize force lists, refer to / read up on rules.</p>
@@ -26,12 +26,12 @@ function HomePage() {
                 </div>
             </div>
             <div className="grid-x grid-margin-x">
-                <div className="cell auto small-8 medium-6 large-4 small-offset-3 medium-offset-3 large-offset-4">
+                <div className="cell auto small-12 medium-8 large-6 medium-offset-2 large-offset-3">
                     <h5>You can also find the rules and documents for free on itch.io!</h5>
                 </div>
             </div>
             <div className="grid-x grid-margin-x">
-                <div className="cell auto small-6 medium-6 large-6 small-offset-5 medium-offset-5 large-offset-5">
+                <div className="cell auto small-12 medium-8 large-6 medium-offset-2 large-offset-3">
                     <iframe title="itch.io page" frameborder="0" src="https://itch.io/embed/1636645" width="552" height="167"><a href="https://subject9x.itch.io/landwar">LANDWAR by Subject9x</a></iframe>
                 </div>
             </div>

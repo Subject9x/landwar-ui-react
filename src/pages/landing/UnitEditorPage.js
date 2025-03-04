@@ -27,7 +27,7 @@ function UnitEditorPage({props}){
         <div className="grid-x grid-margin-x row-fill-s row-fill row-fill-l"></div>
         <div className="grid-x grid-margin-x">
             <div className="cell auto small-12 medium-6 large-4 medium-offset-1 large-offset-2" >
-                <a className="btn--green ui-icon-white" href="http://localhost:3000/editor/unit" target="_blank" rel="noopener noreferrer">
+                <a className="btn--green ui-icon-white" href="http://landwargame.net/editor/unit" target="_blank" rel="noopener noreferrer">
                     Create, edit, import, export Unit stats.
                 </a>
             </div>

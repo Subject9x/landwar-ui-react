@@ -23,17 +23,14 @@ function RulebooksPage({ props }) {
                 </div>
             </div>
             <div className="grid-x grid-margin-x">
-                <div className="cell auto small-6 medium-5 large-4 medium-offset-1 large-offset-2" >
+                <div className="cell auto small-12 medium-10 large-8 medium-offset-1 large-offset-2" >
                     <p>The minimum rules you will need to play <i>LANDWAR</i> is the <b>Core Rulebook, Quickplay Sheet, </b>and<b> Token Sheet.</b></p>
                     <p>Same goes for <b>Scenarios</b>, this are just author suggested ways to setup battles between players, and covers more advanced rules like <i>Objectives</i>, and more detailed win-conditions.</p>
-                </div>
-                <div className="cell auto small-6 medium-5 large-4">
-                    <p>These are extra funsies that add more layers to the core experience of <i>LANDWARD</i>, they are completely optional and highly situational.</p>
                 </div>
             </div>
 
             <div className="grid-x grid-margin-x">
-                <div className="cell auto small-5 medium-4 large-3 small-offset-2 medium-offset-3 large-offset-3">
+                <div className="cell auto small-12 medium-4 large-4 medium-offset-2 large-offset-2">
                     <table className="rulePanel">
                         <thead>
                             <tr><th><h4>Core Rules</h4></th></tr>
@@ -58,7 +55,7 @@ function RulebooksPage({ props }) {
                         </tbody>
                     </table>
                 </div>
-                <div className="cell auto small-5 medium-4 large-3 ">
+                <div className="cell auto small-12 medium-4 large-4">
                     <table className="rulePanel">
                         <thead>
                             <tr><th><h4>Addons and Modules</h4></th></tr>

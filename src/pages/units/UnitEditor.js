@@ -8,13 +8,17 @@ import UnitEditorTable from "../../components/unitEditor/unitSheet/UnitEditorTab
 import { unitObj, convertCSVUnitToRaw } from "../../components/data/unitInfo";
 import { calculateUnitBaseCost, calculateUnitTagCost } from "../../components/data/UnitCalculator";
 import { tagInfo } from "../../components/data/tagInfo";
-import { utilCheckMatchUnit } from "../../components/Utils";
+import { numRound2Decimal, utilCheckMatchUnit } from "../../components/Utils";
 
 function UnitEditor({props}){
 
     const [unitListName, setUnitListName] = useState("");
     const [unitDataIndex, setUnitDataIndex] = useState(0);
     const [unitData, setUnitData] = useState([]);
+  
+    const [totalTagCost, setTotalTagCost] = useState(0);
+    const [totalBaseCost, setTotalBaseCost] = useState(0);
+    const [totalCosts, setTotalCosts] = useState(0);
 
     function unitNewEntry(){
         let unit = structuredClone(unitObj);
@@ -149,15 +153,46 @@ function UnitEditor({props}){
         setUnitData(unitData);
     }
 
-    useEffect(()=>{},[unitData]);
+    useEffect(()=>{
+        let base = 0;
+        let tags = 0;
+        let total = 0;
+        unitData.forEach(unit => {
+            base += unit['points'];
+            tags += unit['tagTotal'];
+            total += unit['completeTotal'];
+        });
+        setTotalBaseCost(numRound2Decimal(base));
+        setTotalTagCost(numRound2Decimal(tags));
+        setTotalCosts(numRound2Decimal(total));
+
+    },[unitData]);
 
     return(
 <div className="grid-container fluid">
     {/*<UserInfoBar /> */}
 
     <div className="grid-x grid-margin-x">
-        <div className="cell small-10 medium-8 large-6 medium-offset-2 large-offset-1">
+        <div className="cell auto small-7 medium-7 large-6 large-offset-1">
             <span> Unit Set:</span><input type="text" placeholder="worksheet name" onChange={(e)=>{setUnitListName(e.target.value)}}/>
+        </div>
+        <div className="cell auto small-4 medium-4 large-3 ">
+            <table id="tagRulesListPanel">
+                <thead>
+                    <tr>
+                        <th><b>Base</b></th>
+                        <th><b>TAG</b></th>
+                        <th><b>Total</b></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{totalBaseCost}</td>
+                        <td>{totalTagCost}</td>
+                        <td>{totalCosts}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
