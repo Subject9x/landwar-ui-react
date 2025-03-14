@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { unitCSVColumns } from "../data/unitInfo";
+import React, { useEffect, useState, useRef } from "react";
+import { unitCSVColumns, exportUnitToCSVRow} from "../data/unitInfo";
 import { CSVLink } from "react-csv";
 import { roundUsing } from "../Utils";
 
@@ -23,6 +23,9 @@ export default function ArmyUnitTable({ idExt, unitList, onRemoveUnit }) {
         "tagTotal": false,
         "completeTotal": false
     });
+    const [downloadReady, setDownloadReady] = useState(false);
+    const [downloadUnits, setDownloadUnits] = useState([]);
+    const csvLinkRef = useRef();
 
     useEffect(() => {
         let basePoints = 0;
@@ -109,6 +112,7 @@ export default function ArmyUnitTable({ idExt, unitList, onRemoveUnit }) {
             setValidateList({...validateList, listNameNotEmpty : true});
         }
     }
+
     function setSortIcon(boolVal){
         if(columnSortStates[boolVal]){
             return (
@@ -119,6 +123,16 @@ export default function ArmyUnitTable({ idExt, unitList, onRemoveUnit }) {
             <i className="fi-arrow-down"></i>
         );
     } 
+
+    function onClickDownload(){
+        let exportUnits = [];
+        unitList.forEach((unit)=>{
+            exportUnits = [...exportUnits, exportUnitToCSVRow(unit)];
+        })
+
+        setDownloadUnits(exportUnits);
+        setTimeout(()=>{setDownloadReady(true); csvLinkRef.current.link.click();}, 200);
+    }
 
 return (
 <div className="grid-x">
@@ -134,14 +148,27 @@ return (
             </div>
             <div className="cell auto small-5 medium-4 large-3">
                 <div className="button-group">
-                    <button type="button" className="button secondary" disabled={!validForPrint()}><i className="fi-save"></i></button>{validForPrint() && 
-                    <CSVLink filename={armyListName} 
-                            data={unitList} 
-                            enclosingCharacter={""}
-                            headers={unitCSVColumns} 
-                            separator={","} 
-                            className="button warning"><i className="fi-download"></i></CSVLink>
-                    }
+                    <button type="button" className="button secondary" disabled={!validForPrint()}><i className="fi-save"></i></button>
+                    <button type="button" 
+                        className={validForPrint() && !downloadReady ? "button success" : "button warning"} 
+                        disabled={!validForPrint() && downloadReady}
+                        onClick={onClickDownload}><i className="fi-download"></i></button>
+                    <CSVLink 
+                        ref={csvLinkRef}
+                        style={{display : "none"}}
+                        filename={armyListName} 
+                        data={downloadUnits} 
+                        enclosingCharacter={""}
+                        headers={unitCSVColumns} 
+                        separator={","} 
+                        
+                        onClick={(e)=>{                                
+                            setDownloadUnits([]);
+                            setDownloadReady(false);
+                            }}
+                        >
+                            <i className="fi-download"></i>
+                    </CSVLink>
                     <button type="button" className="button success" onClick={(e)=>{onClickPrint(e);}} disabled={!validForPrint()}><i className="fi-print"></i></button>
                     <a id="printUnits" style={{display:"none"}} href={"http://landwargame.net/print/units/" + armyListName} target="_blank" rel="noopener noreferrer" ></a>
                 </div>
@@ -151,6 +178,7 @@ return (
         <div className="grid-x">
             <div className="cell auto">
                 <table>
+                    <tbody>
                         <tr>
                             <th><b><u>Total Unit points</u></b></th>
                             <th><b><u>Total TAG points</u></b></th>
@@ -162,6 +190,7 @@ return (
                             <td>{costValues[1]}</td>
                             <td>{costValues[2]}</td>
                         </tr>
+                    </tbody>
                 </table>
             </div>
 

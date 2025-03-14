@@ -322,6 +322,25 @@
     white-space: nowrap;
 }
 
+
+.boxPanel{
+    background-color: rgb(226, 226, 226);
+    border-style: solid;
+    border-width: 4px;
+    border-color: rgb(107, 107, 107);
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.boxPanel>p{
+    margin-left: 4px;
+}
+
+.boxPanel>tbody>tr>td{
+    text-align: center;
+    font-size: large;
+}
+
 /*#abTagView{
     background-color: lightgrey;
     opacity:  100%;
@@ -385,27 +404,3 @@
 }*/
 
 
-
-
-/*
-.rdt_Table
-
-.rdt_TableRow 
-
-.rdt_TableCol 
-
-.rdt_TableCol_Sortable
-
-.rdt_TableCell 
-
-.rdt_TableHeader 
-.rdt_TableFooter 
-
-.rdt_TableHead 
-
-.rdt_TableHeadRow 
-
-.rdt_TableBody 
-
-.rdt_ExpanderRow
-*/

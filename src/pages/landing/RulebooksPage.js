@@ -31,7 +31,7 @@ function RulebooksPage({ props }) {
 
             <div className="grid-x grid-margin-x">
                 <div className="cell auto small-12 medium-4 large-4 medium-offset-2 large-offset-2">
-                    <table className="rulePanel">
+                    <table className="boxPanel">
                         <thead>
                             <tr><th><h4>Core Rules</h4></th></tr>
                         </thead>
@@ -56,7 +56,7 @@ function RulebooksPage({ props }) {
                     </table>
                 </div>
                 <div className="cell auto small-12 medium-4 large-4">
-                    <table className="rulePanel">
+                    <table className="boxPanel">
                         <thead>
                             <tr><th><h4>Addons and Modules</h4></th></tr>
                         </thead>

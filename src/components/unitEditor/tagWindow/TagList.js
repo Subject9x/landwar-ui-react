@@ -43,7 +43,7 @@ export default function TagList({tagList, unitData, tagExclusions, invalidTags, 
 
 
     return (
-<div id="tagRulesDescPanel" >
+<div id="tagRulesDescPanel" style={{maxHeight: "500px", overflowY : "scroll"}}>
     <div className="grid-y shrink">
         <div className="cell" >
             <table id="tagList">
@@ -56,7 +56,7 @@ export default function TagList({tagList, unitData, tagExclusions, invalidTags, 
                 </thead>
                 <tbody>
                     {tagList.map((tag,idx)=>(
-                        <tr key={idx} id={idx} className={tagRowDisplay(tag.abrv)} onClick={()=>{handleRowClick(tag)}}>
+                        <tr key={idx} id={idx}  className={ tagExclusions.includes(tag) || invalidTags.includes(tag) ? "tagRuleLineDisable" : unitData['tags'].includes(tag) ? "tagRuleLineActive" : "" }onClick={()=>{handleRowClick(tag)}}>
                             <td><Checkbox key={idx} id={tag.abrv} type={"checkbox"} handleOnChange={handleTagCheck} isChecked={selectedTags.includes(tag.abrv)} disable={(tagExclusions.includes(tag.abrv) || invalidTags.includes(tag.abrv))? true : false}/></td>
                             <td>{tag.title}</td>
                             <td>{displayCost(tag)}</td>

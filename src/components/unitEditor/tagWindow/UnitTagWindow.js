@@ -57,26 +57,22 @@ export default function UnitTagWindow({rowId, unitData, handleWindowClose, handl
 
     return (
         <div id="tagWindow" className="grid-x reveal-modal" role="dialog">
-            <div className="cell shrink">
+            <div className="cell shrink" >
                 <TagList tagList={tagList} unitData={unitData} tagExclusions={excludedTags} invalidTags={invalidTags} handleCheckedTag={handleSelectTag} handleRowClick={onTagRowClick}/>
             </div>
 
             <div className="cell auto">
-                <div className="grid-x grid-margin-x">
-                    <div className="cell">
+                <div className="grid-x ">
+                    <div className="cell auto small-4 medium-2 large-2">
+                        {unitData.name}
+                    </div>
+                    <div className="cell auto small-8 medium-10 large-10">
                         <div className="grid-x">
-                            <div className="cell small-3 medium-3 large-3">
-                                Base: <b>{unitData['points']}</b>
-                            </div>
-                            <div className="cell small-3 medium-3 large-3">
-                                Tag total:<i>{unitData['tagTotal']}</i>
-                            </div>
-                            <div className="cell small-3 medium-3 large-3">
-                                Total Cost:<b>{unitData['completeTotal']}</b>
-                            </div>
-                            {/*<div className="cell shrink"><button className="button success" onClick={(e)=>{handleWindowSave()}}>Save</button></div>*/}
-                            <div className="cell small-3 medium-3 large-3">
-                                <button name={rowId} className="button alert" onClick={(e)=>{handleWindowClose()}}><i className="fi-x"></i></button>
+                            <div className="cell auto small-2 medium-2 large-3">Base: <b>{unitData['points']}</b></div>
+                            <div className="cell auto small-2 medium-2 large-3">Tag total:<i>{unitData['tagTotal']}</i></div>
+                            <div className="cell auto small-2 medium-2 large-3">Total Cost:<b>{unitData['completeTotal']}</b></div>
+                            <div className="cell auto small-2 medium-2 large-2 large-offset-1">
+                                <button name={rowId} className="button success" onClick={(e)=>{handleWindowClose()}}><i className="fi-check"></i></button>
                             </div>
                         </div>
                     </div>
