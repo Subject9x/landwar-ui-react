@@ -108,11 +108,12 @@
     left: 0;*/
 }
 
-@media print{
-    #tagRulesPanel{
-        page-break-inside: avoid;
-    }
+#tagRulesPanel{
+    page-break-inside: avoid;    
+    font-size: smaller;
 }
+
+
 
 #tagRulesListPanel {
     background-color: white;
@@ -172,6 +173,19 @@
     border-style: solid;
 }
 
+@media print{
+    
+    #tagRulesPanel{
+        page-break-inside: avoid;    
+        font-size: small;
+    }
+    #tagRulesDescPanel{
+        font-size: small;
+    }
+    #tagWindow_descTitle{
+        font-size: small;
+    }
+}
 
 /*
     Page: TagLib

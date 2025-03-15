@@ -25,8 +25,8 @@ export default function UnitPrintedPage({props}){
             copyShadowRoots : true,
             onAfterPrint : ()=>{
                 
-                localStorage.removeItem(listName);  //important cleanup
-                window.close();
+                //localStorage.removeItem(listName);  //important cleanup
+                //window.close();
             }
         }
     );
@@ -112,9 +112,13 @@ return(
                 </table>
             </div>
         </div>
-        {tagList.map(tag => (
-            <TagInfoCard tagItem={tag} showCostEquation={false} showRequirements={false}/>
-        ))}
+        <div className="grid-x grid-margin-x">
+            <div className="cell auto small-12 medium-10 large-10  medium-offset-1 large-offset-1">
+                {tagList.map(tag => (
+                    <TagInfoCard tagItem={tag} showCostEquation={false} showRequirements={false}/>
+                ))}
+            </div>
+        </div>
     </div>
 </div>
 );

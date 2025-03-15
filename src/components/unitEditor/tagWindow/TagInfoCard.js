@@ -8,12 +8,12 @@ export default function TagInfoCard({tagItem, showRequirements, showCostEquation
         <div id="tagRulesDescPanel" className="cell auto">
             <div className="grid-x grid-margin-x">
                 <div className="cell auto small-12 medium-10 large-8 medium-offset-1 large-offset-1" >
-                    <div id="tagWindow_descTitle"><h3>{tagItem.tag.title}</h3></div>
+                    <div id="tagWindow_descTitle"><h5>{tagItem.tag.title}</h5></div>
                 </div>
             </div>
             <div className="grid-x grid-margin-x">
                 <div className="cell auto small-10 medium-10 large-10 small-offset-1 medium-offset-1 large-offset-1">
-                    <u>Phase and Description</u><div id="tagWindow_descText" dangerouslySetInnerHTML={{ __html: tagItem.tag.desc }}></div>
+                    <div id="tagWindow_descText" dangerouslySetInnerHTML={{ __html: tagItem.tag.desc }}></div>
                 </div>
             </div>
             {showRequirements && 
