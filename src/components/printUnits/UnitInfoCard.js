@@ -1,42 +1,73 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 import '../../css/unitcard.css';
 
+/*
+{unitInfo['name']}
+{unitInfo['subName']}
+{unitInfo['size']}
+{unitInfo['move']}
+{unitInfo['evade']}
+{unitInfo['armor']}
+{unitInfo['dmgMelee']}
+{unitInfo['dmgRange']}
+{unitInfo['range']}"
+{unitInfo['tags'].map((tag, id) => (
+                        <li key={unitInfo.id + "_" + tag + id}>{tag}</li>
+                    ))}
+*/
 export default function UnitInfoCard({ unitInfo }) {
 
-    return (
-        <div className="uic-main-sm" >
-            <div className="uic-header-row-sm">
-                <div className="uic-info-panel-sm">
-                    <div className="uic-name-sm" id="ucName"><label id="ucName">{unitInfo['name']}</label></div>
-                    <div className="uic-stat-row-sm">
-                        <div className="uic-stat-row-label-sm"><label id="ucSize">{unitInfo['size']}</label></div>
-                        <div className="uic-stat-row-fill-sm"></div>
-                        <div className="uic-stat-row-label-sm"><label id="ucMove">{unitInfo['move']}</label></div>
-                        <div className="uic-stat-row-fill-sm"></div>
-                        <div className="uic-stat-row-label-sm"><label id="ucEvade">{unitInfo['evade']}</label></div>
-                        <div className="uic-stat-row-fill-sm"></div>
-                        <div className="uic-stat-row-label-sm"><label id="ucArmor">{unitInfo['armor']}</label></div>
-                    </div>
-                </div>
-                <div className="uic-points-sm" ><label id="ucPoints" >{Math.round(unitInfo['completeTotal'] + Number.EPSILON)}</label></div>
+
+    function getTagList(){
+        let str = "";
+        unitInfo['tags'].map((tag, id) => {
+            return str = str + tag + ",  ";
+        });
+        return str;
+    }
+
+return (
+    <div className="main" >
+        <div className="header-row">
+            <div className="title">
+                <div className="name">{unitInfo['name']}</div>
+                <div className="subName">{unitInfo['subName']}</div>
             </div>
-            <div className="uic-atk-tag-row-sm">
-                <div className="uic-attack-panel-sm">
-                    <div className="uic-stat-row-label-sm"><label id="ucMel">{unitInfo['dmgMelee']}</label></div>
-                    <div className="uic-atk-row-fill-sm-mid"></div>
-                    <div className="uic-stat-row-label-sm"><label id="ucRange">{unitInfo['dmgRange']}</label></div>
-                    <div className="uic-stat-row-fill-sm"></div>
-                    <div className="uic-stat-row-label-sm"><label id="ucDist">{unitInfo['range']}"</label></div>
+            <div className="points">{Math.round(unitInfo['completeTotal'] + Number.EPSILON)}</div>
+        </div>
+        <div className="row-top">
+            <div className="stat-column-core">
+                <div className="stat-core-val">{unitInfo['size']}</div>
+                <div className="stat-core-val">{unitInfo['move']}</div>
+            </div>
+            <div className="stat-attacks">
+                <div className="ranges-row">
+                    <div>0-1"</div>
+                    <div>2-{unitInfo['range']}"</div>
+                    <div>{unitInfo['range'] + 1}+"</div>
                 </div>
-                <div className="uic-tag-panel-sm">
-                    <ul id="ucKeywords" className="uic-keyword-word-sm">
-                        {unitInfo['tags'].map((tag, id) => (
-                            <li key={unitInfo.id + "_" + tag + id}>{tag}</li>
-                        ))}
-                    </ul>
+                <div className="stat-dmg-row">
+                    <div >{unitInfo['dmgMelee']}</div>
+                    <div >{unitInfo['dmgRange']}</div>
+                    <div >{unitInfo['dmgRange']}</div>
                 </div>
             </div>
         </div>
-    );
+        <div className="row-bottom">
+            <div className="row-bottom-left">
+                <div className="stat-column-core-bottom">
+                    <div className="stat-core-val">{unitInfo['evade']}</div>
+                    <div className="stat-core-val">{unitInfo['armor']}</div>
+                </div>
+                <div className="tag-panel">
+                    {getTagList()}
+                </div>
+            </div>
+            <div className="row-bottom-right" >
+                <img className="unit-img" src={unitInfo.imgUrl} alt="..." />
+            </div>
+        </div>
+    </div>
+);
 }

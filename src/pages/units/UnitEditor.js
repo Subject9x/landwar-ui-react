@@ -85,6 +85,12 @@ function UnitEditor({props}){
             if(!duplicate){
                 unit["id"] = unitIndex;
                 unit["name"] = unit.unitName;
+                if(Object.keys(unit).includes("subName")){
+                    unit["subName"] = unit.subName;
+                }
+                else{
+                    unit["subName"] = "";
+                }
                 unit["tags"] = unit.tags.split(" ");
                 unit["tags"].pop();
 
@@ -107,7 +113,7 @@ function UnitEditor({props}){
         });
 
         //update costs
-        if(columnName === "name"){
+        if(columnName === "name" || columnName === "subName"){
             tmpUnit[columnName] = val;
         }
         else{

@@ -34,6 +34,10 @@ export default function ArmyEditor({props}){
                 unit = convertCSVUnitToRaw(unit);
                 unit["id"] = unitCount;
                 unit["name"] = unit.unitName;
+                if(!Object.keys(unit).includes("subName")){
+                    unit["subName"] = "";
+                }
+                unit["imgUrl"] = "";
                 unit["tags"] = unit.tags.split(" ");
                 unit["tags"].pop();
                 unitCount += 1;
@@ -48,6 +52,7 @@ export default function ArmyEditor({props}){
         let unitListIdxUp = unitListIdx;
         let unit = importedUnits[unitId];
         let unitEntry = structuredClone(unit);
+        unitEntry["imgUrl"] = unit.imgUrl;
 
         unitEntry["id"] = unitListIdxUp
         unitListIdxUp += 1;
@@ -63,9 +68,20 @@ export default function ArmyEditor({props}){
         setUnitList([...updateArr]);
     }
 
+    function addImageUnitPoolentry(unitId, url){
+        const arrIdx = importedUnits.findIndex(unit => {
+            return unit.id === unitId;
+        });
+        let tmpUnit = importedUnits[arrIdx];
+        tmpUnit["imgUrl"] = url;
+        importedUnits[arrIdx] = tmpUnit
+        setImportedUnits([...importedUnits]);
+    }
+
 return(
 <div className="grid-container fluid">
     <UserInfoBar />
+   {/*
     <div className="grid-x grid-margin-x">
         <div className="cell auto small-12 medium-12 large-10 large-offset-1">
             <div className="grid-x grid-margin-x">
@@ -78,6 +94,17 @@ return(
             </div>
         </div>
     </div>
+    */}
+    <div className="grid-x grid-margin-x">
+        <div className="cell auto small-12 medium-10 large-8 medium-offset-1 large-offset-2" >
+            <ArmyUnitPool unitList={importedUnits} onUnitImport={onImportUnits} onAddUnitToList={addUnitToList} onAddUnitImage={addImageUnitPoolentry}/>
+        </div>
+        <div className="cell auto small-12 medium-10 large-8 medium-offset-1 large-offset-2" >
+            <ArmyUnitTable unitList={unitList} onRemoveUnit={unitListRemoveEntry}/>
+
+        </div>
+    </div>
+    
 </div>
 );
 };

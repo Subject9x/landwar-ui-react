@@ -184,7 +184,6 @@ return (
                             <th><b><u>Total TAG points</u></b></th>
                             <th><b><u>Army total</u></b></th>
                         </tr>
-
                         <tr>
                             <td>{costValues[0]}</td>
                             <td>{costValues[1]}</td>
@@ -196,8 +195,8 @@ return (
 
         </div>
         <div className="grid-x">
-            <div className="cell auto">
-                <table id={"armyUnitTable" + idExt} className="hover scroll">
+            <div className="cell auto small-12 medium-12 large-12">
+                <table id={"armyUnitTable" + idExt} className="hover scroll" style={{overflowY :"scroll", maxHeight : "1000px"}}>
                     <thead>
                         <tr>
                             <th></th>
@@ -218,7 +217,7 @@ return (
                             tableUnitList.map((row, idx) => (
                                 <tr key={idx} id={idx}>
                                     <td><button type="button" className="btn btn--red" onClick={() => { onRemoveUnit(row.id) }}><i className="fi-minus"></i></button></td>
-                                    <td>{row.unitName}</td>
+                                    <td>{row.unitName} {row.subName}</td>
                                     <td>{row.size}</td>
                                     <td>{row.move}</td>
                                     <td>{row.evade}</td>

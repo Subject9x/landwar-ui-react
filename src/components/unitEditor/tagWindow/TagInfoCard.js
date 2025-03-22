@@ -7,8 +7,8 @@ export default function TagInfoCard({tagItem, showRequirements, showCostEquation
     <div id="tagRulesPanel" className="grid-x grid-margin-x">
         <div id="tagRulesDescPanel" className="cell auto">
             <div className="grid-x grid-margin-x">
-                <div className="cell auto small-12 medium-10 large-8 medium-offset-1 large-offset-1" >
-                    <div id="tagWindow_descTitle"><h5>{tagItem.tag.title}</h5></div>
+                <div className="cell auto small-11 medium-11 large-11 small-offset-2 medium-offset-1 large-offset-1" >
+                    <div id="tagWindow_descTitle"><b>{tagItem.tag.abrv}</b> - {tagItem.tag.title} </div>
                 </div>
             </div>
             <div className="grid-x grid-margin-x">

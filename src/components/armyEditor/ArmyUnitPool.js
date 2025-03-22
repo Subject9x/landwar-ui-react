@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import { initializeSortedTagList } from "../../components/data/tagInfo";
 import { parseCSVFileInput, roundUsing} from "../Utils";
 
-export default function ArmyUnitPool({unitList, onUnitImport, onAddUnitToList }) {
+export default function ArmyUnitPool({unitList, onUnitImport, onAddUnitToList, onAddUnitImage}) {
 
     const inputRef = useRef(null);
     const [tagList] = useState([...initializeSortedTagList()]);
@@ -90,7 +90,11 @@ export default function ArmyUnitPool({unitList, onUnitImport, onAddUnitToList })
         return (
             <i className="fi-arrow-down"></i>
         );
-    }    
+    }
+
+    function addUnitImage(idx, imgUrl){
+        onAddUnitImage( idx, imgUrl);
+    }
 
 return (
 <div className="grid-x">
@@ -105,10 +109,11 @@ return (
             </div>
         </div>
         <div className="grid-x">
-            <div className="cell auto">
-                <table id="armyUnitTable" className="hover scroll">
+            <div className="cell auto small-12 medium-12 large-12">
+                <table id="armyUnitTable" className="hover scroll" style={{overflowY :"scroll", maxHeight : "500px"}}>
                     <thead>
                         <tr>
+                            <th>Image URL</th>
                             <th>Name<button type="button" className="button secondary clear" onClick={() => { sortOnColumnTxt("unitName") }}>{setSortIcon("unitName")}</button></th>
                             <th>SZ<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("size") }}>{setSortIcon("size")}</button></th>
                             <th>MV<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("move") }}>{setSortIcon("move")}</button></th>
@@ -125,7 +130,12 @@ return (
                     <tbody>
                         {tableUnitList.map((row, idx) => (
                                 <tr key={idx} id={idx}>
-                                    <td>{row.unitName}</td>
+                                    <td>
+                                        <input type="text" onChange={(e) => {addUnitImage(idx, e.target.value)}} value={row.imgUrl} />
+                                    </td>
+                                    <td>
+                                        {row.unitName} / <i>{row.subName}</i>
+                                    </td>
                                     <td>{row.size}</td>
                                     <td>{row.move}</td>
                                     <td>{row.evade}</td>
@@ -142,7 +152,7 @@ return (
                                         }
                                     </td>
                                     <td>{ roundUsing(Math.ceil, row.completeTotal, 0)}</td>
-                                    <td><button type="button" className="btn btn--green" onClick={() => { onAddUnitToList(row.id) }}><i className="fi-arrow-right"></i></button></td>
+                                    <td><button type="button" className="btn btn--green" onClick={() => { onAddUnitToList(row.id) }}><i className="fi-plus"></i></button></td>
                                 </tr>
                             ))
                         }

@@ -3,7 +3,8 @@ export const unitObj = {'name':"", 'size':0, 'move':0, 'evade':0,
                         'armor':0, 'tags':"", 'points':0, 'tagTotal':0, 'completeTotal':0};
 
 export const unitCSVColumns = [
-    {label : 'unitName', key : 'name'}, 
+    {label : 'unitName', key : 'name'},
+    {label : 'subName', key : 'subName'},
     {label : 'size', key : 'size'}, 
     {label : 'move', key : 'move'}, 
     {label : 'evade', key : 'evade'},
@@ -22,6 +23,7 @@ export function exportUnitToCSVRow(unitData){
     }   
     let exportUnit = structuredClone(unitObj);
     exportUnit['name'] = unitData['name'];
+    exportUnit['subName'] = unitData['subName'];
     exportUnit['size'] = unitData['size'];
     exportUnit['move'] = unitData['move'];
     exportUnit['evade'] = unitData['evade'];

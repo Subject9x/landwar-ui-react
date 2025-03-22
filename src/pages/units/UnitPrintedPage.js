@@ -25,8 +25,8 @@ export default function UnitPrintedPage({props}){
             copyShadowRoots : true,
             onAfterPrint : ()=>{
                 
-                //localStorage.removeItem(listName);  //important cleanup
-                //window.close();
+                localStorage.removeItem(listName);  //important cleanup
+                window.close();
             }
         }
     );
@@ -80,7 +80,7 @@ export default function UnitPrintedPage({props}){
     },[setUnitData, listName]);
 
 return(
-<div ref={contentRef} className="uic-main">
+<div ref={contentRef} className="uic-page">
     <div className="grid-container">
         <div className="grid-x" style={{pageBreakAfter:"always"}}>
             <div className="cell auto" >

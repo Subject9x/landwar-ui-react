@@ -1,7 +1,6 @@
 
-import TagList from "../unitEditor/tagWindow/TagList";
-import { calcArmor, calcDMG_M, calcDMG_R, calcEvade, calcMove, calcRange, calculateUnitBaseCost } from "./UnitCalculator";
-
+import { calcArmor, calcDMG_M, calcDMG_R, calcEvade, calcMove, calcRange } from "./UnitCalculator";
+//, calculateUnitBaseCost
 export const tagInfo = {
     id : "core",
     data :[ 
