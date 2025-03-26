@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef} from "react";
-import UnitInfoCard from "../../components/printUnits/UnitInfoCard";
 import { useParams } from "react-router";
+import { useReactToPrint } from "react-to-print";
 import "../../css/unitcard.css";
 import "../../css/styles.css";
-import { useReactToPrint } from "react-to-print";
+
+import UnitInfoCard from "../../components/printUnits/UnitInfoCard";
 import { tags_getByName } from "../../components/data/tagInfo";
 import TagInfoCard from "../../components/unitEditor/tagWindow/TagInfoCard";
 import { roundUsing } from "../../components/Utils";
@@ -24,7 +25,6 @@ export default function UnitPrintedPage({props}){
             contentRef: contentRef,
             copyShadowRoots : true,
             onAfterPrint : ()=>{
-                
                 localStorage.removeItem(listName);  //important cleanup
                 window.close();
             }

@@ -9,6 +9,7 @@ import ArmyListPage from "../pages/landing/ArmyListPage";
 import CardGenPage from "../pages/landing/CardGenPage";
 import ArmyEditor from "../pages/army/ArmyEditor";
 import UnitPrintedPage from "../pages/units/UnitPrintedPage";
+import PrintBlankCards from "../pages/units/PrintBlankCards";
 
 export default function SiteRouter({props}){
 
@@ -26,6 +27,7 @@ export default function SiteRouter({props}){
                 <Route exact path="/info/cardgen" element={<CardGenPage />}/>
 
                 <Route exact path="/print/units/:listName" element={<UnitPrintedPage />}/>
+                <Route exact path="print/cards/:total" element={<PrintBlankCards />}/>
             </Routes>
         </BrowserRouter>
     );

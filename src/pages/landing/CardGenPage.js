@@ -7,6 +7,15 @@ export default function CardGenPage({props}){
 
     const [cardCopies, setCardCopies] = useState(0);
 
+    function updateAmount(val){
+        setCardCopies(val);
+    }
+
+    function printCards(e){
+        e.preventDefault();
+        let printLink = document.getElementById("printUnits");
+        printLink.click();
+    }
 
 return(
 <div className="grid-container fluid">
@@ -28,11 +37,12 @@ return(
             <p>Select the amount of <b>blank</b> cards you'd like to print.</p>
         </div>
         <div className="cell auto small-1 medium-1 large-1">
-            <input id="uicBlankCopies" type="number" title="copies of blank template to print"/>
+            <input id="uicBlankCopies" type="number" title="copies of blank template to print" value={cardCopies} onChange={(e)=>{updateAmount(e.target.value)}}/>
         </div>
         <div className="cell auto small-2 medium-1 large-1">
-            <button type="button" onclick="ucg_print_blanks_pdf(event);" className="button success"><i className="fi-print"></i></button>
+            <button type="button" className="button success" onClick={(e)=>{printCards(e)}}><i className="fi-print"></i></button>
         </div>
+        <a id="printUnits" style={{display:"none"}} href={"http://landwargame.net/print/cards/" + cardCopies} target="_blank" rel="noopener noreferrer" ></a>
     </div>
 </div>
 );
