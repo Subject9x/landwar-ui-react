@@ -1,0 +1,11 @@
+﻿unitName,size,move,evade,dmgMelee,dmgRange,range,armor,points,tags,tagTotal,completeTotal
+Scout AFV,1,12,2,0,1,8,2,34.85,RCN ,6,40.85
+Light Tank,2,8,1,0,2,12,4,45.36,CHRGR ,7,52.36
+Medium Tank,3,6,0,0,3,16,6,56.54,ADVGS ,11,67.54
+Heavy Tank,4,4,0,0,4,18,10,76.98,STBLFR ,5,81.98
+Light GEV,1,16,3,0,1,10,2,43.76,ROLLSTP ,-1.27,42.49
+Medium GEV,2,12,2,0,2,14,4,55.94,AFTBRN ,8,63.94
+Light Mech,3,14,2,3,2,8,4,57.36,INERTIAL ,14.42,71.78
+Medium Mech,4,12,1,4,3,12,8,76.22,FORT ,9.5,85.72
+Heavy Mech,5,8,1,5,4,22,11,106.49,AP-RNG ,12.8,119.29
+Assault Mech,6,5,0,6,5,16,14,96.51,THNDR ,15.07,111.58

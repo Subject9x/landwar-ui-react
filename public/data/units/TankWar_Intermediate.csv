@@ -1,0 +1,9 @@
+﻿unitName,subName,size,move,evade,dmgMelee,dmgRange,range,armor,points,tags,tagTotal,completeTotal
+AFV,,1,12,3,0,1,8,2,35.51,WKARM RCN ,5.53,41.04
+Light Tank,,2,14,2,0,3,10,4,57.44,WKARM BTRY ,1.39,58.83
+Medium Tank,,4,10,0,0,4,16,7,68.71,OVRHT ,11.33,80.04
+Heavy Tank,,6,6,0,0,7,24,10,108.9,TRFFY HVYARM ,35.99,144.89
+Tank Destroyer,,3,8,1,0,6,20,6,87.04,ARC-LFA AP-RNG STBLFR ,29.73,116.77
+SPG,,4,4,0,0,3,28,5,84.53,ARC-LFA IF ,19.73,104.26
+Fighter,aircraft,2,20,3,0,2,8,2,54.35,CHRGR ARC-NAR FLY ,2,56.35
+Fighter-Bomber,aircraft,2,16,2,0,3,12,3,59.85,ARC-NAR FLY ,-10,49.85

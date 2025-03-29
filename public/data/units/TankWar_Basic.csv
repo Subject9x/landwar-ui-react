@@ -1,0 +1,9 @@
+﻿unitName,subName,size,move,evade,dmgMelee,dmgRange,range,armor,points,tags,tagTotal,completeTotal
+AFV,,1,12,3,0,1,8,2,35.51,,0,35.51
+Light Tank,,2,14,2,0,3,10,4,57.44,,0,57.44
+Medium Tank,,4,10,0,0,4,16,7,68.71,,0,68.71
+Heavy Tank,,6,6,0,0,7,24,10,108.9,,0,108.9
+Tank Destroyer,,3,8,1,0,6,20,6,87.04,,0,87.04
+SPG,,4,4,0,0,3,28,5,84.53,,0,84.53
+Fighter,aircraft,2,20,3,0,2,8,2,54.35,,0,54.35
+Fighter-Bomber,aircraft,2,16,2,0,3,12,3,59.85,,0,59.85

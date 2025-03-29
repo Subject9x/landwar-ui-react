@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import { useParams } from "react-router";
 import 'foundation-sites/dist/css/foundation.min.css';
 import 'foundation-sites/dist/css/foundation-icons.css';
 
@@ -8,10 +9,12 @@ import UnitEditorTable from "../../components/unitEditor/unitSheet/UnitEditorTab
 import { unitObj, convertCSVUnitToRaw } from "../../components/data/unitInfo";
 import { calculateUnitBaseCost, calculateUnitTagCost } from "../../components/data/UnitCalculator";
 import { tagInfo } from "../../components/data/tagInfo";
-import { numRound2Decimal, utilCheckMatchUnit } from "../../components/Utils";
+import { numRound2Decimal, utilCheckMatchUnit, parseCSVFileInput } from "../../components/Utils";
 
 function UnitEditor({props}){
 
+    const [pageLoaded, setPageLoaded] = useState(0);
+    const {userId, userSet} = useParams();
     const [unitListName, setUnitListName] = useState("");
     const [unitDataIndex, setUnitDataIndex] = useState(0);
     const [unitData, setUnitData] = useState([]);
@@ -85,10 +88,7 @@ function UnitEditor({props}){
             if(!duplicate){
                 unit["id"] = unitIndex;
                 unit["name"] = unit.unitName;
-                if(Object.keys(unit).includes("subName")){
-                    unit["subName"] = unit.subName;
-                }
-                else{
+                if(!Object.keys(unit).includes("subName")){
                     unit["subName"] = "";
                 }
                 unit["tags"] = unit.tags.split(" ");
@@ -160,6 +160,18 @@ function UnitEditor({props}){
     }
 
     useEffect(()=>{
+        if(pageLoaded === 0){
+            if(userId === "0" && (userSet !== null && userSet !== undefined && userSet !== "")){
+                let setData = localStorage.getItem(userSet);
+                if(setData !== undefined && setData !== null){
+                    let parseData = parseCSVFileInput(setData);
+                    onImportCSV(parseData);
+                    localStorage.removeItem(userSet);
+                }
+            }
+            setPageLoaded(1);
+        }
+
         let base = 0;
         let tags = 0;
         let total = 0;

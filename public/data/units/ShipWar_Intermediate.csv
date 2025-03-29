@@ -1,0 +1,13 @@
+﻿unitName,size,move,evade,dmgMelee,dmgRange,range,armor,points,tags,tagTotal,completeTotal
+Frigate,2,15,2,0,1,8,3,44.35,CRW1 ,15,59.35
+Destroyer,3,14,1,0,2,12,5,58.7,FORT ,12,70.7
+Cruiser CL,5,13,1,0,4,16,10,91.9,HULLGN1 ,3.2,95.1
+Cruiser CA,5,9,0,0,4,16,12,84.75,HVYARM ,41.31,126.06
+Cruiser CC,5,10,0,0,4,16,10,79.07,SHRPS ,7.5,86.57
+Gunship,5,6,0,0,6,16,8,77.39,ADVGS ,12.5,89.89
+Battlecruiser BC,6,8,0,0,7,22,14,118.51,SPRCHRGR ,2.4,120.91
+Battleship BL,7,6,0,0,8,24,18,140.45,OVRHT ,20,160.45
+Battleship BB,8,5,0,0,9,24,24,164.33,AP-RNG ,28.8,193.13
+Dreadnought,10,4,0,0,10,28,26,188.17,HVYARM ,70.47,258.64
+Bomber,1,12,2,0,2,2,4,42.28,FLY BLAST ,7.17,49.45
+Airship,1,8,0,0,2,16,2,40.01,FLY ,0.5,40.51

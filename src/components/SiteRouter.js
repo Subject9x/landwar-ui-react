@@ -17,8 +17,8 @@ export default function SiteRouter({props}){
         <BrowserRouter>
             <Routes>
                 <Route exact path="/" element={<HomePage />}/>
-                <Route exact path="/editor/unit" element={<UnitEditor />}/>
-                <Route extact path="/editor/army" element={<ArmyEditor />}/>
+                <Route exact path="/editor/unit/:userId?/:userSet?" element={<UnitEditor />}/>
+                <Route exact path="/editor/army/:userId?/:userSet?" element={<ArmyEditor />}/>
 
                 <Route exact path="/info/rules" element={<RulebooksPage />}/>
                 <Route exact path="/info/units" element={<UnitEditorPage />}/>

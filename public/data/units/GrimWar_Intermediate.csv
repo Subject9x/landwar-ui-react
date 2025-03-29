@@ -1,0 +1,14 @@
+﻿unitName,subName,size,move,evade,dmgMelee,dmgRange,range,armor,points,tags,tagTotal,completeTotal
+Human Grunt,,2,6,0,2,2,10,4,37.78,,0,37.78
+Human Void Trooper,,4,8,0,4,4,16,7,70.71,,0,70.71
+Celestial Elder,,3,9,1,3,3,12,5,59.45,GRPL JJ ,10.5,69.95
+Abyssal Elder,,3,9,2,4,4,10,5,63.7,CLOAK BLNK ,16.2,79.9
+Rowdy Lad,,5,5,0,6,1,6,6,37.71,BRWL JGRNAT ,9.35,47.06
+Coalition Ranger,,2,6,0,2,4,20,3,62.19,ADVGS COORDFR ,30.5,92.69
+Reborn Silicate,,2,4,0,4,6,16,11,87.41,FRLS HEAL STBLFR ,50.24,137.65
+Hive Drone,,1,6,1,3,1,8,2,28.18,AFTBRN WKARM OVRHT ,10.19,38.37
+Human Cultist,,2,7,0,3,1,6,3,27.69,RNKG ,-23.54,4.15
+Nergal Void Trooper,,4,5,0,4,4,16,7,66.96,HVYARM INHBTMNS ,33.85,100.81
+Shamash Void Trooper,,4,9,2,4,4,16,6,78.46,BLAST IF ,21.71,100.17
+Crom Void Trooper,,4,8,1,5,3,8,7,61.38,CRG1 TRFFY AP-MEL ,29.45,90.83
+Thoth Void Trooper,,4,6,0,3,4,12,9,67.39,FRLS ARC-LFA ,16.39,83.78
