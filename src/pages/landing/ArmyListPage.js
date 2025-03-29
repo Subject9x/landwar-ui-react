@@ -9,7 +9,7 @@ export default function ArmyListPage({props}){
             .then((text)=>{
                 localStorage.setItem(fileName, text);
                 let editTemplateLink = document.getElementById("editATemplate");
-                editTemplateLink.href = "http://localhost:3000/editor/unit/0/"+fileName;
+                editTemplateLink.href = "http://landwargame.net/editor/unit/0/"+fileName;
                 editTemplateLink.click();
             });
     };
