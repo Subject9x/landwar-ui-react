@@ -1,0 +1,5 @@
+﻿unitName,subName,size,move,evade,dmgMelee,dmgRange,range,armor,points,tags,tagTotal,completeTotal
+Heavy Tank,,6,6,0,0,7,24,10,108.9,TRFFY HVYARM ,35.99,144.89
+Tank Destroyer,,3,8,1,0,6,20,6,87.04,ARC-LFA AP-RNG STBLFR ,29.73,116.77
+Medium Tank,,4,10,0,0,4,16,7,68.71,OVRHT ,11.33,80.04
+Light Tank,,2,14,2,0,3,10,4,57.44,WKARM BTRY ,1.39,58.83

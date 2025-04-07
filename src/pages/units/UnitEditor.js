@@ -14,7 +14,7 @@ import { numRound2Decimal, utilCheckMatchUnit, parseCSVFileInput } from "../../c
 function UnitEditor({props}){
 
     const [pageLoaded, setPageLoaded] = useState(0);
-    const {userId, userSet} = useParams();
+    const {userId, userListId} = useParams();
     const [unitListName, setUnitListName] = useState("");
     const [unitDataIndex, setUnitDataIndex] = useState(0);
     const [unitData, setUnitData] = useState([]);
@@ -161,12 +161,12 @@ function UnitEditor({props}){
 
     useEffect(()=>{
         if(pageLoaded === 0){
-            if(userId === "0" && (userSet !== null && userSet !== undefined && userSet !== "")){
-                let setData = localStorage.getItem(userSet);
+            if(userId === "0" && (userListId !== null && userListId !== undefined && userListId !== "")){
+                let setData = localStorage.getItem(userListId);
                 if(setData !== undefined && setData !== null){
                     let parseData = parseCSVFileInput(setData);
                     onImportCSV(parseData);
-                    localStorage.removeItem(userSet);
+                    localStorage.removeItem(userListId);
                 }
             }
             setPageLoaded(1);
@@ -184,7 +184,7 @@ function UnitEditor({props}){
         setTotalTagCost(numRound2Decimal(tags));
         setTotalCosts(numRound2Decimal(total));
 
-    },[unitData]);
+    },[unitData, pageLoaded, setPageLoaded, userListId, userId]);
 
     return(
 <div className="grid-container fluid">

@@ -86,25 +86,25 @@ function UnitEditorPage({props}){
                     <tbody style={{textAlign : "center"}}>
                         <tr>
                             <td><b>ShipWar</b>: Capital ship units, naval or space</td>
-                            <td><button type='button' className='button primary' onClick={(e)=>{fetchTemplateFile("ShipWar_Beginner")}}><icon className="fi-die-one"></icon></button></td>
+                            <td><button type='button' className='button primary' onClick={(e)=>{fetchTemplateFile("ShipWar_Basic")}}><icon className="fi-die-one"></icon></button></td>
                             <td><button type='button' className='button success' onClick={(e)=>{fetchTemplateFile("ShipWar_Intermediate")}}><icon className="fi-die-three"></icon></button></td>
                             <td><button type='button' className='button warning' onClick={(e)=>{fetchTemplateFile("ShipWar_Advanced")}}><icon className="fi-die-six"></icon></button></td>
                         </tr>
                         <tr>
                             <td><b>MechWar</b>: Giant robots, tanks, etc.</td>
-                            <td><button type='button' className='button primary' onClick={(e)=>{fetchTemplateFile("MekWar_Beginner")}}><icon className="fi-die-one"></icon></button></td>
+                            <td><button type='button' className='button primary' onClick={(e)=>{fetchTemplateFile("MekWar_Basic")}}><icon className="fi-die-one"></icon></button></td>
                             <td><button type='button' className='button success' onClick={(e)=>{fetchTemplateFile("MekWar_Intermediate")}}><icon className="fi-die-three"></icon></button></td>
                             <td><button type='button' className='button warning' onClick={(e)=>{fetchTemplateFile("MekWar_Advanced")}}><icon className="fi-die-six"></icon></button></td>
                         </tr>
                         <tr> 
                             <td ><b>TankWar</b>: WW2 tanks and AFVs.</td>
-                            <td><button type='button' className='button primary' onClick={(e)=>{fetchTemplateFile("TankWar_Beginner")}}><icon className="fi-die-one"></icon></button></td>
+                            <td><button type='button' className='button primary' onClick={(e)=>{fetchTemplateFile("TankWar_Basic")}}><icon className="fi-die-one"></icon></button></td>
                             <td><button type='button' className='button success' onClick={(e)=>{fetchTemplateFile("TankWar_Intermediate")}}><icon className="fi-die-three"></icon></button></td>
                             <td><button type='button' className='button warning' onClick={(e)=>{fetchTemplateFile("TankWar_Advanced")}}><icon className="fi-die-six"></icon></button></td>
                         </tr>
                         <tr>
                             <td><b>GrimWar</b>: 15mm-32mm dismal future warfare</td>
-                            <td><button type='button' className='button primary' onClick={(e)=>{fetchTemplateFile("GrimWar_Beginner")}}><icon className="fi-die-one"></icon></button></td>
+                            <td><button type='button' className='button primary' onClick={(e)=>{fetchTemplateFile("GrimWar_Basic")}}><icon className="fi-die-one"></icon></button></td>
                             <td><button type='button' className='button success' onClick={(e)=>{fetchTemplateFile("GrimWar_Intermediate")}}><icon className="fi-die-three"></icon></button></td>
                             <td><button type='button' className='button warning' onClick={(e)=>{fetchTemplateFile("GrimWar_Advanced")}}><icon className="fi-die-six"></icon></button></td>
                         </tr>

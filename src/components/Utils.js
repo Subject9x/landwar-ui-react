@@ -1,4 +1,8 @@
 //https://stackoverflow.com/a/1584377
+
+import { convertCSVUnitToRaw } from "./data/unitInfo";
+
+
 export const mergePrimitiveArrs = (a, b, predicate = (a, b) => a === b) => {
     const c = [...a]; // copy to avoid side effects
     // add all items from B to copy C if they're not already present
@@ -36,6 +40,29 @@ export function parseCSVFileInput(csvObj){
         }
     }
     return result;
+}
+
+export function basicImportUnits(unitsArr){
+    if(unitsArr.length === 0){
+        return;
+    }
+    let parsedUnits = [];
+    let unitCount = 0;
+    console.log(unitsArr);
+    unitsArr.forEach((unit, unitId)=>{
+            unit = convertCSVUnitToRaw(unit);
+            unit["id"] = unitCount;
+            unit["name"] = unit.unitName;
+            if(!Object.keys(unit).includes("subName")){
+                unit["subName"] = "";
+            }
+            unit["imgUrl"] = "";
+            unit["tags"] = unit.tags.split(" ");
+            unit["tags"].pop();
+            unitCount += 1;
+            parsedUnits = [...parsedUnits, unit];
+    });
+    return parsedUnits;
 }
 
 export function roundUsing(func, number, prec) {

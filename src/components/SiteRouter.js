@@ -10,6 +10,7 @@ import CardGenPage from "../pages/landing/CardGenPage";
 import ArmyEditor from "../pages/army/ArmyEditor";
 import UnitPrintedPage from "../pages/units/UnitPrintedPage";
 import PrintBlankCards from "../pages/units/PrintBlankCards";
+import TheMorePage from "../pages/landing/TheMorePage";
 
 export default function SiteRouter({props}){
 
@@ -17,14 +18,15 @@ export default function SiteRouter({props}){
         <BrowserRouter>
             <Routes>
                 <Route exact path="/" element={<HomePage />}/>
-                <Route exact path="/editor/unit/:userId?/:userSet?" element={<UnitEditor />}/>
-                <Route exact path="/editor/army/:userId?/:userSet?" element={<ArmyEditor />}/>
+                <Route exact path="/editor/unit/:userId?/:userListId?" element={<UnitEditor />}/>
+                <Route exact path="/editor/army/:userId?/:userListId?" element={<ArmyEditor />}/>
 
                 <Route exact path="/info/rules" element={<RulebooksPage />}/>
                 <Route exact path="/info/units" element={<UnitEditorPage />}/>
                 <Route exact path="/info/tags" element={<TagLibPage />}/>
                 <Route exact path="/info/army" element={<ArmyListPage />}/>
                 <Route exact path="/info/cardgen" element={<CardGenPage />}/>
+                {/*<Route exact path="/info/more" element={<TheMorePage />}/>*/}
 
                 <Route exact path="/print/units/:listName" element={<UnitPrintedPage />}/>
                 <Route exact path="print/cards/:total" element={<PrintBlankCards />}/>

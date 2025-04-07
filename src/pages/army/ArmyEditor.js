@@ -1,15 +1,18 @@
-import React, {useState} from "react";
+import React, {useState, useEffect, useCallback} from "react";
+import { useParams } from "react-router";
 import 'foundation-sites/dist/css/foundation.min.css';
 import 'foundation-sites/dist/css/foundation-icons.css';
 import '../../css/rulebook.css';
 import UserInfoBar from "../../components/UserInfoBar";
 import ArmyUnitPool from "../../components/armyEditor/ArmyUnitPool";
 import ArmyUnitTable from "../../components/armyEditor/ArmyUnitTable";
-import { utilCheckMatchUnit } from "../../components/Utils";
+import { utilCheckMatchUnit, parseCSVFileInput } from "../../components/Utils";
 import { convertCSVUnitToRaw } from "../../components/data/unitInfo";
 
 export default function ArmyEditor({props}){
 
+    const [pageLoaded, setPageLoaded] = useState(0);
+    const {userId, userListId} = useParams();
     const [unitPoolIdx, setUnitPoolIdx] = useState(0);
     const [unitListIdx, setUnitListIdx] = useState(0);
     const [importedUnits, setImportedUnits] = useState([]);
@@ -21,7 +24,6 @@ export default function ArmyEditor({props}){
         }
         let addUnits = [...importedUnits];
         let unitCount = unitPoolIdx;
-        console.log(unitsArr);
         unitsArr.forEach((unit, unitId)=>{
             let duplicate = false;
             importedUnits.forEach((existingUnit,idx)=>{
@@ -78,23 +80,24 @@ export default function ArmyEditor({props}){
         setImportedUnits([...importedUnits]);
     }
 
+    useEffect(()=>{
+        if(pageLoaded === 0){
+            if(userId === "0" && (userListId !== null && userListId !== undefined && userListId !== "")){
+                let setData = localStorage.getItem(userListId);
+                if(setData !== undefined && setData !== null){
+                    let parseData = parseCSVFileInput(setData);
+                    onImportUnits(parseData);
+
+                    localStorage.removeItem(userListId);
+                }
+            }
+            setPageLoaded(1);
+        }
+    },[pageLoaded, setPageLoaded, userId, userListId, onImportUnits]);
+
 return(
 <div className="grid-container fluid">
     <UserInfoBar />
-   {/*
-    <div className="grid-x grid-margin-x">
-        <div className="cell auto small-12 medium-12 large-10 large-offset-1">
-            <div className="grid-x grid-margin-x">
-                <div className="cell auto small-6 medium-6 large-5">
-                    <ArmyUnitPool unitList={importedUnits} onUnitImport={onImportUnits} onAddUnitToList={addUnitToList}/>
-                </div>
-                <div className="cell auto small-6 medium-6 large-5 rulePanel">
-                    <ArmyUnitTable unitList={unitList} onRemoveUnit={unitListRemoveEntry}/>
-                </div>
-            </div>
-        </div>
-    </div>
-    */}
     <div className="grid-x grid-margin-x">
         <div className="cell auto small-12 medium-10 large-8 medium-offset-1 large-offset-2" >
             <ArmyUnitPool unitList={importedUnits} onUnitImport={onImportUnits} onAddUnitToList={addUnitToList} onAddUnitImage={addImageUnitPoolentry}/>

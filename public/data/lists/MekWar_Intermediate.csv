@@ -1,0 +1,5 @@
+﻿unitName,subName,size,move,evade,dmgMelee,dmgRange,range,armor,points,tags,tagTotal,completeTotal
+Assault Mech,,6,5,0,6,5,16,14,96.51,THNDR ,15.07,111.58
+Heavy Mech,,5,8,1,5,4,22,11,106.49,AP-RNG ,12.8,119.29
+Medium Mech,,4,12,1,4,3,12,8,76.22,FORT ,9.5,85.72
+Light Mech,,3,14,2,3,2,8,4,57.36,INERTIAL ,14.42,71.78

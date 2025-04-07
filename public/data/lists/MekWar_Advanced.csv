@@ -1,0 +1,5 @@
+﻿unitName,subName,size,move,evade,dmgMelee,dmgRange,range,armor,points,tags,tagTotal,completeTotal
+Assault Mech,,6,5,0,6,5,16,14,96.51,THNDR ARC-LFA HVYARM ,47.32,143.83
+Heavy Mech,,5,8,1,5,4,22,11,106.49,AP-RNG ARC-LFA ADVGS ,20.6,127.09
+Medium Mech,,4,12,1,4,3,12,8,76.22,FORT ARC-LFA OVRHT ,18.6,94.82
+Light Mech,,3,14,2,3,2,8,4,57.36,INERTIAL ARC-LFA CHRGR JJ ,35.32,92.68

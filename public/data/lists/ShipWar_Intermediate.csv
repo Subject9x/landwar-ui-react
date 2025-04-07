@@ -1,0 +1,5 @@
+﻿unitName,subName,size,move,evade,dmgMelee,dmgRange,range,armor,points,tags,tagTotal,completeTotal
+Battleship BB,,8,5,0,0,9,24,24,164.33,AP-RNG ,28.8,193.13
+Cruiser CA,,5,9,0,0,4,16,12,84.75,HVYARM ,41.31,126.06
+Cruiser CL,,5,13,1,0,4,16,10,91.9,HULLGN1 ,3.2,95.1
+Destroyer,,3,14,1,0,2,12,5,58.7,FORT ,12,70.7
