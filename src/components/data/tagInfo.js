@@ -74,7 +74,8 @@ export const tagInfo = {
                 }
                 let rangeDamageVal = unitData['dmgRange'];
                 let meleeDamageVal = unitData['dmgMelee'];
-                if(rangeDamageVal <= 0 || meleeDamageVal <= 0){
+
+                if(rangeDamageVal <= 0 && meleeDamageVal <= 0){
                     warn = warn + '<p>Unit must have <i>either</i> <b>Range Damage</b> <i>or</i> <b>Melee Damage</b> greater than 0.</p>';
                 }
                 return warn;
@@ -393,12 +394,15 @@ export const tagInfo = {
                     sizeVal = 1;
                 }
                 if(moveVal === 0){
-                    moveVal = 6;
+                    moveVal = 1;
+                }
+                if(armorVal === 0){
+                    armorVal = 1;
                 }
 
-                let val = (moveVal + armorVal + sizeVal) / 4;
+                let val = (moveVal + armorVal + sizeVal) / 3;
 
-                return val * 3;
+                return val * 1.5;
             },
             reqs : (unitData) => {
                 let warn = '';
@@ -408,7 +412,7 @@ export const tagInfo = {
                 }
                 return warn;
             },
-            eqt:'<i>average</i> [<b>Size</b>, <b>Move</b>, <b>Armor</b>] * 2'
+            eqt:'<i>average</i> [<b>Size</b>, <b>Move</b>, <b>Armor</b>] * 1.5'
         },
         {
             abrv: 'CRG2',
@@ -419,18 +423,22 @@ export const tagInfo = {
                 let sizeVal = unitData['size'];
                 let moveVal = unitData['move'];
                 let armorVal = unitData['armor'];
-                //let structVal = parseInt(document.getElementById(rowId + '_structure').value);
 
                 if(sizeVal === 0){
                     sizeVal = 1;
                 }
                 if(moveVal === 0){
-                    moveVal = 6;
+                    moveVal = 1;
+                }
+                if(armorVal === 0){
+                    armorVal = 1;
                 }
 
-                let val = (moveVal + armorVal + sizeVal) / 4;//+ structVal;
+                
 
-                return val * 5;
+                let val = (moveVal + armorVal + sizeVal) / 3;
+
+                return val * 2.5;
             },
             reqs : (unitData) => {
                 let warn = '';
@@ -440,7 +448,7 @@ export const tagInfo = {
                 }
                 return warn;
             },
-            eqt:'<i>average</i> [<b>Size</b>, <b>Move</b>, <b>Armor</b>] * 5'
+            eqt:'<i>average</i> [<b>Size</b>, <b>Move</b>, <b>Armor</b>] * 2.5'
         },
         {
             abrv: 'CRW1',
@@ -1147,7 +1155,8 @@ export const tagInfo = {
                 return Math.max(5, ((moveVal / sizeVal) * moveVal));
             },
             reqs : (unitData) => {
-                return '';
+                let warn = ''
+                return warn;
             },
             eqt:'(<b>Move</b> / <b>Size</b>) * <b>Size</b> | min cost 5pts.'
         },

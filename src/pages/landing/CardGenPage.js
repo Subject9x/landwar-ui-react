@@ -42,7 +42,7 @@ return(
         <div className="cell auto small-2 medium-1 large-1">
             <button type="button" className="button success" onClick={(e)=>{printCards(e)}}><i className="fi-print"></i></button>
         </div>
-        <a id="printUnits" style={{display:"none"}} href={"http://landwargame.net/print/cards/" + cardCopies} target="_blank" rel="noopener noreferrer" ></a>
+        <a id="printUnits" style={{display:"none"}} href={process.env.REACT_APP_DOMAIN +"/print/cards/" + cardCopies} target="_blank" rel="noopener noreferrer" ></a>
     </div>
 </div>
 );

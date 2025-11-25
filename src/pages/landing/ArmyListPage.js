@@ -4,8 +4,8 @@ import { parseCSVFileInput, basicImportUnits } from "../../components/Utils";
 
 export default function ArmyListPage({props}){
 
-    const printURL = "http://landwargame.net/print/units/";
-    const templateURL = "http://landwargame.net/editor/army/0/";
+    const printURL = process.env.REACT_APP_DOMAIN + "/print/units/";
+    const templateURL = process.env.REACT_APP_DOMAIN + "/editor/army/0/";
 
     async function fetchTemplateFile (fileName){
         fetch("/data/units/"+fileName+".csv")
@@ -63,7 +63,7 @@ return(
     </div>
     <div className="grid-x grid-margin-x">
         <div className="cell auto small-12 medium-8 large-5 medium-offset-1 large-offset-2" >
-            <a className="button success" href="http://landwargame.net/editor/army" target="_blank" rel="noopener noreferrer">Created, edit, upload, download army list .csv</a>
+            <a className="button success" href={process.env.REACT_APP_DOMAIN + "/editor/army"} target="_blank" rel="noopener noreferrer">Created, edit, upload, download army list .csv</a>
         </div>
     </div>
      

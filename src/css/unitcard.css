@@ -250,13 +250,14 @@
     min-width: 57%;
     max-width: 57%;
     width: 57%;
+    height: auto;
 }
 
 .unit-img{
     position: relative;
-    max-width: 170px;
-    max-height: 140px;
+    max-width: 165px;
+    /* max-height: 140px; */
     display: block;
-    margin-left: auto;
+    margin-left: 4px;
     margin-right: auto;
 }

@@ -17,7 +17,7 @@ export default function SiteRouter({props}){
     return(
         <BrowserRouter>
             <Routes>
-                <Route exact path="/" element={<HomePage />}/>
+                <Route index element={<HomePage />}/>
                 <Route exact path="/editor/unit/:userId?/:userListId?" element={<UnitEditor />}/>
                 <Route exact path="/editor/army/:userId?/:userListId?" element={<ArmyEditor />}/>
 
@@ -26,10 +26,10 @@ export default function SiteRouter({props}){
                 <Route exact path="/info/tags" element={<TagLibPage />}/>
                 <Route exact path="/info/army" element={<ArmyListPage />}/>
                 <Route exact path="/info/cardgen" element={<CardGenPage />}/>
-                {/*<Route exact path="/info/more" element={<TheMorePage />}/>*/}
+                <Route exact path="/info/more" element={<TheMorePage />}/>
 
-                <Route exact path="/print/units/:listName" element={<UnitPrintedPage />}/>
-                <Route exact path="print/cards/:total" element={<PrintBlankCards />}/>
+                <Route exact path="/print/units/:listName/:images" element={<UnitPrintedPage />}/>
+                <Route exact path="/print/cards/:total" element={<PrintBlankCards />}/>
             </Routes>
         </BrowserRouter>
     );

@@ -10,7 +10,7 @@ export default function PrintBlankCards({props}){
 
     const {total} = useParams();
     const contentRef = useRef(null);
-    const amount = [total];
+    // const amount = [total];
 
     const reactToPrintFn = useReactToPrint(
         {
@@ -36,7 +36,7 @@ export default function PrintBlankCards({props}){
         setTimeout(()=>{
             reactToPrintFn();
         }, 250);
-    },[]);
+    },[reactToPrintFn]);
 
     return(
 <div ref={contentRef} className="uic-page">

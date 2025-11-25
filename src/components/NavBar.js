@@ -17,16 +17,14 @@ export default function NavBar({ props }) {
             <button id="navUnitBuild" type="button" className="button primary" onClick={() => { navigation("/info/units") }}><i className="fi-wrench"></i> <b>Unit Editor</b></button>
             <button id="navArmyList" type="button" className="button primary" onClick={() => { navigation("/info/army") }}><i className="fi-results"></i> <b>Force Editor</b></button>
             <button id="navCardGen" type="button" className="button primary" onClick={() => { navigation("/info/cardgen") }}><i className="fi-thumbnails"></i> <b>Blank Cards</b></button>
-            <button id="navMorePage" type="button" className="button primary" onClick={() => { navigation("/info/more") }}><i className="fi-info"></i> <b>I Want More!</b></button>
-        </div> 
-    
             
-            {/*<div className="cell shrink small-3 medium-3 large-3">
-                user: {usename}
-                <button id="login" type="button" className="btn--green">Login</button>
-                <button id="login" type="button" className="btn--red">Logout</button>
-            </div>*/}
-   
+            {/* <button id="navMorePage" type="button" className="button primary" onClick={() => { navigation("/info/more") }}><i className="fi-info"></i> <b>I Want More!</b></button> */}
+        </div>         
+        {/* <div className="cell shrink small-3 medium-3 large-3">
+            user: 
+            <button id="login" type="button" className="btn--green">Login</button>
+            <button id="login" type="button" className="btn--red">Logout</button>
+        </div> */}
     </div>
 </div>
     );

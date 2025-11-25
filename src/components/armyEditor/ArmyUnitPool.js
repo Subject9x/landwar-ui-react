@@ -1,11 +1,9 @@
 import React, { useRef, useEffect, useState } from "react";
-import { initializeSortedTagList } from "../../components/data/tagInfo";
 import { parseCSVFileInput, roundUsing} from "../Utils";
 
-export default function ArmyUnitPool({unitList, onUnitImport, onAddUnitToList, onAddUnitImage}) {
+export default function ArmyUnitPool({unitList, listUUID, onUnitImport, onAddUnitToList, onAddUnitImageURL, onAddUnitImageUpload}) {
 
     const inputRef = useRef(null);
-    const [tagList] = useState([...initializeSortedTagList()]);
     const [tableUnitList, setTableUnitList] = useState([]);
     const [columnSortStates, setColumnSortStates] = useState({
         "unitName": false,
@@ -92,8 +90,12 @@ export default function ArmyUnitPool({unitList, onUnitImport, onAddUnitToList, o
         );
     }
 
-    function addUnitImage(idx, imgUrl){
-        onAddUnitImage( idx, imgUrl);
+    function addUnitImageURL(idx, imgUrl){
+        onAddUnitImageURL( idx, imgUrl);
+    }
+
+    function addUnitImageUpload(idx, e){
+        onAddUnitImageUpload(idx, e);
     }
 
 return (
@@ -113,7 +115,7 @@ return (
                 <table id="armyUnitTable" className="hover scroll" style={{overflowY :"scroll", maxHeight : "500px"}}>
                     <thead>
                         <tr>
-                            <th>Image URL</th>
+                            <th>Image</th>
                             <th>Name<button type="button" className="button secondary clear" onClick={() => { sortOnColumnTxt("unitName") }}>{setSortIcon("unitName")}</button></th>
                             <th>SZ<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("size") }}>{setSortIcon("size")}</button></th>
                             <th>MV<button type="button" className="button secondary clear" onClick={() => { sortOnColumnNum("move") }}>{setSortIcon("move")}</button></th>
@@ -130,8 +132,9 @@ return (
                     <tbody>
                         {tableUnitList.map((row, idx) => (
                                 <tr key={idx} id={idx}>
-                                    <td>
-                                        <input type="text" onChange={(e) => {addUnitImage(idx, e.target.value)}} value={row.imgUrl} />
+                                    <td>                                        
+                                        <input type="text" onChange={(e) => {addUnitImageURL(idx, e.target.value)}} value={row.imgUrl} />
+                                        <input type="file" className="button tertiary" onChange={(e)=>{addUnitImageUpload(idx, e);}} accept="image/*" />
                                     </td>
                                     <td>
                                         {row.unitName} / <i>{row.subName}</i>

@@ -5,19 +5,22 @@ import NavBar from '../../components/NavBar';
 function UnitEditorPage({props}){
 
     async function fetchTemplateFile (fileName){
-        fetch("/data/units/"+fileName+".csv")
+        fetch("/data/units/"+fileName+".csv", {headers:{
+            'Content-Type' : 'application/csv',
+            'Accept' : 'application/csv'
+        }})
             .then(response => response.text() )
             .then((text)=>{
                 localStorage.setItem(fileName, text);
                 let editTemplateLink = document.getElementById("editATemplate");
-                editTemplateLink.href = "http://landwargame.net/editor/unit/0/"+fileName;
+                editTemplateLink.href = process.env.REACT_APP_DOMAIN + "/editor/unit/0/"+fileName;
                 editTemplateLink.click();
             });
     };
 
     return(
     <div className="grid-container fluid">
-        <a id="editATemplate" style={{display:"none"}} href={"http://landwargame.net/editor/unit"} target="_blank" rel="noopener noreferrer" ></a>
+        <a id="editATemplate" style={{display:"none"}} href={process.env.REACT_APP_DOMAIN +"/editor/unit"} target="_blank" rel="noopener noreferrer" ></a>
         <NavBar />
         <div className="grid-x grid-margin-x">
             <div className="cell auto small-12 medium-10 large-8 medium-offset-1 large-offset-2" >
@@ -38,7 +41,7 @@ function UnitEditorPage({props}){
         
         <div className="grid-x grid-margin-x">
             <div className="cell auto small-12 medium-6 large-4 medium-offset-1 large-offset-2" >
-                <a className="button success" href="http://landwargame.net/editor/unit" target="_blank" rel="noopener noreferrer">
+                <a className="button success" href={process.env.REACT_APP_DOMAIN + "/editor/unit"} target="_blank" rel="noopener noreferrer">
                     Create, edit, import, export Unit stats.
                 </a>
             </div>

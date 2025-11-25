@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef} from "react";
+import React, { useEffect, useState, useRef, useCallback} from "react";
 import { useParams } from "react-router";
 import { useReactToPrint } from "react-to-print";
 import "../../css/unitcard.css";
@@ -13,7 +13,8 @@ import { roundUsing } from "../../components/Utils";
 
 export default function UnitPrintedPage({props}){
  
-    const {listName} = useParams();
+    const pageLoaded = useRef(null);
+    const {listName, images} = useParams();
     const [unitData, setUnitData] = useState([]);
     const [tagList, setTagList] = useState([]);
     const [pointsData, setPointsData] = useState({"units": 0.0, "tags" : 0.0, "total" : 0.0});
@@ -30,6 +31,10 @@ export default function UnitPrintedPage({props}){
             }
         }
     );
+    
+    const callbackBuildUnitListData = useCallback((unitList)=>{
+        buildUnitListData(unitList);
+    },[]);
 
     function buildUnitListData(unitList){
         let tags = [];
@@ -66,18 +71,21 @@ export default function UnitPrintedPage({props}){
     }
 
     useEffect(()=>{
-        let data = localStorage.getItem(listName);
-        if(data === null || data === undefined){
-            return
+        if(pageLoaded.current === null){
+            let data = localStorage.getItem(listName);
+            if(data === null || data === undefined){
+                return
+            }
+            let parsed = JSON.parse(data)
+            setUnitData(parsed);
+            buildUnitListData(parsed);
+            //disable for debug
+            setTimeout(()=>{
+                reactToPrintFn();
+            }, 250);
+            pageLoaded.current = 1;
         }
-        let parsed = JSON.parse(data)
-        setUnitData(parsed);
-        buildUnitListData(parsed);
-        //disable for debug
-        setTimeout(()=>{
-            reactToPrintFn();
-        }, 250);
-    },[setUnitData, listName]);
+    },[setUnitData, listName, pageLoaded, buildUnitListData, reactToPrintFn]);
 
 return(
 <div ref={contentRef} className="uic-page">
@@ -85,7 +93,7 @@ return(
         <div className="grid-x" style={{pageBreakAfter:"always"}}>
             <div className="cell auto" >
                 {unitData.map(unit => (
-                    <UnitInfoCard unitInfo={unit} />
+                    <UnitInfoCard unitInfo={unit} imagesUID={images} />
                 ))}
             </div>
         </div>

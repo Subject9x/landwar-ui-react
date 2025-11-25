@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { useParams } from "react-router";
 import 'foundation-sites/dist/css/foundation.min.css';
 import 'foundation-sites/dist/css/foundation-icons.css';
@@ -13,7 +13,7 @@ import { numRound2Decimal, utilCheckMatchUnit, parseCSVFileInput } from "../../c
 
 function UnitEditor({props}){
 
-    const [pageLoaded, setPageLoaded] = useState(0);
+    const pageLoaded = useRef(null);
     const {userId, userListId} = useParams();
     const [unitListName, setUnitListName] = useState("");
     const [unitDataIndex, setUnitDataIndex] = useState(0);
@@ -160,7 +160,7 @@ function UnitEditor({props}){
     }
 
     useEffect(()=>{
-        if(pageLoaded === 0){
+        if(pageLoaded.current === null){
             if(userId === "0" && (userListId !== null && userListId !== undefined && userListId !== "")){
                 let setData = localStorage.getItem(userListId);
                 if(setData !== undefined && setData !== null){
@@ -169,7 +169,7 @@ function UnitEditor({props}){
                     localStorage.removeItem(userListId);
                 }
             }
-            setPageLoaded(1);
+            pageLoaded.current = 1;
         }
 
         let base = 0;
@@ -184,7 +184,7 @@ function UnitEditor({props}){
         setTotalTagCost(numRound2Decimal(tags));
         setTotalCosts(numRound2Decimal(total));
 
-    },[unitData, pageLoaded, setPageLoaded, userListId, userId]);
+    },[unitData, pageLoaded, userListId, userId]);
 
     return(
 <div className="grid-container fluid">

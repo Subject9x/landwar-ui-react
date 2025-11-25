@@ -39,6 +39,10 @@ export function exportUnitToCSVRow(unitData){
     exportUnit['tagTotal'] = unitData['tagTotal'];
     exportUnit['completeTotal'] =  unitData['completeTotal'];
 
+    if(exportUnit['imgUrl'] !== undefined){
+        delete exportUnit['imgUrl'];
+    }
+
     return exportUnit;
 }
 

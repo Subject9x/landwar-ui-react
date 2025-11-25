@@ -16,7 +16,7 @@ import '../../css/unitcard.css';
                         <li key={unitInfo.id + "_" + tag + id}>{tag}</li>
                     ))}
 */
-export default function UnitInfoCard({ unitInfo }) {
+export default function UnitInfoCard({ unitInfo, imagesUID }) {
 
 
     function getTagList(){
@@ -25,6 +25,12 @@ export default function UnitInfoCard({ unitInfo }) {
             return str = str + tag + ",  ";
         });
         return str;
+    }
+
+    function getImageUpload(){
+        let cache = JSON.parse(localStorage.getItem(imagesUID));
+        let img = "data:image/png;base64," + cache["pool"][unitInfo.poolId];
+        return img;
     }
 
 return (
@@ -65,7 +71,18 @@ return (
                 </div>
             </div>
             <div className="row-bottom-right" >
-                <img className="unit-img" src={unitInfo.imgUrl} alt="..." />
+                {(unitInfo.imgUrl !== undefined && unitInfo.imgUrl !== "" && unitInfo.imgUrl.length >= 0)
+                    &&
+                    <img className="unit-img" src={unitInfo.imgUrl} alt="..." />
+                }
+                {(imagesUID !== "-1")
+                &&
+                <img className="unit-img" src={getImageUpload()} alt="..." />
+               
+
+                }
+                
+                
             </div>
         </div>
     </div>

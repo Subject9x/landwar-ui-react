@@ -70,3 +70,14 @@ export function roundUsing(func, number, prec) {
     tempnumber = func(tempnumber);
     return tempnumber / Math.pow(10, prec);
 }
+
+export function basicUUID (uidLen){
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < uidLen; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+

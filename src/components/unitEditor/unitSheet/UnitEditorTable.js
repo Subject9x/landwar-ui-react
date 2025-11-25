@@ -142,7 +142,7 @@ function UnitEditorTable({unitDataSet, worksheetName, unitRowDataChange, unitRow
     <div className="cell auto">
         <div className="grid-x">
             <div className="cell auto">
-                <a id="printUnits" style={{display:"none"}} href={"http://landwargame.net/print/units/" + worksheetName}target="_blank" rel="noopener noreferrer" />
+                <a id="printUnits" style={{display:"none"}} href={process.env.REACT_APP_DOMAIN + "/print/units/" + worksheetName}target="_blank" rel="noopener noreferrer" />
             </div>
         </div>
 

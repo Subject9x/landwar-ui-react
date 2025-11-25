@@ -3,7 +3,7 @@ import { unitCSVColumns, exportUnitToCSVRow} from "../data/unitInfo";
 import { CSVLink } from "react-csv";
 import { roundUsing } from "../Utils";
 
-export default function ArmyUnitTable({ idExt, unitList, onRemoveUnit }) {
+export default function ArmyUnitTable({ idExt, listUUID, unitList, onRemoveUnit }) {
 
     const [validateList, setValidateList] = useState({listNameNotEmpty:false, listNotEmpty:false});
     const [armyListName, setArmyListName] = useState("");
@@ -170,7 +170,7 @@ return (
                             <i className="fi-download"></i>
                     </CSVLink>
                     <button type="button" className="button success" onClick={(e)=>{onClickPrint(e);}} disabled={!validForPrint()}><i className="fi-print"></i></button>
-                    <a id="printUnits" style={{display:"none"}} href={"http://landwargame.net/print/units/" + armyListName} target="_blank" rel="noopener noreferrer" ></a>
+                    <a id="printUnits" style={{display:"none"}} href={process.env.REACT_APP_DOMAIN + "/print/units/" + armyListName + "/" + listUUID} target="_blank" rel="noopener noreferrer" ></a>
                 </div>
 
             </div>
