@@ -50,6 +50,15 @@ export function calcRange(moveVal, rangeVal, rangeDamageVal){
     if(rangeDamageVal === 0){
         return 0;
     }
+
+    var mediumRange = rangeVal - 4; //4 is Close Range
+
+    var shortCost = 0;
+
+    var effectiveCost = 0;
+
+    var longRange = 0;
+
     return Math.max(0, (moveVal / 2) + ((rangeVal / 16) * rangeVal) + (rangeDamageVal / 2));
 }
 

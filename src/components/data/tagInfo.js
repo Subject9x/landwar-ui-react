@@ -1341,7 +1341,7 @@ export const tagInfo = {
         {
             abrv: 'RNGOPTSH',
             title : 'Optimal Range - Short',
-            desc : '<p><i>Combat Phase</i>.</p><p>Unit may extend <i>Close Range</i> bonus to <b>10"</b>. <b>Additional -1 ATK</b> at <i>Long Range</i>, and <i>Ranged Damage</i> reduce by <b>50% rounded down</b> for all attacks outside of <b>10"</b>.</p>',
+            desc : '<p><i>Combat Phase</i>.</p><p>Unit may extend <i>Close Range</i> bonus to <b>6"</b>. <b>Additional -1 ATK</b> at <i>Long Range</i>, and <i>Ranged Damage</i> reduce to <b>50% rounded down</b> for all attacks outside of <b>6"</b>.</p>',
             excl : ['RNGMIN','ADVGS','SHRPS','RNGOPTLN'],
             func : (unitData) => {
                 let moveVal = unitData['move'];
@@ -1357,8 +1357,8 @@ export const tagInfo = {
             reqs : (unitData) => {
                 let warn = '';
                 let rangeVal = unitData['range'];
-                if(rangeVal <= 0){
-                    warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
+                if(rangeVal < 6){
+                    warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 5.</p>';
                 }
                 let rangeDamageVal = unitData['dmgRange'];
                 if(rangeDamageVal <= 0){
@@ -1371,7 +1371,7 @@ export const tagInfo = {
         {
             abrv: 'RNGOPTLN',
             title : 'Optimal Range - Long',
-            desc : '<p><i>Combat Phase</i>.</p><p><b>-1 ATK</b> and <b>50%</b> <i>Ranged Damage</i> to any Target <b>at or under 16"</b> of range.</p>',
+            desc : '<p><i>Combat Phase</i>.</p><p><b>-2 ATK</b> and <b>50%</b> <i>Ranged Damage</i> to any Target <b>at or under 10"</b> of range.</p>',
             excl : ['RNGMIN','ADVGS','SHRPS','RNGOPTSH'],
             func : (unitData) => {
                 let moveVal = unitData['move'];
@@ -1386,8 +1386,8 @@ export const tagInfo = {
             reqs : (unitData) => {
                 let warn = '';
                 let rangeVal = unitData['range'];
-                if(rangeVal <= 0){
-                    warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 0.</p>';
+                if(rangeVal < 10){
+                    warn = warn + '<p>Unit must have a <b>[Range]</b> greater than 9.</p>';
                 }
                 let rangeDamageVal = unitData['dmgRange'];
                 if(rangeDamageVal <= 0){
