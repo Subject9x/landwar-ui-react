@@ -1,6 +1,6 @@
 import React from "react";
-import 'foundation-sites/dist/css/foundation.min.css';
-import 'foundation-sites/dist/css/foundation-icons.css';
+// import 'foundation-sites/dist/css/foundation.min.css';
+// import 'foundation-sites/dist/css/foundation-icons.css';
 import { useNavigate } from "react-router";
 
 export default function NavBar({ props }) {

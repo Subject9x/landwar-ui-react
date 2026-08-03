@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useCallback, useRef} from "react";
 import { useParams } from "react-router";
-import 'foundation-sites/dist/css/foundation.min.css';
-import 'foundation-sites/dist/css/foundation-icons.css';
+// import 'foundation-sites/dist/css/foundation.min.css';
+// import 'foundation-sites/dist/css/foundation-icons.css';
 import '../../css/rulebook.css';
 import UserInfoBar from "../../components/UserInfoBar";
 import ArmyUnitPool from "../../components/armyEditor/ArmyUnitPool";

@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router";
 import NavBar from "../../components/NavBar";
-import 'foundation-sites/dist/css/foundation.min.css';
-import 'foundation-sites/dist/css/foundation-icons.css';
+// import 'foundation-sites/dist/css/foundation.min.css';
+// import 'foundation-sites/dist/css/foundation-icons.css';
 
 
 function RulebooksPage({ props }) {

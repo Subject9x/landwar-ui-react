@@ -13,6 +13,7 @@
     "csv-string": "^4.0.1",
     "csv-stringify": "^6.5.1",
     "dompurify": "^3.1.6",
+    "foundation-icons": "^2.0.0",
     "foundation-sites": "^6.8.1",
     "furtive": "^2.4.0",
     "landwar-ui-react": "file:",

@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import { useParams } from "react-router";
-import 'foundation-sites/dist/css/foundation.min.css';
-import 'foundation-sites/dist/css/foundation-icons.css';
+// import 'foundation-sites/dist/css/foundation.min.css';
+// import 'foundation-sites/dist/css/foundation-icons.css';
 
 import UserInfoBar from "../../components/UserInfoBar";
 import UnitEditorTable from "../../components/unitEditor/unitSheet/UnitEditorTable";
