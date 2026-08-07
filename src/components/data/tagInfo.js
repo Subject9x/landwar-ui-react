@@ -1,4 +1,5 @@
 
+import ArmyUnitPool from "../armyEditor/ArmyUnitPool";
 import { calcArmor, calcDMG_M, calcDMG_R, calcEvade, calcMove, calcRange } from "./UnitCalculator";
 //, calculateUnitBaseCost
 export const tagInfo = {
@@ -153,25 +154,42 @@ export const tagInfo = {
         {
             abrv: 'BLAST',
             title : 'Blast',
-            desc : '<p><i>Combat Phase</i></p><p>When this Unit makes a <i>Ranged Attack</i>, Player may declare this attack is using <i>[Blast]</i>. Select a Target unit as normal, and make the attack roll. <b>If</b> the attack hits, Target takes <b>25% round down</b> damage and <b>+1 Stress</b>. The remaining damage is split <b>equally</b> across <b>all</b> units within a 6" radius of the <b>Target regardless of LoS.</b></p><p>Attacker picks which units are hit first. <i>Stationary</i> units must also be picked first and are hit automatically <b>even if they are friendly</b>, other units may avoid damage on 1 D6 roll of 5+.</p>',
-            excl : ['BTRY'],
+            desc : '<p><i>Combat Phase</i></p><p>When this Unit makes a <i>Ranged Attack</i>, Player may declare this attack is using <i>[Blast]</i>, rolling to hit as normal. If attack hits, the following applies:</p><p>Radius of blast is 50% of current <b>DMG</b> rnd down, min 3", max 10".</p><p>Any Unit whose center is inside radius suffers <b>+1 Stress</b> and 50% <b>DMG</b> round down. Initial target suffers additional <b>+1 Stress</b>.</p>',
+            excl : ['BTRY', 'AP-RNG'],
             func : (unitData) => {
                 let moveVal = unitData['move'];
                 let rangeDamageVal = unitData['dmgRange'];
                 let rangeVal = unitData['range'];
 
-                return (moveVal / 4) + (rangeVal / 3) + (rangeDamageVal / 2);
+                let blastDamage = rangeDamageVal;
+
+                if(blastDamage < 3){
+                    blastDamage = 3;
+                }
+                else if(blastDamage > 10){
+                    blastDamage = 10;
+                }
+
+                let rangeCost = calcRange(moveVal, rangeVal, blastDamage);
+
+
+                return (rangeDamageVal / 2) + (rangeCost * 0.25);
             },
             reqs : (unitData) => {
                 let warn = '';
                 let rangeDamageVal = unitData['dmgRange'];
+                let rangeVal = unitData['range'];
+                
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
+                }
+                if(rangeDamageVal <= rangeDamageVal / 2){
+                    warn = warn + '<p>Unit must have a <b>[Range]</b> greater than blast radius(50% of <b>[Range Damage]</b>)</p>';
                 }
 
                 return warn;
             },
-            eqt:'(<b>Move</b> / 4) + (<b>Range</b> / 3) + (<b>Damage-Range</b> / 2)'
+            eqt:'(<b>Damage-Range</b> / 2) + (<b>Range COST</b> / 4), where <b>Damage-Ranged</b> is min 3, max 10.'
         },
         {
             abrv: 'BLNK',
@@ -202,7 +220,7 @@ export const tagInfo = {
             abrv: 'BMBR-AR',
             title : 'Bomber-Area',
             desc : '<p><i>Combat Phase</i></p><p>When Unit makes their <i>Ranged Attack</i> this Turn, Unit may make an <b>additional</b> <i>Ranged Attack</i> on <b>each</b> enemy Unit that it moves <b>over</b> during the <i>Movement Phase</i> within <b>2"</b> of the Unit.<ul><li><i>Damage</i> of each attack is 33% of total <b>Damage</b> value <b>rounded up</b>.</li><li> This attack <b>cannot be</b> <i>Indirect Fire</i></li><li>These attacks are at <b>-2 ATK</b>.</li></ul></p>',
-            excl : ['BLNK','BMBR-DV'],
+            excl : ['BLNK','BMBR-DV', 'BLAST'],
             func : (unitData) => {
                 let sizeVal = unitData['size'];
                 let moveVal = unitData['move'];
@@ -527,7 +545,7 @@ export const tagInfo = {
         {
             abrv: 'FLY',
             title : 'Flyer',
-            desc : 'Unit is considered as permanently above the ground. Unit may move and shoot <b>over</b> enemy Units and Terrain. Unit cannot use <b>Cover Bonus</b> for defense and <b>all</b> units have <i>Line of sight</i> to this unit. <b>Only</b> Units with <b>[Flyer]</b> or <b>[Jump Jets]</b> can choose <i>Melee Attacks</i> when applicable. ',
+            desc : '<p>Unit gains <b>+1 DEF</b> to <i>Ranged Attacks</i>.</p><p>Unit is considered as permanently above the ground. Unit may move and shoot <b>over</b> enemy Units and Terrain. Unit cannot use <b>Cover Bonus</b> for defense and <b>all</b> units have <i>Line of sight</i> to this unit. <b>Only</b> Units with <b>[Flyer]</b> or <b>[Jump Jets]</b> can choose <i>Melee Attacks</i> when applicable.</p>',
             excl : ['HIALT','BLNK','JJ'],
             func : (unitData) => {
                 let sizeVal = unitData['size'];
@@ -822,7 +840,7 @@ export const tagInfo = {
         {
             abrv: 'JJ',
             title : 'Jump Jets',
-            desc : '<p><i>Movement Phase</i></p><p>Unit may traverse terrain vertically, uses [Flyer] rules when moving, but is otherwise treated as a ground unit. Unit still subject to <i>Flanking</i> check.</p>',
+            desc : '<p><i>Movement Phase</i></p><p>Unit may traverse terrain vertically, uses [Flyer] rules when moving. Unit still subject to <i>Flanking</i> check.</p><p><i>Combat Phase</i></p<p>Unit suffers <b>-1 ATK</b> this turn.</p>',
             excl : ['BLNK','HIALT','FLY'],
             func : (unitData) => {
                 let sizeVal = unitData['size'];
@@ -1150,8 +1168,6 @@ export const tagInfo = {
             func : (unitData) => {
                 let sizeVal = unitData['size'];
                 let moveVal = unitData['move'];
-                //let evadeVal = unitData['evade'];
-
                 return Math.max(5, ((moveVal / sizeVal) * moveVal));
             },
             reqs : (unitData) => {
@@ -1331,9 +1347,6 @@ export const tagInfo = {
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
                 }
-                // if(!tags_checkByName('Minimum Range')){
-                //     warn = warn + '<p>Unit must have the <i>[Minimum Range]</i> tag.</p>';
-                // }
                 return warn;
             },
             eqt:'(<b>Damage-Range</b> / 3) + (65% of <b>Range Cost</b>)'
@@ -1371,7 +1384,7 @@ export const tagInfo = {
         {
             abrv: 'RNGOPTLN',
             title : 'Optimal Range - Long',
-            desc : '<p><i>Combat Phase</i>.</p><p><b>-2 ATK</b> and <b>50%</b> <i>Ranged Damage</i> to any Target <b>at or under 10"</b> of range.</p>',
+            desc : '<p><i>Combat Phase</i>.</p><p><b>-2 ATK</b> and <b>50%</b> <i>Ranged Damage</i> to any Target <b>at or under 50%</b> of range.</p>',
             excl : ['RNGMIN','ADVGS','SHRPS','RNGOPTSH'],
             func : (unitData) => {
                 let moveVal = unitData['move'];
@@ -1396,6 +1409,188 @@ export const tagInfo = {
                 return warn;
             },
             eqt:'subtract ((50% of <i>Ranged Cost</i>) + (<i>Ranged Attack</i> / 2))'
+        },
+        {
+            abrv : 'FIRETM',
+            title : 'Fireteam',
+            desc : '<p><i>Combat Phase</i></p><p><b>Once</b> per <i>Combat Phase</i>, Unit gains <b>+1 DEF</b> for every non-panicked <i>[Fireteam]</i> Unit within <i>Effective Range</i>(min 10"); max <b>+2 DEF</b>.</p>',
+            excl : [],
+            func : (unitData) => {
+                let cost = 0;
+                let moveVal = unitData['move'];
+                let rangeVal = unitData['range'];
+
+                if(rangeVal < 10){
+                    rangeVal = 10;
+                }
+
+                cost = cost + (moveVal / 3.0);
+                cost = cost + (rangeVal / 4.0);
+
+                return cost;
+            },
+            reqs : (unitData) => {
+                let warn = '';
+                let moveVal = unitData['move'];
+                let rangeVal = unitData['range'];
+
+                if(rangeVal <= 0){
+                    warn = warn + '<p>Unit must have <b>[Range]</b> greater than 0.</p>';
+                }
+
+                return warn;
+            },
+            eqt: '(<b>Move</b> / 3) + (<b>Range</b> / 4), <b>Range</b> less than 10 will be counted as 10.'
+        },
+        {
+            abrv : 'PATH',
+            title : 'Pathfinder',
+            desc : '<p><i>Movement Phase</i></p><p><b>Unit cannot be Panicked.</b></p><p>After Unit completes its move, player may select up to 2 friendly units in <b>Line of Sight</b> and <i>Effective Range</i> <b>OR</b> out of <b>Line of Sight</b> and 50% <i>Effective Range</i>.</p><p>When selected Units move, they made <b>add 25%</b> of their current <i>Move</i< value to their move.</p>',
+            excl : ['RNKG'],
+            func : (unitData) => {
+                let cost = 0;
+                let sizeVal = unitData['size'] === 0 ? 1 : unitData['size'];
+                let moveVal = unitData['move'] === 0 ? 1 : unitData['move'];
+                let moveCost = calcMove(moveVal, sizeVal);
+
+                let effectRange = unitData['range'] === 0 ? 2 : unitData['range'] ;
+
+                cost = cost + (moveCost * 0.25);
+                cost = cost + (effectRange * 0.25);
+
+                return cost;
+
+            },
+            reqs : (unitData) => {
+                let warn = '';
+                let moveVal = unitData['move'];
+                let rangeVal = unitData['range'];
+
+                if(moveVal <= 0){
+                    warn = warn + '<p>Unit must have <b>[Move]</b> greater than 0.</p>'
+                }
+                if(rangeVal <= 0){
+                    warn = warn + '<p>Unit must have <b>[Range]</b> greater than 1.</p>'
+                }
+
+                return warn;
+            },
+            eqt: '(25% <b>Move <i>Cost</i></b>) + (25% <b>Range</b>)'
+        },
+        {
+            abrv : 'AGGRO',
+            title : 'Aggressive',
+            desc : '<p><i>Initiative Phase</i></p><p><b>Before all</b> Players have rolled for initiative, non-Panicked Unit may use this tag.</p><p>Unit suffers <b>2 Stress</b> for <b>+2 INI</b> this turn.</p>',
+            excl : ['MHQ', 'FRLS'],
+            func : (unitData) => {
+                let cost = 0;
+                let moveVal = unitData['move'] > 0 ? unitData['move'] : 1;
+                let armorVal = unitData['armor'] > 0 ? unitData['armor'] : 1;
+                let evadeVal = unitData['evade'];
+
+                let dmgVal = unitData['dmgRange'] > unitData['dmgMelee'] ? (unitData['dmgRange'] > 0 ? unitData['dmgRange'] : 1) : (unitData['dmgMelee'] > 0 ?  unitData['dmgMelee'] : 1);
+                cost = cost + (armorVal * 0.50);
+                cost = cost + (moveVal * 0.67);
+                cost = cost + (dmgVal * 0.25);
+                cost = cost + (evadeVal * 2);
+
+                return cost;
+            },
+            reqs : (unitData) => {
+                let warn = '';
+                let moveVal = unitData['move'];
+                let armorVal = unitData['armor'];
+                let rangeDamageVal = unitData['dmgRange'];
+                let meleeDamageVal = unitData['dmgMelee'];
+                
+                if(moveVal <= 0){
+                    warn = warn + '<p>Unit must have a <b>[Move]</b> greater than 0.</p>';
+                }
+
+                if(armorVal <= 0){
+                    warn = warn + '<p>Unit must have a <b>[Armor]</b> greater than 0.</p>';
+                }
+
+                if(rangeDamageVal <= 0 && meleeDamageVal <= 0){
+                    warn = warn + '<p>Unit must have either <b>Damage Range</b> or <b>Damage Melee</b> greater than 0.</p>';
+                }
+
+                return warn;
+            },
+            eqt: '(50% <i>Armor</i>) + (67% <i>Move</i>) + (<i>Evade</i> * 2) + 25% of highest value of either <i>DMG-Melee</i> or <i>DMG-Ranged</i>.'
+        },
+        {
+            abrv : 'FUSIL',
+            title : 'Fusillade',
+            desc : '<p><i>Combat Phase</i></p><p>When making a <i>Ranged attack</i>, Player may declare Unit is using <i>[Fusillade]</i>.</p><p>Roll <b>1D6</b> <i>for each</i> point of <b>DMG-Range</b>(max 8 dice), a <b>5+</b> counts as a success.</p><p>Target rolls defense dice as normal.</p><p>Damage inflicted is only the number of successful dice, Unit suffers <b>+1 Stress</b>.</p>',
+            excl : ['BLAST'],
+            func : (unitData) => {
+                let cost = 0;
+
+                let moveVal = unitData['move'];
+                let rangeDamageVal = unitData['dmgRange'];
+
+                if(rangeDamageVal > 8){
+                    rangeDamageVal = 8;
+                }
+
+                cost = cost + moveVal / 2;
+                cost = cost + ((rangeDamageVal / 8.0) * 10.0);
+
+                return cost;
+            },
+            reqs : (unitData) => {
+                let warn = '';
+                let rangeVal = unitData['range'];
+                let rangeDamageVal = unitData['dmgRange'];
+
+                if(rangeVal <= 0){
+                    warn = warn + '<p>Unit must have <b>Range</b> greater than 0.</p>';
+                }
+                if(rangeDamageVal <= 0){
+                    warn = warn + '<p>Unit must have <b>Damage Range</b> greater than 0.</p>';
+                }
+
+                return warn;
+            },
+            eqt : '(<b>Move</b> / 2) + ((<b>DMG-Range</b> / 8) * 10)'
+        },
+        {
+            abrv : 'FURY',
+            title : 'Fury',
+            desc : '<p><i>Combat Phase</i></p><p>When making a <i>Melee attack</i>, Player may declare Unit is using <i>[Fury]</i>.</p><p>Roll <b>1D6</b> <i>for each</i> point of <b>DMG-Melee</b>(max 8 dice), a <b>5+</b> counts as a success.</p><p>Target rolls defense dice as normal.</p><p>Damage inflicted is only the number of successful dice, Unit suffers <b>+1 Stress</b>.</p>',
+            excl : [],
+            func : (unitData) => {
+                let cost = 0;
+                let meleeDamageVal = unitData['dmgMelee'];
+                let moveVal = unitData['move'];
+
+                if(meleeDamageVal > 8){
+                    meleeDamageVal = 8;
+                }
+
+                cost = cost + moveVal * 0.75;
+                cost = cost + (meleeDamageVal * 0.5);
+
+                return cost;
+            },
+            reqs : (unitData) => {
+                let warn = '';
+                let moveVal = unitData['move'];
+                let meleeDamageVal = unitData['dmgMelee'];
+                
+                if(moveVal <= 0){
+                    warn = warn + '<p>Unit must have <b>Move</b> greater than 0.</p>';
+                }
+
+
+                if(meleeDamageVal <= 0){
+                    warn = warn + '<p>Unit must have <b>Damage Melee</b> greater than 0.</p>';
+                }
+
+                return warn;
+            },
+            eqt : '(<b>Move</b> * 0.75) + (<b>DMG-Melee</b>(max 8) * 0.5)'
         }
    ]
 };
