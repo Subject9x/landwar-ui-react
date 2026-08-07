@@ -22,7 +22,7 @@ export default function TagInfoCard({tagItem, showRequirements, showCostEquation
                 <div className="cell auto small-2 medium-2 large-2 small-offset-1 medium-offset-1 large-offset-1">
                     <u>Requirements:</u>
                 </div>
-                <div className="cell auto small-4 medium-4 large-4">
+                <div className="cell auto small-10 medium-8 large-6">
                     <div id="tagWindow_descWarn" dangerouslySetInnerHTML={{ __html: tagItem.warnMsg }}></div>
                 </div>
             </div>

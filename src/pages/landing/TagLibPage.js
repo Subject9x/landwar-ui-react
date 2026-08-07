@@ -48,15 +48,15 @@ export default function TagLibPage({ props }) {
 
     <div className="grid-x grid-margin-x row-fill-s row-fill row-fill-l"></div>
 
-    {(Object.keys(selectedTag.tag).length !== 0)
-        && (    
         <div className="grid-x grid-margin-x">
             <div className="cell auto small-10 medium-8 large-6 small-offset-1 medium-offset-2 large-offset-3">
+    {(Object.keys(selectedTag.tag).length !== 0)
+        && (    
                 <TagInfoCard tagItem={selectedTag} showCostEquation={true} showRequirements={true}/>
-            </div>
-        </div>
         )
     }
+            </div>
+        </div>
 
     {/* disabling modules until we can figure out how to make them work. */}
     {/* <button id="tagLibBtnRPG" type="button" disabled>RPG Tags</button> */}
