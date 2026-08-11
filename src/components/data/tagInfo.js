@@ -1,5 +1,4 @@
 
-import ArmyUnitPool from "../armyEditor/ArmyUnitPool";
 import { calcArmor, calcDMG_M, calcDMG_R, calcEvade, calcMove, calcRange } from "./UnitCalculator";
 //, calculateUnitBaseCost
 export const tagInfo = {
@@ -178,7 +177,6 @@ export const tagInfo = {
             reqs : (unitData) => {
                 let warn = '';
                 let rangeDamageVal = unitData['dmgRange'];
-                let rangeVal = unitData['range'];
                 
                 if(rangeDamageVal <= 0){
                     warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 0.</p>';
@@ -402,7 +400,7 @@ export const tagInfo = {
             abrv: 'CRG1',
             title : 'Courage-I',
             desc : '<p><i>Resolution Phase</i>.</p><p>When Unit is making a <i>Stress Check</i>, Unit gets <b>+1</b> to the D6 roll.</p>',
-            excl : ['CRG2','FRLS'],
+            excl : ['CRG2','FRLS','CRW1','CRW2'],
             func : (unitData) => {
                 let sizeVal = unitData['size'];
                 let moveVal = unitData['move'];
@@ -436,7 +434,7 @@ export const tagInfo = {
             abrv: 'CRG2',
             title : 'Courage-II',
             desc : '<p><i>Resolution Phase</i>.</p><p>When Unit is making a <i>Stress Check</i>, Unit gets <b>+2</b> to the D6 roll.</p>',
-            excl : ['CRG1','FRLS'],
+            excl : ['CRG1','FRLS','CRW1','CRW2'],
             func : (unitData) => {
                 let sizeVal = unitData['size'];
                 let moveVal = unitData['move'];
@@ -451,8 +449,6 @@ export const tagInfo = {
                 if(armorVal === 0){
                     armorVal = 1;
                 }
-
-                
 
                 let val = (moveVal + armorVal + sizeVal) / 3;
 
@@ -471,18 +467,11 @@ export const tagInfo = {
         {
             abrv: 'CRW1',
             title : 'Crew-I',
-            desc : '<p><i>Resolution Phase</i>.</p>For stress rolls, roll 2D6 and take the highest (represents crew morale and squad morale). Limit of Crew Points is (Size / 3)  + 2.',
-            excl : ['CRG1','CRG2','CRW2','FRLS','OVRHT'],
+            desc : '<p><i>Resolution Phase</i></p><p>Non-panicked Unit may <b>ignore</b> effect of <i>Crew Shaken</i> for 50% <b>Armor</b> check.</p>',
+            excl : ['CRW2','FRLS','CRG1','CRG2'],
             func : (unitData) => {
                 let sizeVal = unitData['size'];
                 let armorVal = unitData['armor'];
-
-                if(sizeVal === 0){
-                    sizeVal = 1;
-                }
-                if(armorVal === 0){
-                    armorVal = 1;
-                }
 
                 let sizeRaise = Math.pow(sizeVal, 2);
                 
@@ -490,26 +479,33 @@ export const tagInfo = {
             },
             reqs : (unitData) => {
                 let warn = '';
-                
-                let sizeVal = unitData['size'];
-                if(sizeVal === 0){
-                    warn = warn + '<p>Unit must have <i>Size</i> > 0.</p>';
-                }
-
-                return warn;
-            },
-            eqt:'((1 / <b>Size</b> ^ 2) * 20) * <b>Armor</b>'
-        },
-        {
-            abrv: 'CRW2',
-            title : 'Crew-II',
-            desc : '<p><i>Resolution Phase</i>.</p>For stress rolls, roll 3D6 and take the highest (represents crew morale and squad morale). Limit of Crew Points is (Size / 3)  + 2.',
-            excl : ['CRG1','CRG2','CRW1','FRLS','OVRHT'],
-            func : (unitData) => {
                 let sizeVal = unitData['size'];
                 let armorVal = unitData['armor'];
 
                 if(sizeVal === 0){
+                    warn = warn + '<p>Unit must have <i>Size</i> greater than 0.</p>';
+                }
+                if(sizeVal > 4){
+                    warn = warn + '<p>Unit must have <i>Size</i> less than 5.</p>';
+                }
+                if(armorVal <= 0){
+                    warn = warn + '<p>Unit must have <i>Armor</i> greater than 0.</p>';
+                }
+
+                return warn;
+            },
+            eqt:'((1 / <b>Armor</b> ^ 2) * 20)'
+        },
+        {
+            abrv: 'CRW2',
+            title : 'Crew-II',
+            desc : '<p><i>Resolution Phase</i></p><p>Non-panicked Unit may <b>ignore</b> effect of <i>Crew Shaken</i> for 25% <b>Armor</b> <i>and</i> at 50% <b>Armor</b>.</p>',
+            excl : ['CRW1','FRLS','CRG1','CRG2'],
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let armorVal = unitData['armor'];
+
+                if(sizeVal < 5){
                     sizeVal = 1;
                 }
                 if(armorVal === 0){
@@ -522,9 +518,16 @@ export const tagInfo = {
             reqs : (unitData) => {
                 let warn = '';
                 let sizeVal = unitData['size'];
-                if(sizeVal < 3){
-                    warn = warn + '<p><b>[Size]</b> must be <i>greater than</i> 2.</p>';
+                let armorVal = unitData['armor'];
+
+                if(sizeVal < 5){
+                    warn = warn + '<p><b>[Size]</b> must be <i>greater than</i> 4.</p>';
                 }
+
+                if(armorVal <= 0){
+                    warn = warn + '<p><b>[Armor]</b> must be <i>greater than</i> 0.</p>';
+                }
+
                 return warn;
             },
             eqt:'((1 / <b>Size</b> ^ 2) * 33) * <b>Armor</b>'
@@ -643,7 +646,7 @@ export const tagInfo = {
             abrv: 'HVYARM',
             title : 'Heavy Armor',
             desc : '<p><i>Combat Phase</i>.</p><p>Unit may reduce <b>any</b> incoming <i>DMG</i> to itself by <b>half rounded down</b>, this occurs <b>before any other</b> TAGs are applied.</p>',
-            excl : ['WKARM'],
+            excl : ['WKARM', 'AFTBRN'],
             func : (unitData) => {
                 let sizeVal = unitData['size'];
                 let moveVal = unitData['move'];
@@ -667,7 +670,7 @@ export const tagInfo = {
             abrv: 'HERO',
             title : 'Hero',
             desc : '<p><i>Resolution Phase</i>.</p><p>Hero may suffer <b>+2 Stress</b> Point to allow every Friendly Unit in 8" to <b>reroll</b> 1 failed <i>Stress Check</i> per Turn. <b>IF</b> [Hero] unit is <b>destroyed</b>, <b>all</b> friendly units <b>immediately</b> suffer <b>+2 Stress</b>.</p>',
-            excl : ['RNKG'],
+            excl : ['RNKG', 'FRLS', 'CRG1', 'CRG2', 'CRW1', 'CRW2'],
             func : (unitData) => {
                 let sizeVal = unitData['size'];
                 let moveVal = unitData['move'];
@@ -840,7 +843,7 @@ export const tagInfo = {
         {
             abrv: 'JJ',
             title : 'Jump Jets',
-            desc : '<p><i>Movement Phase</i></p><p>Unit may traverse terrain vertically, uses [Flyer] rules when moving. Unit still subject to <i>Flanking</i> check.</p><p><i>Combat Phase</i></p<p>Unit suffers <b>-1 ATK</b> this turn.</p>',
+            desc : '<p><i>Movement Phase</i></p><p>Unit may traverse terrain vertically, uses [Flyer] rules when moving.</p><p><i>Combat Phase</i></p<p>Unit suffers <b>-1 ATK</b> this turn, cannot use <i>[Afterburner]</i> with this move.</p>',
             excl : ['BLNK','HIALT','FLY'],
             func : (unitData) => {
                 let sizeVal = unitData['size'];
@@ -959,7 +962,7 @@ export const tagInfo = {
             abrv: 'OVRHT',
             title : 'Overheat',
             desc : '<p><i>Combat Phase</i></p><p><b>Unit cannot be Panicked.</b></p><p>During <i>Combat Phase</i>, Unit may suffer <b>3 Stress Points</b> to re-roll <i>up to 3</i> <b>ATK</b> dice. <b>Cannot</b> be combined with <b>[Fearless]</b>.</p>',
-            excl : ['FRLS'],
+            excl : ['FRLS', 'CRW1', 'CRW2'],
             func : (unitData) => {
                 let meleeDamageVal = unitData['dmgMelee'];
                 let rangeDamageVal = unitData['dmgRange'];
@@ -1431,7 +1434,6 @@ export const tagInfo = {
             },
             reqs : (unitData) => {
                 let warn = '';
-                let moveVal = unitData['move'];
                 let rangeVal = unitData['range'];
 
                 if(rangeVal <= 0){
@@ -1582,8 +1584,7 @@ export const tagInfo = {
                 if(moveVal <= 0){
                     warn = warn + '<p>Unit must have <b>Move</b> greater than 0.</p>';
                 }
-
-
+                
                 if(meleeDamageVal <= 0){
                     warn = warn + '<p>Unit must have <b>Damage Melee</b> greater than 0.</p>';
                 }
@@ -1591,6 +1592,54 @@ export const tagInfo = {
                 return warn;
             },
             eqt : '(<b>Move</b> * 0.75) + (<b>DMG-Melee</b>(max 8) * 0.5)'
+        },
+        {
+            abrv : 'RELNT',
+            title : 'Relentless',
+            desc : '<p><i>Combat Phase</i></p><p>When Unit is <i>Panicked</i>, do not halve <b>ATK</b> or <b>DEF</b> dice, Unit is still considered <i>Panicked</i> otherwise.</p>',
+            excl : ['FRLS', 'CRW1', 'CRW2', 'CRG1', 'CRG2', 'OVRHT'],
+            func : (unitData) => {
+                let cost = 0;
+                let meleeDamageVal = unitData['dmgMelee'];
+                let rangeDamageVal = unitData['dmgRange'];
+                let moveVal = unitData['move'];
+                let armorVal = unitData['armor'];
+
+                cost = cost + (moveVal / 4);
+                cost = cost + (armorVal / 3);
+                cost = cost + (meleeDamageVal / 4);
+                cost = cost + (rangeDamageVal / 3);
+
+                return cost;
+            },
+            reqs : (unitData) => {
+                return '';
+            },
+            eqt : '(<b>Move</b> / 4) + (<b>Armor</b> / 3) + (<b>Damage Range</b> / 3) + (<b>Damage Melee</b> / 4)'
+        },
+        {
+            abrv : 'RNFARM',
+            title : 'Reinforced Armor',
+            desc : '<p><i>Combat Phase</i></p><p>Unit may reduce <b>any</b> incoming <i>DMG</i> to itself by <b>25% rounded down</b>, this occurs <b>before any other</b> TAGs are applied.</p>',
+            excl : ['HVYARM', 'WKARM'],
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let moveVal = unitData['move'];
+                let armorVal = unitData['armor'];
+
+                return calcArmor(armorVal, sizeVal) * 0.4 + (moveVal * 1.05);
+            },
+            reqs : (unitData) => {
+                let warn = '';
+                let evadeVal = unitData['evade'];
+                
+                if(evadeVal > 1){
+                    warn = warn + '<p>Unit <b>Evade<b> cannot be greater than <b>1</b>.';
+                }
+                
+                return warn;
+            },
+            eqt:'(<b>Armor Cost</b> * 0.4) + (<b>Move</b> * 1.05)'
         }
    ]
 };
@@ -1686,15 +1735,12 @@ export function tags_getByName(tagAbbrev, srcTagArray){
     return {};
 }
 
-
 //run me once at app boot.
 export function initializeSortedTagList(){
-    let tagCount = 0;
     let sortTheTags = [];
 
     for(let tagId in tagInfo.data){
         let tag = tagInfo.data[tagId];
-        tagCount++;
         sortTheTags.push(tag);
     }
     let arr = [...sortTheTags.sort((a, b) => a.title.localeCompare(b.title))];
