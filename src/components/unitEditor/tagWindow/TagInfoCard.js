@@ -1,7 +1,8 @@
 import React from "react";
 import "../../../css/styles.css";
+import { tagInfo, tags_getByName } from "../../data/tagInfo";
 
-export default function TagInfoCard({tagItem, showRequirements, showCostEquation}){
+export default function TagInfoCard({tagItem, showRequirements, showCostEquation, showExclusions}){
 
     return(             
     <div id="tagRulesPanel" className="grid-x grid-margin-x">
@@ -35,6 +36,21 @@ export default function TagInfoCard({tagItem, showRequirements, showCostEquation
                 </div>
                 <div className="cell auto small-8 medium-8 large-8">
                     <div id="tagWindow_equation" dangerouslySetInnerHTML={{ __html: tagItem.tag.eqt }}></div>
+                </div>
+            </div>
+            }
+            {showExclusions && 
+            <div className="grid-x grid-margin-x">
+                <div className="cell auto small-2 medium-2 large-2 small-offset-1 medium-offset-1 large-offset-1">
+                    <u>Exclude tags:</u>
+                </div>
+                <div className="cell auto small-8 medium-8 large-8">
+                    <div>
+                    {tagItem.tag.excl.map((tagAbrv)=>{
+                        let foundTag = tagInfo['data'].filter( t => (t.abrv === tagAbrv))[0];
+                        return (<i>{foundTag.title + ", "}</i>);
+                    })}
+                    </div>
                 </div>
             </div>
             }

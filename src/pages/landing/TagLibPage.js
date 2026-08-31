@@ -25,6 +25,7 @@ export default function TagLibPage({ props }) {
     function selectATag(tagId){
         let tag = tagList.find(({abrv}) => (abrv === tagId));
         setSelectedTag({...selectedTag, tag : tag, warnMsg : tag.reqs(dummyUnit)});
+        window.scrollTo(0,0);
     }
 
     return (
@@ -50,11 +51,11 @@ export default function TagLibPage({ props }) {
 
         <div className="grid-x grid-margin-x">
             <div className="cell auto small-10 medium-8 large-6 small-offset-1 medium-offset-2 large-offset-3">
-    {(Object.keys(selectedTag.tag).length !== 0)
-        && (    
-                <TagInfoCard tagItem={selectedTag} showCostEquation={true} showRequirements={true}/>
-        )
-    }
+            {(Object.keys(selectedTag.tag).length !== 0)
+                && (    
+                        <TagInfoCard tagItem={selectedTag} showCostEquation={true} showRequirements={true} showExclusions={true}/>
+                )
+            }
             </div>
         </div>
 
@@ -71,6 +72,7 @@ export default function TagLibPage({ props }) {
         </div>
     </div> */}
     <div className="grid-x grid-margin-x row-fill-s row-fill row-fill-l">
+        
     </div>
     <div className="grid-x">
         <div className="cell auto small-12 medium-10 large-8 medium-offset-1 large-offset-2">

@@ -1,4 +1,5 @@
-export const unitObj = {'name':"", 'size':0, 'move':0, 'evade':0, 
+import { calculateUnitBaseCost, calculateUnitTagCost } from "./UnitCalculator";
+export const unitObj = {'name':"", 'subName' : "", 'size':0, 'move':0, 'evade':0, 
                         'dmgMelee':0, 'dmgRange':0, 'range':0, 
                         'armor':0, 'tags':"", 'points':0, 'tagTotal':0, 'completeTotal':0};
 
@@ -56,8 +57,10 @@ export function convertCSVUnitToRaw(srcUnit){
     srcUnit['armor'] = Number(srcUnit['armor']);
 
     srcUnit['points'] = parseFloat(srcUnit['points']);
+    calculateUnitBaseCost(srcUnit);
+    
     srcUnit['tagTotal'] = parseFloat(srcUnit['tagTotal']);
-    srcUnit['completeTotal'] = parseFloat(srcUnit['completeTotal']);
+    calculateUnitTagCost(srcUnit);
     return srcUnit;
 }
 

@@ -182,7 +182,8 @@ function UnitEditor({props}){
         });
         setTotalBaseCost(numRound2Decimal(base));
         setTotalTagCost(numRound2Decimal(tags));
-        setTotalCosts(numRound2Decimal(total));
+        let t = numRound2Decimal(total);
+        setTotalCosts(t);
 
     },[unitData, pageLoaded, userListId, userId]);
 

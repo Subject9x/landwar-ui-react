@@ -123,7 +123,7 @@ return(
         <div className="grid-x grid-margin-x">
             <div className="cell auto small-12 medium-10 large-10  medium-offset-1 large-offset-1">
                 {tagList.map(tag => (
-                    <TagInfoCard tagItem={tag} showCostEquation={false} showRequirements={false}/>
+                    <TagInfoCard tagItem={tag} showCostEquation={false} showRequirements={false} showExclusions={false}/>
                 ))}
             </div>
         </div>
