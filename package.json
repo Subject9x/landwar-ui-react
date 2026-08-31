@@ -18,7 +18,8 @@
     "furtive": "^2.4.0",
     "landwar-ui-react": "file:",
     "node-csv": "0.1.2",
-    "npm": "^10.9.2",
+    "npm": "^12.0.2",
+    "pagedjs": "^0.4.3",
     "react": "^18.3.1",
     "react-csv": "^2.2.2",
     "react-dom": "^18.3.1",
@@ -35,8 +36,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest"
+      "react-app"
     ]
   },
   "browserslist": {
