@@ -3,7 +3,7 @@ import { calcArmor, calcDMG_M, calcDMG_R, calcEvade, calcMove, calcRange } from 
 //, calculateUnitBaseCost
 export const tagInfo = {
     id : "core",
-    data :[ 
+    data : [ 
         {
             abrv: 'ADVGS',
             title : 'Advanced Gun Sights',
@@ -85,18 +85,18 @@ export const tagInfo = {
         {
             abrv: 'AP-MEL',
             title : 'Armor Piercing - Melee',
-            desc : "<p><i>Combat Phase</i></p><p>When applying Damage from this unit's <i>Melee</i> attack; <b>If</b> Target has the <i>[Heavy Armor]</b> tag, <b>ignore it</b>. If Target does not have this tag, Target suffers <b>+2 Stress</b> along with the damage of the attack.</p>",
+            desc : "<p><i>Combat Phase</i></p><p>Melee Attack <b>ignores</b> <i>[Heavy Armor]</i> damage reduction. Target suffers <i>Stress</i> equal to <b>DMG / 2 round down</b> with minimum 0.</p><p> <i>DMG</i> value of this attack must <b>always be 2+</b>.</p>",
             excl : [],
             func : (unitData) => {
                 let moveVal = unitData['move'];
                 let meleeDamageVal = unitData['dmgMelee'];
-                return (calcDMG_M(meleeDamageVal, moveVal) * 0.6);
+                return (calcDMG_M(meleeDamageVal, moveVal) * 0.8);
             },
             reqs : (unitData) => {
                 let warn = '';
                 let meleeDamageVal = unitData['dmgMelee'];
-                if(meleeDamageVal <= 0){
-                    warn = warn + '<p>Unit must have a <b>[Melee Damage]</b> greater than 0.</p>';
+                if(meleeDamageVal < 2){
+                    warn = warn + '<p>Unit must have a <b>[Melee Damage]</b> greater than 1.</p>';
                 }
                 return warn;
             },
@@ -105,21 +105,22 @@ export const tagInfo = {
         {
             abrv: 'AP-RNG',
             title : 'Armor Piercing - Ranged',
-            desc : "<p><i>Combat Phase</i></p><p>When applying Damage from this unit's <i>Ranged</i> attack; <b>If</b> Target has the <i>[Heavy Armor]</i> tag, <b>ignore it</b>. If Target <b>does not</b> have <i>[Heavy Armor]</i>, Target suffers <b>+2 Stress</b> along with the damage of the attack. <i>DMG</i> value of this attack must <b>always be 4+</b>.</p>",
-            excl : [],
+            desc : "<p><i>Combat Phase</i></p><p>Ranged Attack <b>ignores</b> <i>[Heavy Armor]</i> damage reduction. Target suffers <i>Stress</i> equal to <b>DMG / 2 round down</b> with minimum 0.</p><p> <i>DMG</i> value of this attack must <b>always be 2+</b>.</p>",
+            excl : ['BLAST'],
             func : (unitData) => {
+                
                 let rangeDamageVal = unitData['dmgRange'];
-                return (calcDMG_R(rangeDamageVal) * 0.8);
+                return (calcDMG_R(rangeDamageVal) * 1.25);
             },
             reqs : (unitData) => {
                 let warn = '';
                 let rangeDamageVal = unitData['dmgRange'];
-                if(rangeDamageVal < 4){
-                    warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 3.</p>';
+                if(rangeDamageVal < 2){
+                    warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 1.</p>';
                 }
                 return warn;
             },
-            eqt:'<i>Range Damage COST</i> * 80%'
+            eqt:'<i>Range Damage COST</i> * 1.25'
         },
         {
             abrv: 'BTRY',
@@ -400,7 +401,7 @@ export const tagInfo = {
             abrv: 'CRG1',
             title : 'Courage-I',
             desc : '<p><i>Resolution Phase</i>.</p><p>When Unit is making a <i>Stress Check</i>, Unit gets <b>+1</b> to the D6 roll.</p>',
-            excl : ['CRG2','FRLS','CRW1','CRW2'],
+            excl : ['CRG2','FRLS','ENDUR1','ENDUR2'],
             func : (unitData) => {
                 let sizeVal = unitData['size'];
                 let moveVal = unitData['move'];
@@ -434,25 +435,19 @@ export const tagInfo = {
             abrv: 'CRG2',
             title : 'Courage-II',
             desc : '<p><i>Resolution Phase</i>.</p><p>When Unit is making a <i>Stress Check</i>, Unit gets <b>+2</b> to the D6 roll.</p>',
-            excl : ['CRG1','FRLS','CRW1','CRW2'],
+            excl : ['CRG1','FRLS','ENDUR1','ENDUR2'],
             func : (unitData) => {
                 let sizeVal = unitData['size'];
-                let moveVal = unitData['move'];
                 let armorVal = unitData['armor'];
 
                 if(sizeVal === 0){
                     sizeVal = 1;
                 }
-                if(moveVal === 0){
-                    moveVal = 1;
-                }
                 if(armorVal === 0){
                     armorVal = 1;
                 }
 
-                let val = (moveVal + armorVal + sizeVal) / 3;
-
-                return val * 2.5;
+                return calcArmor(armorVal, sizeVal) * 0.25;
             },
             reqs : (unitData) => {
                 let warn = '';
@@ -465,42 +460,10 @@ export const tagInfo = {
             eqt:'<i>average</i> [<b>Size</b>, <b>Move</b>, <b>Armor</b>] * 2.5'
         },
         {
-            abrv: 'CRW1',
-            title : 'Crew-I',
+            abrv: 'ENDUR1',
+            title : 'Endurance-I',
             desc : '<p><i>Resolution Phase</i></p><p>Non-panicked Unit may <b>ignore</b> effect of <i>Crew Shaken</i> for 50% <b>Armor</b> check.</p>',
-            excl : ['CRW2','FRLS','CRG1','CRG2'],
-            func : (unitData) => {
-                let sizeVal = unitData['size'];
-                let armorVal = unitData['armor'];
-
-                let sizeRaise = Math.pow(sizeVal, 2);
-                
-                return ((1/ sizeRaise) * 20) * armorVal;
-            },
-            reqs : (unitData) => {
-                let warn = '';
-                let sizeVal = unitData['size'];
-                let armorVal = unitData['armor'];
-
-                if(sizeVal === 0){
-                    warn = warn + '<p>Unit must have <i>Size</i> greater than 0.</p>';
-                }
-                if(sizeVal > 4){
-                    warn = warn + '<p>Unit must have <i>Size</i> less than 5.</p>';
-                }
-                if(armorVal <= 0){
-                    warn = warn + '<p>Unit must have <i>Armor</i> greater than 0.</p>';
-                }
-
-                return warn;
-            },
-            eqt:'((1 / <b>Armor</b> ^ 2) * 20)'
-        },
-        {
-            abrv: 'CRW2',
-            title : 'Crew-II',
-            desc : '<p><i>Resolution Phase</i></p><p>Non-panicked Unit may <b>ignore</b> effect of <i>Crew Shaken</i> for 25% <b>Armor</b> <i>and</i> at 50% <b>Armor</b>.</p>',
-            excl : ['CRW1','FRLS','CRG1','CRG2'],
+            excl : ['ENDUR2','FRLS','CRG1','CRG2'],
             func : (unitData) => {
                 let sizeVal = unitData['size'];
                 let armorVal = unitData['armor'];
@@ -511,9 +474,42 @@ export const tagInfo = {
                 if(armorVal === 0){
                     armorVal = 1;
                 }
-                let sizeRaise = Math.pow(sizeVal, 2);
 
-                return ((1 / sizeRaise) * 33) * armorVal;
+                return calcArmor(armorVal, sizeVal) * 0.5;
+            },
+            reqs : (unitData) => {
+                let warn = '';
+                let sizeVal = unitData['size'];
+                let armorVal = unitData['armor'];
+
+                if(sizeVal === 0){
+                    warn = warn + '<p>Unit must have <i>Size</i> greater than 0.</p>';
+                }
+                if(armorVal <= 0){
+                    warn = warn + '<p>Unit must have <i>Armor</i> greater than 0.</p>';
+                }
+
+                return warn;
+            },
+            eqt:'<b> Armor COST</b> * 0.5'
+        },
+        {
+            abrv: 'ENDUR2',
+            title : 'Endurance-II',
+            desc : '<p><i>Resolution Phase</i></p><p>Non-panicked Unit may <b>ignore</b> effect of <i>Crew Shaken</i> for 25% <b>Armor</b> <i>and</i> at 50% <b>Armor</b>.</p>',
+            excl : ['ENDUR1','FRLS','CRG1','CRG2'],
+            func : (unitData) => {
+                let sizeVal = unitData['size'];
+                let armorVal = unitData['armor'];
+
+                if(sizeVal < 5){
+                    sizeVal = 1;
+                }
+                if(armorVal === 0){
+                    armorVal = 1;
+                }
+
+                return calcArmor(armorVal, sizeVal) * 0.67;
             },
             reqs : (unitData) => {
                 let warn = '';
@@ -530,13 +526,13 @@ export const tagInfo = {
 
                 return warn;
             },
-            eqt:'((1 / <b>Size</b> ^ 2) * 33) * <b>Armor</b>'
+            eqt:'<b> Armor COST</b> * 0.67'
         },
         {
             abrv: 'FRLS',
             title : 'Fearless',
             desc : '<p><i>Resolution Phase</i>.</p><p>Unit <i>automatically</i> passes any <i>Stress Check</i>.</p>',
-            excl : ['CRG1','CRG2','CRW1','CRW2','OVRHT','HERO'],
+            excl : ['CRG1','CRG2','ENDUR1','ENDUR2','OVRHT','HERO'],
             func : (unitData) => {
                 return unitData['points']  * 0.35;
             },
@@ -645,7 +641,7 @@ export const tagInfo = {
         {
             abrv: 'HVYARM',
             title : 'Heavy Armor',
-            desc : '<p><i>Combat Phase</i>.</p><p>Unit may reduce <b>any</b> incoming <i>DMG</i> to itself by <b>half rounded down</b>, this occurs <b>before any other</b> TAGs are applied.</p>',
+            desc : '<p><i>Combat Phase</i>.</p><p>Unit may reduce <b>any</b> incoming <i>DMG</i> to itself to <b>half rounded up</b>, this occurs <b>after</b> any other TAGs are applied.</p><p>Any Stress penalty from <i>[AP-Ranged]</i> is at <b>-1</b>.</p><p>Example: 5 DMG would be reduced to 3 DMG.</p>',
             excl : ['WKARM', 'AFTBRN'],
             func : (unitData) => {
                 let sizeVal = unitData['size'];
@@ -670,7 +666,7 @@ export const tagInfo = {
             abrv: 'HERO',
             title : 'Hero',
             desc : '<p><i>Resolution Phase</i>.</p><p>Hero may suffer <b>+2 Stress</b> Point to allow every Friendly Unit in 8" to <b>reroll</b> 1 failed <i>Stress Check</i> per Turn. <b>IF</b> [Hero] unit is <b>destroyed</b>, <b>all</b> friendly units <b>immediately</b> suffer <b>+2 Stress</b>.</p>',
-            excl : ['RNKG', 'FRLS', 'CRG1', 'CRG2', 'CRW1', 'CRW2'],
+            excl : ['RNKG', 'FRLS', 'CRG1', 'CRG2', 'ENDUR1', 'ENDUR2'],
             func : (unitData) => {
                 let sizeVal = unitData['size'];
                 let moveVal = unitData['move'];
@@ -742,7 +738,7 @@ export const tagInfo = {
         {
             abrv: 'IF',
             title : 'Indirect Fire',
-            desc : '<p><i>Combat Phase</i>.</p><p>Unit may select targets <b>outside</b> <i>Line of Sight</i> when making <i>Ranged Attacks</i>. Target <b>must</b> be within <b>50% of</b> <i>Effective Range</i> of the attacking Unit.</p>',
+            desc : '<p><i>Combat Phase</i>.</p><p>Unit may select targets <b>outside</b> <i>Line of Sight</i> when making <i>Ranged Attacks</i>. Target <b>must</b> be within <b>50% of</b> <i>Effective Range</i> of the attacking Unit, Target gains <b>+1DEF</b>.</p>',
             excl : ['FLDART'],
             func : (unitData) => {
                 let moveVal = unitData['move'];
@@ -751,7 +747,7 @@ export const tagInfo = {
                 
                 let rangeCost = calcRange(moveVal, rangeVal, rangeDamageVal);
 
-                return (rangeDamageVal / 2) + (rangeCost * 0.45);
+                return (rangeCost * 0.33);
             },
             reqs : (unitData) => {
                 let warn = '';
@@ -766,7 +762,7 @@ export const tagInfo = {
                 }
                 return warn;
             },
-            eqt:'(<b>Damage-Range</b> / 3) + (45% of <b>Range Cost</b>)'
+            eqt:'(33% of <b>Range Cost</b>)'
         },
         {
             abrv: 'INERTIAL',
@@ -962,7 +958,7 @@ export const tagInfo = {
             abrv: 'OVRHT',
             title : 'Overheat',
             desc : '<p><i>Combat Phase</i></p><p><b>Unit cannot be Panicked.</b></p><p>During <i>Combat Phase</i>, Unit may suffer <b>3 Stress Points</b> to re-roll <i>up to 3</i> <b>ATK</b> dice. <b>Cannot</b> be combined with <b>[Fearless]</b>.</p>',
-            excl : ['FRLS', 'CRW1', 'CRW2'],
+            excl : ['FRLS', 'ENDUR1', 'ENDUR2'],
             func : (unitData) => {
                 let meleeDamageVal = unitData['dmgMelee'];
                 let rangeDamageVal = unitData['dmgRange'];
@@ -1329,7 +1325,7 @@ export const tagInfo = {
         {
             abrv: 'FLDART',
             title : 'Field Artillery',
-            desc : '<p><i>Combat Phase</i>.</p><p>Unit may select targets <b>outside</b> <i>Line of Sight</i> when making <i>Ranged Attacks</i>. Target <b>cannot</b> be at <i>Long Range</i> of the attacking Unit.</p>',
+            desc : '<p><i>Combat Phase</i>.</p><p>Unit may select targets <b>outside</b> <i>Line of Sight</i> when making <i>Ranged Attacks</i>. Target <b>cannot</b> be at <i>Long Range</i> of the attacking Unit, however Target gets <b>+1DEF</b></p>',
             excl : ['IF'],
             func : (unitData) => {
                 let moveVal = unitData['move'];
@@ -1338,7 +1334,7 @@ export const tagInfo = {
                 
                 let rangeCost = calcRange(moveVal, rangeVal, rangeDamageVal);
 
-                return (rangeDamageVal / 3) + (rangeCost * 0.65);
+                return (rangeCost * 0.45);
             },
             reqs : (unitData) => {
                 let warn = '';
@@ -1352,7 +1348,7 @@ export const tagInfo = {
                 }
                 return warn;
             },
-            eqt:'(<b>Damage-Range</b> / 3) + (65% of <b>Range Cost</b>)'
+            eqt:'(45% of <b>Range Cost</b>)'
         },
         {
             abrv: 'RNGOPTSH',
@@ -1597,7 +1593,7 @@ export const tagInfo = {
             abrv : 'RELNT',
             title : 'Relentless',
             desc : '<p><i>Combat Phase</i></p><p>When Unit is <i>Panicked</i>, do not halve <b>ATK</b> or <b>DEF</b> dice, Unit is still considered <i>Panicked</i> otherwise.</p>',
-            excl : ['FRLS', 'CRW1', 'CRW2', 'CRG1', 'CRG2', 'OVRHT'],
+            excl : ['FRLS', 'ENDUR1', 'ENDUR2', 'CRG1', 'CRG2', 'OVRHT'],
             func : (unitData) => {
                 let cost = 0;
                 let meleeDamageVal = unitData['dmgMelee'];
@@ -1617,38 +1613,56 @@ export const tagInfo = {
             },
             eqt : '(<b>Move</b> / 4) + (<b>Armor</b> / 3) + (<b>Damage Range</b> / 3) + (<b>Damage Melee</b> / 4)'
         },
-        {
-            abrv : 'RNFARM',
-            title : 'Reinforced Armor',
-            desc : '<p><i>Combat Phase</i></p><p>Unit may reduce <b>any</b> incoming <i>DMG</i> to itself by <b>25% rounded down</b>, this occurs <b>before any other</b> TAGs are applied.</p>',
-            excl : ['HVYARM', 'WKARM'],
-            func : (unitData) => {
-                let sizeVal = unitData['size'];
-                let moveVal = unitData['move'];
-                let armorVal = unitData['armor'];
+        //saving for later / never
+        // {
+        //     abrv : 'RNFARM',
+        //     title : 'Reinforced Armor',
+        //     desc : '<p><i>Combat Phase</i></p><p>Unit may reduce <b>any</b> incoming <i>DMG</i> to itself by <b>25% rounded down</b>, this occurs <b>before any other</b> TAGs are applied.</p>',
+        //     excl : ['HVYARM', 'WKARM'],
+        //     func : (unitData) => {
+        //         let sizeVal = unitData['size'];
+        //         let moveVal = unitData['move'];
+        //         let armorVal = unitData['armor'];
 
-                return calcArmor(armorVal, sizeVal) * 0.4 + (moveVal * 1.05);
-            },
-            reqs : (unitData) => {
-                let warn = '';
-                let evadeVal = unitData['evade'];
+        //         return calcArmor(armorVal, sizeVal) * 0.4 + (moveVal * 1.05);
+        //     },
+        //     reqs : (unitData) => {
+        //         let warn = '';
+        //         let evadeVal = unitData['evade'];
                 
-                if(evadeVal > 1){
-                    warn = warn + '<p>Unit <b>Evade<b> cannot be greater than <b>1</b>.';
-                }
+        //         if(evadeVal > 1){
+        //             warn = warn + '<p>Unit <b>Evade<b> cannot be greater than <b>1</b>.';
+        //         }
                 
-                return warn;
-            },
-            eqt:'(<b>Armor Cost</b> * 0.4) + (<b>Move</b> * 1.05)'
-        }
+        //         return warn;
+        //     },
+        //     eqt:'(<b>Armor Cost</b> * 0.4) + (<b>Move</b> * 1.05)'
+        // },
+        // {
+        //     abrv: 'AP-RNG-1',
+        //     title : 'Armor Piercing - Ranged - I',
+        //     desc : "<p><i>Combat Phase</i></p><p>When applying Damage from this unit's <i>Ranged</i> attack; <b>If</b> ignore <i>[Reinforced Armor]</i> tag, <b>ignore it</b>. If Target <b>does not</b> have <i>[Reinforced Armor]</i>, Target suffers <b>+1 Stress</b> along with the damage of the attack. <i>DMG</i> value of this attack must <b>always be 2+</b>.</p>",
+        //     excl : ['AP-RNG-2'],
+        //     func : (unitData) => {
+        //         let rangeDamageVal = unitData['dmgRange'];
+        //         return (calcDMG_R(rangeDamageVal) * 0.6);
+        //     },
+        //     reqs : (unitData) => {
+        //         let warn = '';
+        //         let rangeDamageVal = unitData['dmgRange'];
+        //         if(rangeDamageVal < 2){
+        //             warn = warn + '<p>Unit must have a <b>[Range Damage]</b> greater than 1.</p>';
+        //         }
+        //         return warn;
+        //     },
+        //     eqt:'<i>Range Damage COST</i> * 60%'
+        // },
    ]
 };
-
 
 export function getTagData(){
     return tagInfo;
 }
-
 
 function tagInfo_hasTag(tagName){
     let tagId = -1;
@@ -1660,7 +1674,6 @@ function tagInfo_hasTag(tagName){
             }
         }
     }
-
     return tagId;
 }
 
@@ -1679,10 +1692,8 @@ export function tags_checkExclusions(exclusions, srcTagArray, warnMsg){
             }
         }
     }
-
     return warnMsg;
 }
-
 
 export function tags_validateExclusion(tag, unitTagArr, warnMsg){
     if(unitTagArr.length === 0){
