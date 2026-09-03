@@ -1,7 +1,7 @@
 /*
     Core Unit cost calculator function.
 
-    Unit Builder Rules v0.8
+    Unit Builder Rules v1.0
 
         Core Stat Equations, TAGS are elsewhere.
 
@@ -13,7 +13,6 @@ import { tags_checkExclusions, tagInfo } from "./tagInfo";
 // Beta 1.5 - size is more of a meta stat that affects other calcs, its a but redundant to factor this as a cost unto-itself, but it's a nice 'rounding
 // value for additional cost bulk.
 export function calcSize(sizeVal){
-    // return sizeVal * 2; // old, pre 1.3
     return sizeVal / 3; 
 }
 
@@ -35,12 +34,11 @@ export function calcDMG_M(meleeDamageVal, moveVal){
     if(meleeDamageVal === 0){
         return 0;
     }
-    // return (meleeDamageVal * 2) + (moveVal / 4) ;
     return meleeDamageVal / 2 + (moveVal / 4) ;
 }
 
 export function calcDMG_R(rangeDamageVal){
-    return rangeDamageVal * 4;
+    return rangeDamageVal * 2;
 }
 
 export function calcRange(moveVal, rangeVal, rangeDamageVal){
@@ -51,15 +49,11 @@ export function calcRange(moveVal, rangeVal, rangeDamageVal){
         return 0;
     }
 
-    var mediumRange = rangeVal - 4; //4 is Close Range
+    let trueRange = (moveVal + rangeVal) - 2.0; //credit back melee range
+    let ratio = (trueRange / 18.0);
+    let cost = (rangeDamageVal * 3.0) * ratio;
 
-    var shortCost = 0;
-
-    var effectiveCost = 0;
-
-    var longRange = 0;
-
-    return Math.max(0, (moveVal / 2) + ((rangeVal / 16) * rangeVal) + (rangeDamageVal / 2));
+    return Math.max(0, cost);
 }
 
 export function calcArmor(armorVal, sizeVal){
@@ -69,13 +63,10 @@ export function calcArmor(armorVal, sizeVal){
 
     let armorFrac = armorVal * 0.33;
     armorVal = armorVal - armorFrac;
-    
-    armorFrac = armorFrac * 2;
-    armorVal = armorVal * 4;
-
+    armorVal = armorVal * 2;
     armorVal = armorVal + armorFrac;
     
-    return Math.max(0, (armorVal - sizeVal / 2));
+    return Math.max(0, (armorVal - (sizeVal / 2)));
 }
 
 function calcBaseCost(sizeCost, moveCost, evadeCost, meleeCost, rangeDamageCost, rangeCost, armorCost){ //, structCost){
@@ -92,7 +83,6 @@ export function calculateUnitBaseCost(unitData){
     let dmgRangeVal = unitData['dmgRange'];
     let rangeVal = unitData['range'];
     let armorVal =unitData['armor'];
-
 
     let sizeCost = calcSize(sizeVal);
     let moveCost = calcMove(moveVal, sizeVal);
@@ -126,18 +116,23 @@ export function calculateUnitTagCost(unitData){
     let removeTag = [];
     unitData['tags'].forEach(tagAbrv => {
         let tag = tagInfo['data'].find(item => item.abrv === tagAbrv);
-
-        tagCost = tagCost + tag.func(unitData);
+        try{
+            tagCost = tagCost + tag.func(unitData);
+        }
+        catch(e){
+            console.log("ERR on tag="+tagAbrv);
+            console.log("ERR on tag="+tag);
+            console.log(e);
+        }
     });
 
     removeTag.forEach(tag => {
         unitData['tags'].filter(rem => rem === tag);
     })
 
-    unitData['tagTotal'] = Math.round((tagCost + Number.EPSILON) * 100) / 100;
-    unitData['completeTotal'] = unitData['points'] + unitData['tagTotal'];
-    unitData['completeTotal'] =  Math.round((unitData['completeTotal'] + Number.EPSILON) * 100) / 100
-
+    let tagTotal = Math.round((tagCost + Number.EPSILON) * 100) / 100;
+    unitData['tagTotal'] = tagTotal;
+    unitData['completeTotal'] =  Math.round(((unitData['points'] + tagTotal) + Number.EPSILON) * 100) / 100
     
     return unitData;
 }
